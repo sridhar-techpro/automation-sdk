@@ -4,10 +4,11 @@
   "description": "Production-grade Automation SDK",
   "main": "dist/core/sdk.js",
   "types": "dist/core/sdk.d.ts",
+  "packageManager": "pnpm@9.0.0",
   "scripts": {
     "build": "tsc",
     "clean": "rm -rf dist",
-    "pretest": "npm run build",
+    "pretest": "pnpm run build",
     "test": "jest --runInBand --forceExit",
     "test:e2e": "jest tests/e2e --runInBand --forceExit",
     "test:unit": "jest tests/unit --runInBand --forceExit",
@@ -21,6 +22,7 @@
     "@types/node": "^20.12.0",
     "jest": "^29.7.0",
     "ts-jest": "^29.1.4",
+    "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
   },
   "jest": {

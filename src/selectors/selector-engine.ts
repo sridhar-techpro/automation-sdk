@@ -22,9 +22,9 @@ export async function resolveSelector(
 
   switch (parsed.type) {
     case 'text-exact':
-      return resolveTextSelector(page, parsed.value, true);
+      return resolveTextSelector(page, parsed.value, true, options);
     case 'text-partial':
-      return resolveTextSelector(page, parsed.value, false);
+      return resolveTextSelector(page, parsed.value, false, options);
     case 'css':
     default:
       return resolveCSSSelector(page, parsed.value, options);
