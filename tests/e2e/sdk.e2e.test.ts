@@ -1,7 +1,11 @@
 import * as http from 'http';
-import * as puppeteer from 'puppeteer';
-import type { Browser } from 'puppeteer';
+import * as puppeteer from 'puppeteer-core';
+import type { Browser, Page } from 'puppeteer-core';
 import { AutomationSDK } from '../../src/core/sdk';
+
+const CHROME_EXECUTABLE =
+  process.env.CHROME_PATH ??
+  '/usr/bin/google-chrome';
 
 const TEST_HTML = `<!DOCTYPE html>
 <html>
@@ -22,10 +26,6 @@ let browser: Browser;
 let wsEndpoint: string;
 let sdk: AutomationSDK;
 
-async function getWsEndpoint(browser: Browser): Promise<string> {
-  return browser.wsEndpoint();
-}
-
 beforeAll(async () => {
   // Start local HTTP server
   await new Promise<void>((resolve) => {
@@ -40,8 +40,9 @@ beforeAll(async () => {
     });
   });
 
-  // Launch browser
-  browser = await (puppeteer as typeof puppeteer).launch({
+  // Launch browser using puppeteer-core with system Chrome
+  browser = await puppeteer.launch({
+    executablePath: CHROME_EXECUTABLE,
     headless: true,
     args: [
       '--no-sandbox',
@@ -51,7 +52,7 @@ beforeAll(async () => {
     ],
   });
 
-  wsEndpoint = await getWsEndpoint(browser);
+  wsEndpoint = browser.wsEndpoint();
 
   sdk = new AutomationSDK({
     browserWSEndpoint: wsEndpoint,
@@ -63,7 +64,7 @@ beforeAll(async () => {
   await sdk.connect();
 
   // Navigate to test page
-  const page = (sdk as unknown as { connectionManager: { getPage: () => puppeteer.Page } }).connectionManager.getPage();
+  const page = (sdk as unknown as { connectionManager: { getPage: () => Page } }).connectionManager.getPage();
   await page.goto(`http://127.0.0.1:${serverPort}`, { waitUntil: 'domcontentloaded' });
 }, 60000);
 
@@ -94,7 +95,7 @@ describe('AutomationSDK E2E', () => {
     expect(result.action).toBe('type');
     expect(result.success).toBe(true);
 
-    const page = (sdk as unknown as { connectionManager: { getPage: () => puppeteer.Page } }).connectionManager.getPage();
+    const page = (sdk as unknown as { connectionManager: { getPage: () => Page } }).connectionManager.getPage();
     const value = await page.$eval('#email', (el) => (el as HTMLInputElement).value);
     expect(value).toBe('test@example.com');
   });
@@ -109,7 +110,7 @@ describe('AutomationSDK E2E', () => {
   });
 
   it('should wait for delayed element to appear', async () => {
-    const page = (sdk as unknown as { connectionManager: { getPage: () => puppeteer.Page } }).connectionManager.getPage();
+    const page = (sdk as unknown as { connectionManager: { getPage: () => Page } }).connectionManager.getPage();
     await page.goto(`http://127.0.0.1:${serverPort}`, { waitUntil: 'domcontentloaded' });
 
     await page.waitForSelector('#delayed', { visible: true, timeout: 5000 });
