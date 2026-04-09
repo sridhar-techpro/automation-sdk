@@ -1,3 +1,4 @@
+import type { Page } from 'puppeteer-core';
 import { ActionPayload, ActionResult, SDKConfig } from './types';
 import { ConnectionManager } from '../engine/connection-manager';
 import { ActionLogger } from '../tracer/logger';
@@ -70,6 +71,14 @@ export class AutomationSDK {
 
   async disconnect(): Promise<void> {
     await this.connectionManager.disconnect();
+  }
+
+  isConnected(): boolean {
+    return this.connectionManager.isConnected();
+  }
+
+  getPage(): Page {
+    return this.connectionManager.getPage();
   }
 
   getLogs(): ActionResult[] {
