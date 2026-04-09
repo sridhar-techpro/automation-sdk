@@ -41,7 +41,7 @@ export async function executeClick(
     );
     return makeResult(true, 'click', selector, start);
   } catch (err) {
-    return makeResult(true, 'click', selector, start, (err as Error).message);
+    return makeResult(false, 'click', selector, start, (err as Error).message);
   }
 }
 
@@ -67,7 +67,7 @@ export async function executeType(
     );
     return makeResult(true, 'type', selector, start);
   } catch (err) {
-    return makeResult(true, 'type', selector, start, (err as Error).message);
+    return makeResult(false, 'type', selector, start, (err as Error).message);
   }
 }
 
