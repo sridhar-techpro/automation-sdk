@@ -1,13 +1,20 @@
 import type { Page, ElementHandle } from 'puppeteer-core';
+import { WaitOptions } from '../core/types';
+
+const DEFAULT_TEXT_TIMEOUT = 30000;
 
 export async function resolveTextSelector(
   page: Page,
   text: string,
-  exact: boolean
+  exact: boolean,
+  options?: WaitOptions
 ): Promise<ElementHandle> {
   const xpathSelector = exact
     ? `::-p-xpath(//*[normalize-space()='${text}'])`
     : `::-p-xpath(//*[contains(text(),'${text}')])`;
+
+  const timeout = options?.timeout ?? DEFAULT_TEXT_TIMEOUT;
+  await page.waitForSelector(xpathSelector, { timeout, visible: options?.visible });
 
   const element = await page.$(xpathSelector);
   if (!element) {
