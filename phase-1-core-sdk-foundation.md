@@ -49,8 +49,39 @@ Browser
 
 3. MUST:
 
-   * Use Puppeteer Core
+   * Use puppeteer-core
    * Connect to Chrome via CDP (remote debugging port)
+
+---
+
+## 📦 PACKAGE MANAGEMENT (MANDATORY)
+
+Use **pnpm only**.
+
+* Add in package.json:
+  "packageManager": "pnpm@9.0.0"
+
+* Use ONLY these dependencies:
+
+Dependencies:
+
+* puppeteer-core
+
+DevDependencies:
+
+* typescript
+* ts-node
+* jest
+* ts-jest
+* @types/jest
+* @types/node
+
+🚨 DO NOT INSTALL:
+
+* puppeteer (full package)
+* playwright
+* selenium
+* any UI/backend frameworks
 
 ---
 
@@ -130,8 +161,8 @@ sdk.execute({
 Support:
 
 * css selectors
-* text=Login (exact)
-* text*=Log (partial)
+* text=Login (exact match)
+* text*=Log (partial match)
 
 Convert → CSS/XPath usable by Puppeteer
 
@@ -153,7 +184,7 @@ Implement:
 
 3. Actionability checks:
 
-   * element attached
+   * element attached to DOM
    * visible
    * interactable
 
@@ -170,18 +201,18 @@ Implement:
 
 ## 🧩 PHASE 6 — TRACING
 
-* log every action:
+Log every action:
 
-  * action type
-  * selector
-  * timestamp
-  * result (success/failure)
+* action type
+* selector
+* timestamp
+* result (success/failure)
 
 ---
 
 ## 🧪 PHASE 7 — E2E TESTING (MANDATORY)
 
-Create real E2E tests using Puppeteer.
+Use Puppeteer for real E2E tests.
 
 ---
 
@@ -221,14 +252,24 @@ Create real E2E tests using Puppeteer.
 
 Tests MUST run using:
 
-npm run test:e2e
+pnpm test:e2e
+
+---
+
+## 🚨 BUILD & RUN REQUIREMENTS
+
+Commands:
+
+* pnpm install
+* pnpm build
+* pnpm test:e2e
 
 ---
 
 ## 🚨 PRODUCTION REQUIREMENTS
 
-* TypeScript strict mode
-* No any types
+* TypeScript strict mode (strict: true)
+* No "any" types
 * Proper error handling (no silent failures)
 * Modular design
 * No hardcoded values
@@ -254,6 +295,21 @@ Aim for reliability equal to or better than Playwright.
 * No mock implementations
 * No partial features
 * No skipping error handling
+* No unnecessary dependencies
+
+---
+
+## 🚨 EXECUTION DISCIPLINE
+
+Follow strictly:
+
+1. Create folder structure
+2. Create package.json with controlled dependencies
+3. STOP and ensure dependencies are correct
+4. Run pnpm install
+5. Implement code phase by phase
+6. Run tests
+7. Fix failures until stable
 
 ---
 
@@ -262,6 +318,7 @@ Aim for reliability equal to or better than Playwright.
 * Complete folder structure
 * Fully working SDK
 * E2E tests passing
+* Uses pnpm correctly
 * Ready for integration into extension later
 
 ---
