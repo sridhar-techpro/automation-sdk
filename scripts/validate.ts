@@ -150,6 +150,7 @@ function runJestTests(): TestRunResult {
     { label: 'e2e:phase3-hardening', pattern: 'tests/e2e/phase3-hardening.e2e.test.ts', timeout: 120_000 },
     { label: 'e2e:ui-coverage',      pattern: 'tests/e2e/ui-coverage.e2e.test.ts',       timeout: 120_000 },
     { label: 'e2e:reliability-engine', pattern: 'tests/e2e/reliability-engine.e2e.test.ts', timeout: 180_000 },
+    { label: 'e2e:replay',             pattern: 'tests/e2e/replay.e2e.test.ts',             timeout: 180_000 },
   ];
 
   let combinedOutput = '';
