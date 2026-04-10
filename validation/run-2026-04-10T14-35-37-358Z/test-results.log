@@ -1,0 +1,499 @@
+console.warn
+    [GoalRunner] task "amazon_task" failed — skipping: Error: Simulated network error
+        at Object.<anonymous> (/home/runner/work/automation-sdk/automation-sdk/tests/unit/ai.unit.test.ts:371:36)
+        at /home/runner/work/automation-sdk/automation-sdk/node_modules/jest-mock/build/index.js:397:39
+        at Object.<anonymous> (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-mock/build/index.js:404:13)
+        at Object.mockConstructor [as goto] (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-mock/build/index.js:148:19)
+        at executeTask (/home/runner/work/automation-sdk/automation-sdk/src/ai/executor.ts:18:18)
+        at runGoal (/home/runner/work/automation-sdk/automation-sdk/src/ai/goal-runner.ts:32:41)
+        at Object.<anonymous> (/home/runner/work/automation-sdk/automation-sdk/tests/unit/ai.unit.test.ts:377:20)
+
+    [0m [90m 33 |[39m       allProducts[33m.[39mpush([33m...[39mproducts)[33m;[39m
+     [90m 34 |[39m     } [36mcatch[39m (err) {
+    [31m[1m>[22m[39m[90m 35 |[39m       console[33m.[39mwarn([32m`[GoalRunner] task "${task.id}" failed — skipping:`[39m[33m,[39m err)[33m;[39m
+     [90m    |[39m               [31m[1m^[22m[39m
+     [90m 36 |[39m     }
+     [90m 37 |[39m   }
+     [90m 38 |[39m[0m
+
+      at runGoal (src/ai/goal-runner.ts:35:15)
+      at Object.<anonymous> (tests/unit/ai.unit.test.ts:377:20)
+
+  console.warn
+    [GoalRunner] task "amazon_task" failed — skipping: Error: Network error
+        at Object.<anonymous> (/home/runner/work/automation-sdk/automation-sdk/tests/unit/ai.unit.test.ts:391:44)
+        at Promise.then.completed (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-circus/build/utils.js:298:28)
+        at new Promise (<anonymous>)
+        at callAsyncCircusFn (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-circus/build/utils.js:231:10)
+        at _callCircusTest (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-circus/build/run.js:316:40)
+        at _runTest (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-circus/build/run.js:252:3)
+        at _runTestsForDescribeBlock (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-circus/build/run.js:126:9)
+        at _runTestsForDescribeBlock (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-circus/build/run.js:121:9)
+        at run (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-circus/build/run.js:71:3)
+        at runAndTransformResultsToJestFormat (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+        at jestAdapter (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+        at runTestInternal (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-runner/build/runTest.js:367:16)
+        at runTest (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-runner/build/runTest.js:444:34)
+
+    [0m [90m 33 |[39m       allProducts[33m.[39mpush([33m...[39mproducts)[33m;[39m
+     [90m 34 |[39m     } [36mcatch[39m (err) {
+    [31m[1m>[22m[39m[90m 35 |[39m       console[33m.[39mwarn([32m`[GoalRunner] task "${task.id}" failed — skipping:`[39m[33m,[39m err)[33m;[39m
+     [90m    |[39m               [31m[1m^[22m[39m
+     [90m 36 |[39m     }
+     [90m 37 |[39m   }
+     [90m 38 |[39m[0m
+
+      at runGoal (src/ai/goal-runner.ts:35:15)
+      at Object.<anonymous> (tests/unit/ai.unit.test.ts:395:20)
+
+  console.warn
+    [GoalRunner] task "flipkart_task" failed — skipping: Error: Network error
+        at Object.<anonymous> (/home/runner/work/automation-sdk/automation-sdk/tests/unit/ai.unit.test.ts:391:44)
+        at Promise.then.completed (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-circus/build/utils.js:298:28)
+        at new Promise (<anonymous>)
+        at callAsyncCircusFn (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-circus/build/utils.js:231:10)
+        at _callCircusTest (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-circus/build/run.js:316:40)
+        at _runTest (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-circus/build/run.js:252:3)
+        at _runTestsForDescribeBlock (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-circus/build/run.js:126:9)
+        at _runTestsForDescribeBlock (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-circus/build/run.js:121:9)
+        at run (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-circus/build/run.js:71:3)
+        at runAndTransformResultsToJestFormat (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+        at jestAdapter (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+        at runTestInternal (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-runner/build/runTest.js:367:16)
+        at runTest (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-runner/build/runTest.js:444:34)
+
+    [0m [90m 33 |[39m       allProducts[33m.[39mpush([33m...[39mproducts)[33m;[39m
+     [90m 34 |[39m     } [36mcatch[39m (err) {
+    [31m[1m>[22m[39m[90m 35 |[39m       console[33m.[39mwarn([32m`[GoalRunner] task "${task.id}" failed — skipping:`[39m[33m,[39m err)[33m;[39m
+     [90m    |[39m               [31m[1m^[22m[39m
+     [90m 36 |[39m     }
+     [90m 37 |[39m   }
+     [90m 38 |[39m[0m
+
+      at runGoal (src/ai/goal-runner.ts:35:15)
+      at Object.<anonymous> (tests/unit/ai.unit.test.ts:395:20)
+
+  console.warn
+    [GoalRunner] task "amazon_task" failed — skipping: Error: Timeout
+        at Object.<anonymous> (/home/runner/work/automation-sdk/automation-sdk/tests/unit/ai.unit.test.ts:407:44)
+        at Promise.then.completed (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-circus/build/utils.js:298:28)
+        at new Promise (<anonymous>)
+        at callAsyncCircusFn (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-circus/build/utils.js:231:10)
+        at _callCircusTest (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-circus/build/run.js:316:40)
+        at _runTest (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-circus/build/run.js:252:3)
+        at _runTestsForDescribeBlock (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-circus/build/run.js:126:9)
+        at _runTestsForDescribeBlock (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-circus/build/run.js:121:9)
+        at run (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-circus/build/run.js:71:3)
+        at runAndTransformResultsToJestFormat (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+        at jestAdapter (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+        at runTestInternal (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-runner/build/runTest.js:367:16)
+        at runTest (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-runner/build/runTest.js:444:34)
+
+    [0m [90m 33 |[39m       allProducts[33m.[39mpush([33m...[39mproducts)[33m;[39m
+     [90m 34 |[39m     } [36mcatch[39m (err) {
+    [31m[1m>[22m[39m[90m 35 |[39m       console[33m.[39mwarn([32m`[GoalRunner] task "${task.id}" failed — skipping:`[39m[33m,[39m err)[33m;[39m
+     [90m    |[39m               [31m[1m^[22m[39m
+     [90m 36 |[39m     }
+     [90m 37 |[39m   }
+     [90m 38 |[39m[0m
+
+      at runGoal (src/ai/goal-runner.ts:35:15)
+      at Object.<anonymous> (tests/unit/ai.unit.test.ts:411:5)
+
+  console.warn
+    [GoalRunner] task "flipkart_task" failed — skipping: Error: Timeout
+        at Object.<anonymous> (/home/runner/work/automation-sdk/automation-sdk/tests/unit/ai.unit.test.ts:407:44)
+        at Promise.then.completed (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-circus/build/utils.js:298:28)
+        at new Promise (<anonymous>)
+        at callAsyncCircusFn (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-circus/build/utils.js:231:10)
+        at _callCircusTest (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-circus/build/run.js:316:40)
+        at _runTest (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-circus/build/run.js:252:3)
+        at _runTestsForDescribeBlock (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-circus/build/run.js:126:9)
+        at _runTestsForDescribeBlock (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-circus/build/run.js:121:9)
+        at run (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-circus/build/run.js:71:3)
+        at runAndTransformResultsToJestFormat (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+        at jestAdapter (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+        at runTestInternal (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-runner/build/runTest.js:367:16)
+        at runTest (/home/runner/work/automation-sdk/automation-sdk/node_modules/jest-runner/build/runTest.js:444:34)
+
+    [0m [90m 33 |[39m       allProducts[33m.[39mpush([33m...[39mproducts)[33m;[39m
+     [90m 34 |[39m     } [36mcatch[39m (err) {
+    [31m[1m>[22m[39m[90m 35 |[39m       console[33m.[39mwarn([32m`[GoalRunner] task "${task.id}" failed — skipping:`[39m[33m,[39m err)[33m;[39m
+     [90m    |[39m               [31m[1m^[22m[39m
+     [90m 36 |[39m     }
+     [90m 37 |[39m   }
+     [90m 38 |[39m[0m
+
+      at runGoal (src/ai/goal-runner.ts:35:15)
+      at Object.<anonymous> (tests/unit/ai.unit.test.ts:411:5)
+
+  console.log
+    [2026-04-10T14:35:45.719Z] ✓ CLICK "#btn" 45ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+  console.log
+    [2026-04-10T14:35:45.869Z] ✓ CLICK "#btn" 27ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.log
+    [2026-04-10T14:35:46.450Z] ✓ CLICK "#long-delayed-btn" 1213ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.log
+    [2026-04-10T14:35:47.688Z] ✓ CLICK "#delayed-enable-btn" 637ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.log
+    [2026-04-10T14:35:48.351Z] ✓ CLICK "text=Login" 52ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.log
+    [2026-04-10T14:35:48.435Z] ✓ CLICK "text*=Log" 28ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.log
+    [2026-04-10T14:35:48.495Z] ✓ CLICK "#btn" 35ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.log
+    [2026-04-10T14:35:48.531Z] ✓ NAVIGATE "http://127.0.0.1:45689" 32ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.log
+    [2026-04-10T14:35:48.564Z] ✓ TYPE "#email" 59ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.log
+    [2026-04-10T14:35:48.627Z] ✓ CLICK "#btn" 61ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+  console.log
+    [2026-04-10T14:35:48.744Z] ✓ CLICK "#btn" 25ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+  console.log
+    [2026-04-10T14:35:48.924Z] ✓ CLICK "#btn" 25ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.log
+    [2026-04-10T14:35:48.981Z] ✗ CLICK "#does-not-exist" 3102ms ERROR: Waiting for selector `#does-not-exist` failed: Waiting failed: 1500ms exceeded
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.log
+    [2026-04-10T14:35:52.112Z] ✗ CLICK "text=ButtonThatDoesNotExist" 3102ms ERROR: Waiting for selector `[[[{"name":"xpath","value":"//*[normalize-space()='ButtonThatDoesNotExist']"}]]]` failed: Waiting failed: 1500ms exceeded
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+  console.log
+    [2026-04-10T14:35:55.288Z] ✓ CLICK "#btn" 22ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.log
+    [2026-04-10T14:35:55.310Z] ✗ CLICK "#nonexistent" 3103ms ERROR: Waiting for selector `#nonexistent` failed: Waiting failed: 1500ms exceeded
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+  console.log
+    [2026-04-10T14:35:58.446Z] ✓ CLICK "#btn" 22ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.log
+    [2026-04-10T14:35:58.495Z] ✓ TYPE "#email" 40ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.log
+    [2026-04-10T14:35:58.536Z] ✓ NAVIGATE "http://127.0.0.1:45689" 31ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.log
+    
+    Performance Baseline:
+      click:    22ms  (limit 5 000ms)
+      type:     40ms  (limit 5 000ms)
+      navigate: 31ms  (limit 10 000ms)
+
+      at Object.<anonymous> (tests/e2e/sdk.e2e.test.ts:464:13)
+
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+
+PASS tests/unit/ai.unit.test.ts
+  Test Group 1: Intent Parsing
+    ✓ parses SEARCH_PRODUCT intent with price and rating filters (3 ms)
+    ✓ defaults to amazon + flipkart when no site is mentioned (1 ms)
+    ✓ parses LOGIN intent
+    ✓ parses NAVIGATE intent (1 ms)
+    ✓ respects explicit site mentions
+    ✓ normalizes "smartphones" keyword to query "smartphone"
+    ✓ normalizes "phones" keyword to query "smartphone"
+    ✓ parses FORM_FILL intent from "fill leave form" (1 ms)
+    ✓ parses FORM_FILL intent from "submit form"
+    ✓ parses TABLE_LOOKUP intent from "find employee"
+    ✓ parses TABLE_LOOKUP intent from "look up"
+    ✓ parses priceMax from "below 30000"
+    ✓ parses priceMax from "budget 30000"
+    ✓ parses priceMax from "less than 30000"
+    ✓ parses ratingMin from "4+ rating"
+    ✓ parses ratingMin from "rating greater than 4"
+    ✓ parses ratingMin from "4.5+ rating"
+  Test Group 2: Task Graph
+    ✓ creates one task per site for SEARCH_PRODUCT (1 ms)
+    ✓ creates amazon_task and flipkart_task
+    ✓ each task has site set correctly
+    ✓ each task includes a navigate step with a URL (1 ms)
+    ✓ each task includes an extract step
+    ✓ amazon task URL points to amazon domain
+    ✓ generates a single task for LOGIN intent (1 ms)
+    ✓ generates a single task for FORM_FILL intent
+    ✓ generates a single task for TABLE_LOOKUP intent
+  Test Group 3: Execution
+    ✓ executes tasks sequentially and returns product arrays (2 ms)
+    ✓ calls goto before extracting (navigate step runs first) (1 ms)
+    ✓ returns non-empty product list when mock HTML has products
+    ✓ returns empty array for a task with no steps (1 ms)
+  Test Group 4: Extraction
+    ✓ extracts all four products from mock HTML
+    ✓ extracts correct title, price and rating
+    ✓ attaches the site name to every extracted product (1 ms)
+    ✓ returns empty array for HTML with no product-item articles
+    ✓ is callable multiple times without state leakage
+  Test Group 5: Filtering
+    ✓ filters out products at or above priceMax (1 ms)
+    ✓ filters out products at or below ratingMin
+    ✓ applies both filters simultaneously and returns only passing products (1 ms)
+    ✓ returns all products when no filters are applied
+  Test Group 6: Aggregation
+    ✓ returns at most 2 products
+    ✓ returns the product with the highest rating first
+    ✓ top product is the one with highest rating
+    ✓ breaks rating ties by price ascending (cheaper wins)
+    ✓ handles fewer than 2 products gracefully
+    ✓ does not mutate the original array
+  Test Group 7: Failure Handling
+    ✓ continues when the first task throws — second task still succeeds (32 ms)
+    ✓ returns empty products when ALL tasks fail (4 ms)
+    ✓ does not throw even when all tasks fail (3 ms)
+  Test Group 8: End-to-End
+    ✓ runGoal returns a structured GoalResult
+    ✓ products and topProducts reference the same results (1 ms)
+    ✓ all returned products pass the price and rating filters
+    ✓ returns at most 2 products after aggregation (1 ms)
+    ✓ executes tasks for both amazon and flipkart (multi-site)
+    ✓ top product has the highest rating among qualifying products (1 ms)
+    ✓ handles "below 30000" price variation end-to-end
+    ✓ handles "4+ rating" variation end-to-end
+
+PASS tests/e2e/sdk.e2e.test.ts (18.634 s)
+  Test 1: Background Execution
+    ✓ executes CDP action while page visibility API reports hidden/blurred state (107 ms)
+    ✓ executes CDP action with two real Chrome tabs open (multi-tab background) (126 ms)
+  Test 2: Retry Stability
+    ✓ auto-waits for element that appears after 500ms (528 ms)
+    ✓ auto-wait: SDK waits for element that appears after 1200ms (1236 ms)
+    ✓ retry: element initially disabled → ActionabilityError → retry → enabled → success (662 ms)
+  Test 3: Selector Intelligence
+    ✓ clicks element via exact text selector (text=Login) (81 ms)
+    ✓ clicks element via partial text selector (text*=Log) (57 ms)
+    ✓ clicks element via CSS selector (#btn) (67 ms)
+  Test 4: Multi-step Flow
+    ✓ navigate → type → click → validate outcome (166 ms)
+  Test 5: CDP Connection Stability
+    ✓ reconnects and resumes execution after explicit disconnect (73 ms)
+    ✓ throws when execute is called before connect (10 ms)
+    ✓ page URL is preserved across disconnect/reconnect cycle (108 ms)
+    ✓ recovers page reference after target is destroyed (targetdestroyed event) (61 ms)
+  Test 6: Failure Path Validation
+    ✓ returns a failure ActionResult (does not throw) for a non-existent CSS selector (3127 ms)
+    ✓ returns a failure ActionResult for a non-existent text selector (3131 ms)
+    ✓ throws PolicyViolationError when navigating to a non-whitelisted domain (44 ms)
+    ✓ tracer logs both successful and failed actions with the correct schema (3157 ms)
+  Test 7: Performance Baseline
+    ✓ all action types complete within production time bounds (151 ms)
+
+PASS tests/e2e/phase2.e2e.test.ts
+  Phase 2 — Locator System
+    ✓ locator.click() works for a simple CSS selector (74 ms)
+    ✓ locator.nth(0) clicks the first list item (64 ms)
+    ✓ locator.first() clicks the first list item (55 ms)
+    ✓ locator.last() clicks the last list item (58 ms)
+    ✓ locator.nth(1) clicks the second list item (59 ms)
+    ✓ locator.filter({ hasText }) clicks the matching item (90 ms)
+    ✓ locator.filter chained with first() clicks first matching item (64 ms)
+    ✓ locator.locator(child) resolves within parent context (70 ms)
+    ✓ locator.type() types into an input (87 ms)
+  Phase 2 — Selector Execution
+    ✓ executes a CSS selector via locator (74 ms)
+    ✓ executes an XPath selector via locator (xpath= prefix) (74 ms)
+    ✓ executes a bare XPath (//) via locator (68 ms)
+    ✓ locator throws a descriptive error for a non-existent selector (1610 ms)
+  Phase 2 — Frame Handling
+    ✓ clicks a button inside an iframe (84 ms)
+  Phase 2 — Shadow DOM
+    ✓ clicks a button inside a shadow root using >>> selector (68 ms)
+    ✓ resolves shadow DOM element via shadow= selector (71 ms)
+  Phase 2 — Advanced Selectors
+    ✓ getByTestId finds and clicks the submit button (69 ms)
+    ✓ getByPlaceholder finds the email input and types into it (93 ms)
+    ✓ getByLabel finds the email input via its associated label (89 ms)
+    ✓ getByText finds the submit button by its text content (84 ms)
+    ✓ getByRole finds a button by role and aria-label (85 ms)
+  Phase 2 — Screenshot
+    ✓ sdk.screenshot() returns a non-empty Buffer (98 ms)
+    ✓ locator.screenshot() returns a non-empty Buffer for a matched element (121 ms)
+  Phase 2 — Multi-Tab Management
+    ✓ getTabs() returns the open tabs
+    ✓ switchToTab(0) returns the first page
+    ✓ switchToTab() throws for an out-of-bounds index (3 ms)
+    ✓ executeOnTab runs an action on the specified tab
+    ✓ multi-tab: disconnect → open second tab → reconnect → executeOnTab(1, ...) (111 ms)
+
+PASS tests/e2e/goal.e2e.test.ts
+  E2E: sdk.executeGoal()
+    ✓ executeGoal works end-to-end and returns topProducts (74 ms)
+    ✓ returned products satisfy the price and rating constraints (63 ms)
+    ✓ returns at most 2 products (top-N aggregation) (78 ms)
+    ✓ products and topProducts contain the same results (69 ms)
+    ✓ intent is correctly parsed from natural language input (65 ms)
+    ✓ executes across multiple sites (multi-task) (64 ms)
+    ✓ handles "below" price variation correctly in a real run (68 ms)
+    ✓ returns a result (not throws) when goal produces no matching products (68 ms)
+
+PASS tests/unit/phase2.unit.test.ts
+  parseSelector — Phase 2
+    ✓ parses xpath= prefix as xpath
+    ✓ parses bare // as xpath (1 ms)
+    ✓ parses (// as xpath (grouped XPath expression)
+    ✓ parses shadow= prefix as shadow
+    ✓ still parses text= correctly
+    ✓ still parses text*= correctly
+    ✓ still parses #id as css
+  buildPlaceholderSelector
+    ✓ returns a CSS attribute selector
+    ✓ escapes double quotes inside the value
+    ✓ escapes backslashes inside the value (1 ms)
+  buildTestIdSelector
+    ✓ returns a data-testid CSS selector
+    ✓ escapes double quotes inside the id
+    ✓ escapes backslashes inside the id
+  buildTextSelector
+    ✓ returns text= for exact match (default)
+    ✓ returns text*= for partial match
+  buildLabelSelector
+    ✓ returns a ::-p-xpath selector referencing the label for attribute
+  buildRoleSelector
+    ✓ returns a ::-p-xpath selector for button role
+    ✓ includes name condition when name option is provided
+    ✓ handles XPath escaping for name with single quote (1 ms)
+  Locator — chainable API (no browser)
+    ✓ creates a Locator via constructor
+    ✓ nth() returns a new Locator
+    ✓ first() returns a new Locator (1 ms)
+    ✓ last() returns a new Locator
+    ✓ filter() returns a new Locator
+    ✓ locator() returns a child Locator
+    ✓ chains are immutable — original is not modified (1 ms)
+
+PASS tests/unit/selectors.unit.test.ts
+  parseSelector
+    ✓ parses text= as text-exact (1 ms)
+    ✓ parses text*= as text-partial (1 ms)
+    ✓ parses #id as css
+    ✓ parses .class as css
+    ✓ parses complex CSS selector
+  withRetry
+    ✓ returns value on first success
+    ✓ retries on failure and eventually succeeds (21 ms)
+    ✓ throws after all retries exhausted (24 ms)
+    ✓ applies exponential backoff (3 ms)
+
+Test Suites: 6 passed, 6 total
+Tests:       145 passed, 145 total
+Snapshots:   0 total
+Time:        26.358 s
+Ran all test suites.
+Force exiting Jest: Have you considered using `--detectOpenHandles` to detect async operations that kept running after all tests finished?
