@@ -5,6 +5,15 @@ import { ActionLogger } from '../tracer/logger';
 import { DomainWhitelist } from '../governance/whitelist';
 import { PolicyEnforcer } from '../governance/policy';
 import { executeClick, executeNavigate, executeType } from './action';
+import { Locator } from '../locator/locator';
+import { TabManager } from '../tabs/tab-manager';
+import {
+  buildRoleSelector,
+  buildLabelSelector,
+  buildPlaceholderSelector,
+  buildTestIdSelector,
+  buildTextSelector,
+} from '../selectors/advanced-selectors';
 
 export class AutomationSDK {
   private config: SDKConfig;
@@ -83,5 +92,105 @@ export class AutomationSDK {
 
   getLogs(): ActionResult[] {
     return this.logger.getLogs();
+  }
+
+  // ─── Locator API ──────────────────────────────────────────────────────────
+
+  /**
+   * Returns a lazy Locator for the given selector.
+   * The element is only resolved when an action (click, type, …) is called.
+   */
+  locator(selector: string): Locator {
+    return new Locator(
+      async () => this.connectionManager.getPage(),
+      selector,
+      this.config,
+    );
+  }
+
+  // ─── Frame support ────────────────────────────────────────────────────────
+
+  /**
+   * Returns an object with a `locator()` method scoped to the content of the
+   * matched iframe element.  The iframe is resolved lazily at action time.
+   */
+  frame(frameSelector: string): { locator: (selector: string) => Locator } {
+    const getPage = () => this.connectionManager.getPage();
+    const config = this.config;
+
+    return {
+      locator: (selector: string): Locator => {
+        const frameResolver = async () => {
+          const page = await getPage();
+          const timeout = config.defaultTimeout;
+          await page.waitForSelector(frameSelector, { timeout });
+          const el = await page.$(frameSelector);
+          if (!el) throw new Error(`Frame element not found: ${frameSelector}`);
+          const fr = await el.contentFrame();
+          if (!fr) throw new Error(`Cannot get content frame for: ${frameSelector}`);
+          return fr;
+        };
+        return new Locator(frameResolver, selector, config);
+      },
+    };
+  }
+
+  // ─── Multi-tab ────────────────────────────────────────────────────────────
+
+  private _getTabManager(): TabManager {
+    return new TabManager(this.connectionManager.getBrowser());
+  }
+
+  /**
+   * Returns all currently open pages in the browser.
+   */
+  async getTabs(): Promise<Page[]> {
+    return this._getTabManager().getTabs();
+  }
+
+  /**
+   * Returns the page at the given zero-based tab index.
+   */
+  async switchToTab(index: number): Promise<Page> {
+    return this._getTabManager().switchToTab(index);
+  }
+
+  /**
+   * Executes an async action on the tab at the given index.
+   */
+  async executeOnTab<T>(index: number, action: (page: Page) => Promise<T>): Promise<T> {
+    return this._getTabManager().executeOnTab(index, action);
+  }
+
+  // ─── Screenshot ───────────────────────────────────────────────────────────
+
+  /**
+   * Takes a full-page screenshot and returns it as a Buffer.
+   */
+  async screenshot(): Promise<Buffer> {
+    const page = await this.connectionManager.getPage();
+    return page.screenshot() as Promise<Buffer>;
+  }
+
+  // ─── Advanced selectors ───────────────────────────────────────────────────
+
+  getByRole(role: string, options?: { name?: string }): Locator {
+    return this.locator(buildRoleSelector(role, options));
+  }
+
+  getByLabel(text: string): Locator {
+    return this.locator(buildLabelSelector(text));
+  }
+
+  getByPlaceholder(text: string): Locator {
+    return this.locator(buildPlaceholderSelector(text));
+  }
+
+  getByTestId(id: string): Locator {
+    return this.locator(buildTestIdSelector(id));
+  }
+
+  getByText(text: string, options?: { exact?: boolean }): Locator {
+    return this.locator(buildTextSelector(text, options?.exact ?? true));
   }
 }

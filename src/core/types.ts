@@ -35,9 +35,28 @@ export interface WaitOptions {
   visible?: boolean;
 }
 
-export type SelectorType = 'css' | 'text-exact' | 'text-partial';
+export type SelectorType = 'css' | 'text-exact' | 'text-partial' | 'xpath' | 'shadow';
 
 export interface ParsedSelector {
   type: SelectorType;
   value: string;
+}
+
+export interface LocatorState {
+  nth?: number;   // -1 means last
+  hasText?: string;
+}
+
+export interface ActionabilityOptions {
+  checkStability?: boolean;
+  checkCoverage?: boolean;
+}
+
+export interface TraceStep {
+  type: 'selector_resolved' | 'action_start' | 'action_end' | 'retry_attempt';
+  selector?: string;
+  resolvedAs?: string;
+  attempt?: number;
+  message?: string;
+  timestamp: number;
 }

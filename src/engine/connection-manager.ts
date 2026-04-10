@@ -1,4 +1,4 @@
-import type { Page } from 'puppeteer-core';
+import type { Browser, Page } from 'puppeteer-core';
 import { PuppeteerAdapter } from './puppeteer-adapter';
 import { withRetry } from '../reliability/retry';
 
@@ -32,6 +32,10 @@ export class ConnectionManager {
 
   async getPage(): Promise<Page> {
     return this.adapter.getPage();
+  }
+
+  getBrowser(): Browser {
+    return this.adapter.getBrowser();
   }
 
   isConnected(): boolean {
