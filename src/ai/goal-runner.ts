@@ -33,6 +33,10 @@ export async function runGoal(
       allProducts.push(...products);
     } catch (err) {
       console.warn(`[GoalRunner] task "${task.id}" failed — skipping:`, err);
+      // After a failed navigation Chrome may be in the middle of loading a
+      // chrome-error:// page.  Reset to about:blank so the page is in a clean,
+      // fully-loaded state before the next task's goto() call.
+      await page.goto('about:blank', { waitUntil: 'domcontentloaded' }).catch(() => {});
     }
   }
 
