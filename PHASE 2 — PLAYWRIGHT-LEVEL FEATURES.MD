@@ -352,3 +352,54 @@ Achieve near Playwright-level capability while maintaining:
 * production-grade reliability
 
 ---
+
+🚨 TOOLING & PACKAGE CONSTRAINTS (STRICT)
+Package Manager
+MUST use: pnpm
+DO NOT use: npm, yarn
+Commands
+
+Use ONLY:
+
+pnpm install
+pnpm build
+pnpm test
+pnpm test:e2e
+pnpm validate
+DO NOT:
+run npm install
+run npm run build
+generate package-lock.json
+Dependencies
+MUST use: puppeteer-core
+DO NOT use: puppeteer
+Browser Model
+MUST connect via CDP:
+puppeteer-core.connect()
+MUST NOT:
+use puppeteer.launch() for SDK execution
+spawn new Chromium instances for production logic
+Exception (Testing Only)
+puppeteer MAY be used in devDependencies ONLY for E2E tests
+MUST NOT be used in SDK runtime
+Build System
+MUST respect existing package.json
+MUST NOT override scripts
+MUST integrate with current build pipeline
+Validation Requirement
+
+All scripts MUST work with:
+
+pnpm build
+pnpm test:e2e
+pnpm validate
+Failure Condition
+
+If any code:
+
+uses npm
+uses puppeteer incorrectly
+breaks pnpm workflow
+
+👉 It is considered INVALID and must be corrected
+Before implementation, analyze package.json and existing scripts. Do not introduce npm usage anywhere.

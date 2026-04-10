@@ -1,0 +1,132 @@
+[
+  {
+    "input": "Suggest smartphones under 30000 with rating above 4",
+    "result": {
+      "intent": {
+        "type": "SEARCH_PRODUCT",
+        "filters": {
+          "priceMax": 30000,
+          "ratingMin": 4,
+          "query": "smartphone"
+        },
+        "sites": [
+          "amazon",
+          "flipkart"
+        ]
+      },
+      "products": [
+        {
+          "title": "Samsung Galaxy S23",
+          "price": 28000,
+          "rating": 4.5,
+          "site": "amazon"
+        },
+        {
+          "title": "Samsung Galaxy S23",
+          "price": 28000,
+          "rating": 4.5,
+          "site": "flipkart"
+        }
+      ],
+      "topProducts": [
+        {
+          "title": "Samsung Galaxy S23",
+          "price": 28000,
+          "rating": 4.5,
+          "site": "amazon"
+        },
+        {
+          "title": "Samsung Galaxy S23",
+          "price": 28000,
+          "rating": 4.5,
+          "site": "flipkart"
+        }
+      ]
+    },
+    "success": true,
+    "error": null,
+    "durationMs": 62
+  },
+  {
+    "input": "phones below 30k with 4+ rating",
+    "result": {
+      "intent": {
+        "type": "SEARCH_PRODUCT",
+        "filters": {
+          "priceMax": 30,
+          "ratingMin": 4,
+          "query": "smartphone"
+        },
+        "sites": [
+          "amazon",
+          "flipkart"
+        ]
+      },
+      "products": [],
+      "topProducts": []
+    },
+    "success": true,
+    "error": null,
+    "durationMs": 65
+  },
+  {
+    "input": "Login to portal using email and password",
+    "result": {
+      "intent": {
+        "type": "LOGIN",
+        "filters": {},
+        "sites": []
+      },
+      "products": [],
+      "topProducts": []
+    },
+    "success": true,
+    "error": null,
+    "durationMs": 5
+  },
+  {
+    "input": "Fill leave form for tomorrow and submit",
+    "result": {
+      "intent": {
+        "type": "FORM_FILL",
+        "filters": {},
+        "sites": []
+      },
+      "products": [],
+      "topProducts": []
+    },
+    "success": true,
+    "error": null,
+    "durationMs": 2
+  },
+  {
+    "input": "Find employee John in table and open details",
+    "result": {
+      "intent": {
+        "type": "TABLE_LOOKUP",
+        "filters": {},
+        "sites": []
+      },
+      "products": [],
+      "topProducts": []
+    },
+    "success": true,
+    "error": null,
+    "durationMs": 8
+  },
+  {
+    "input": "Open dashboard and download report",
+    "result": {
+      "intent": {
+        "type": "NAVIGATE",
+        "filters": {},
+        "sites": []
+      },
+      "products": [],
+      "topProducts": []
+    },
+    "success": true,
+    "error": null,
+    "durationMs": 6
+  }
+]

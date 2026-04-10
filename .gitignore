@@ -1,4 +1,8 @@
 node_modules/
 dist/
+dist-scripts/
 *.js.map
 *.d.ts.map
+# Validation run bundles are generated artifacts; only the first committed
+# run (as reference output) and the scenarios file are tracked.
+validation/run-*/

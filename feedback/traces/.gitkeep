@@ -1,0 +1,22 @@
+# Execution traces are stored here by the learning system.
+#
+# Each file is a JSON document with the following structure:
+#
+# {
+#   "timestamp": "ISO-8601",
+#   "goal": "natural-language input",
+#   "intent": { "type": "...", "filters": {}, "sites": [] },
+#   "tasks": [
+#     {
+#       "id": "amazon_task",
+#       "success": true,
+#       "durationMs": 62,
+#       "productsExtracted": 2
+#     }
+#   ],
+#   "topProducts": [...],
+#   "errors": []
+# }
+#
+# This directory is included in version control via this .gitkeep file.
+# Trace files are generated at runtime and are gitignored by pattern *.trace.json.
