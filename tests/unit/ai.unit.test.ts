@@ -118,6 +118,14 @@ describe('Test Group 1: Intent Parsing', () => {
     expect(parseIntent('phones less than 30000').filters.priceMax).toBe(30000);
   });
 
+  it('parses priceMax from "below 30k" (k notation → 30000)', () => {
+    expect(parseIntent('phones below 30k').filters.priceMax).toBe(30000);
+  });
+
+  it('parses priceMax from "under 20k" (k notation → 20000)', () => {
+    expect(parseIntent('laptops under 20k').filters.priceMax).toBe(20000);
+  });
+
   // ── Rating variation tests ─────────────────────────────────────────────────
 
   it('parses ratingMin from "4+ rating"', () => {
@@ -508,6 +516,16 @@ describe('Test Group 8: End-to-End', () => {
       async () => mockPage,
     );
     expect(intent.filters.ratingMin).toBe(4);
+    expect(products.length).toBeGreaterThan(0);
+  });
+
+  it('handles "30k" price notation end-to-end', async () => {
+    const mockPage = createMockPage(MOCK_HTML);
+    const { intent, products } = await runGoal(
+      'phones below 30k with 4+ rating',
+      async () => mockPage,
+    );
+    expect(intent.filters.priceMax).toBe(30000);
     expect(products.length).toBeGreaterThan(0);
   });
 });

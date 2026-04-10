@@ -23,28 +23,33 @@ const KEYWORD_CANONICAL: Record<string, string> = {
 };
 
 // Handles: under, below, less than, within, budget, upto, up to
+// Supports optional "k"/"K" suffix (e.g. 30k → 30000).
 // Uses bounded quantifiers to avoid ReDoS on adversarial whitespace inputs.
 const PRICE_RE =
-  /(?:under|below|less[ \t]+than|within|budget|upto|up[ \t]+to)[ \t]{1,5}(?:rs\.?[ \t]{0,3}|₹[ \t]{0,3}|inr[ \t]{0,3})?(\d[\d,]*)/i;
+  /(?:under|below|less[ \t]+than|within|budget|upto|up[ \t]+to)[ \t]{1,5}(?:rs\.?[ \t]{0,3}|₹[ \t]{0,3}|inr[ \t]{0,3})?(\d[\d,]*)(k)?/i;
 
 function extractPriceMax(lower: string): number | undefined {
   const m = PRICE_RE.exec(lower);
-  return m ? parseInt(m[1].replace(/,/g, ''), 10) : undefined;
+  if (!m) return undefined;
+  const raw = parseInt(m[1].replace(/,/g, ''), 10);
+  return m[2] ? raw * 1000 : raw;
 }
 
 function extractRatingMin(lower: string): number | undefined {
   // "4+ rating" / "4+ stars"
-  const plusMatch = /(\d+(?:\.\d+)?)\s*\+\s*(?:rating|stars?)?/.exec(lower);
+  // Uses non-backtracking literal characters only — no ReDoS risk.
+  const plusMatch = /(\d+(?:\.\d+)?)[ \t]*\+[ \t]*(?:rating|stars?)?/.exec(lower);
   if (plusMatch) return parseFloat(plusMatch[1]);
 
   // "rating above 4" / "rating greater than 4" / "rating >= 4"
+  // Bounded whitespace to prevent ReDoS on long whitespace-only strings.
   const stdMatch =
-    /(?:rating|stars?)\s+(?:above|over|greater\s+than|more\s+than|[≥>=]+)\s*(\d+(?:\.\d+)?)/.exec(lower);
+    /(?:rating|stars?)[ \t]{1,5}(?:above|over|greater[ \t]{1,5}than|more[ \t]{1,5}than|[≥>=]+)[ \t]{0,5}(\d+(?:\.\d+)?)/.exec(lower);
   if (stdMatch) return parseFloat(stdMatch[1]);
 
   // "> 4" or ">= 4" when followed by optional "rating"/"stars"
   // Uses non-overlapping character classes to prevent ReDoS.
-  const cmpMatch = /[>≥][ \t]*=?[ \t]*(\d+(?:\.\d+)?)[ \t]*(?:rating|stars?)?/.exec(lower);
+  const cmpMatch = /[>≥][ \t]{0,5}=?[ \t]{0,5}(\d+(?:\.\d+)?)[ \t]{0,5}(?:rating|stars?)?/.exec(lower);
   if (cmpMatch) return parseFloat(cmpMatch[1]);
 
   return undefined;

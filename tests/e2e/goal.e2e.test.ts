@@ -195,8 +195,11 @@ describe('E2E: sdk.executeGoal()', () => {
       await page.setRequestInterception(false);
     }
 
-    expect(navigatedUrls.some(u => u.includes('amazon.in'))).toBe(true);
-    expect(navigatedUrls.some(u => u.includes('flipkart.com'))).toBe(true);
+    expect(navigatedUrls.some(u => isInterceptTarget(u))).toBe(true);
+    // Confirm both sites were visited (amazon and flipkart)
+    const hostnames = navigatedUrls.map(u => { try { return new URL(u).hostname; } catch { return ''; } });
+    expect(hostnames.some(h => h === 'www.amazon.in' || h === 'amazon.in')).toBe(true);
+    expect(hostnames.some(h => h === 'www.flipkart.com' || h === 'flipkart.com')).toBe(true);
   });
 
   it('handles "below" price variation correctly in a real run', async () => {
