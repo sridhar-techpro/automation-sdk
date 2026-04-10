@@ -52,6 +52,10 @@ describe('buildPlaceholderSelector', () => {
   it('escapes double quotes inside the value', () => {
     expect(buildPlaceholderSelector('Say "hi"')).toBe('[placeholder="Say \\"hi\\""]');
   });
+
+  it('escapes backslashes inside the value', () => {
+    expect(buildPlaceholderSelector('a\\b')).toBe('[placeholder="a\\\\b"]');
+  });
 });
 
 describe('buildTestIdSelector', () => {
@@ -61,6 +65,10 @@ describe('buildTestIdSelector', () => {
 
   it('escapes double quotes inside the id', () => {
     expect(buildTestIdSelector('a"b')).toBe('[data-testid="a\\"b"]');
+  });
+
+  it('escapes backslashes inside the id', () => {
+    expect(buildTestIdSelector('a\\b')).toBe('[data-testid="a\\\\b"]');
   });
 });
 

@@ -56,23 +56,29 @@ export function buildRoleSelector(role: string, options?: { name?: string }): st
  */
 export function buildLabelSelector(text: string): string {
   const escaped = xpathLiteral(text);
-  // Input referenced by a label's `for` attribute, OR input nested inside a label
-  return `::-p-xpath(//input[@id=//label[normalize-space(.)=${escaped}]/@for] | //label[normalize-space(.)=${escaped}]//input | //textarea[@id=//label[normalize-space(.)=${escaped}]/@for])`;
+  const labelXPath = `//label[normalize-space(.)=${escaped}]`;
+
+  const inputByFor = `//input[@id=${labelXPath}/@for]`;
+  const inputInsideLabel = `${labelXPath}//input`;
+  const textareaByFor = `//textarea[@id=${labelXPath}/@for]`;
+
+  return `::-p-xpath(${inputByFor} | ${inputInsideLabel} | ${textareaByFor})`;
 }
 
 /**
  * Returns a CSS selector that matches elements with the given placeholder.
  */
 export function buildPlaceholderSelector(text: string): string {
-  // CSS attribute selector — no XPath needed
-  return `[placeholder="${text.replace(/"/g, '\\"')}"]`;
+  const escaped = text.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+  return `[placeholder="${escaped}"]`;
 }
 
 /**
  * Returns a CSS selector that matches elements with the given data-testid.
  */
 export function buildTestIdSelector(id: string): string {
-  return `[data-testid="${id.replace(/"/g, '\\"')}"]`;
+  const escaped = id.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+  return `[data-testid="${escaped}"]`;
 }
 
 /**
