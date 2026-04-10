@@ -26,7 +26,7 @@ function getElementText(html: string, cls: string): string | undefined {
  * </article>
  * ```
  */
-export function extractProductsFromHTML(html: string, site: string): Product[] {
+export function extractProductsFromHTML(html: string, site?: string): Product[] {
   const products: Product[] = [];
   const articleRe =
     /<article\b[^>]*class="[^"]*\bproduct-item\b[^"]*"[^>]*>([\s\S]*?)<\/article>/gi;
@@ -55,7 +55,7 @@ export function extractProductsFromHTML(html: string, site: string): Product[] {
  * Extracts products from a live browser page by reading page.content() and
  * delegating to {@link extractProductsFromHTML}.
  */
-export async function extractProducts(page: Page, site: string): Promise<Product[]> {
+export async function extractProducts(page: Page, site?: string): Promise<Product[]> {
   const html = await page.content();
   return extractProductsFromHTML(html, site);
 }

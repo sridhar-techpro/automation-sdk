@@ -1,4 +1,4 @@
-export type IntentType = 'SEARCH_PRODUCT' | 'LOGIN' | 'NAVIGATE';
+export type IntentType = 'SEARCH_PRODUCT' | 'LOGIN' | 'FORM_FILL' | 'NAVIGATE' | 'TABLE_LOOKUP';
 
 export interface Filters {
   priceMax?: number;
@@ -10,6 +10,8 @@ export interface Intent {
   type: IntentType;
   filters: Filters;
   sites: string[];
+  /** Generic key/value parameters extracted from the input (e.g. credentials, field values). */
+  params?: Record<string, string>;
 }
 
 export type StepAction = 'navigate' | 'extract';
@@ -21,7 +23,7 @@ export interface ExecutionStep {
 
 export interface Task {
   id: string;
-  site: string;
+  site?: string;
   steps: ExecutionStep[];
 }
 
@@ -34,5 +36,8 @@ export interface Product {
 
 export interface GoalResult {
   intent: Intent;
+  /** Full filtered + aggregated product list. */
   products: Product[];
+  /** Alias for products — top-N results after aggregation. */
+  topProducts: Product[];
 }

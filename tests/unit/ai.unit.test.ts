@@ -85,12 +85,58 @@ describe('Test Group 1: Intent Parsing', () => {
     const intent = parseIntent('find phones under 20000');
     expect(intent.filters.query).toBe('smartphone');
   });
+
+  // ── New intent type tests ──────────────────────────────────────────────────
+
+  it('parses FORM_FILL intent from "fill leave form"', () => {
+    expect(parseIntent('Fill leave form for tomorrow and submit').type).toBe('FORM_FILL');
+  });
+
+  it('parses FORM_FILL intent from "submit form"', () => {
+    expect(parseIntent('submit the form').type).toBe('FORM_FILL');
+  });
+
+  it('parses TABLE_LOOKUP intent from "find employee"', () => {
+    expect(parseIntent('Find employee John and open details').type).toBe('TABLE_LOOKUP');
+  });
+
+  it('parses TABLE_LOOKUP intent from "look up"', () => {
+    expect(parseIntent('look up user record').type).toBe('TABLE_LOOKUP');
+  });
+
+  // ── Price variation tests ──────────────────────────────────────────────────
+
+  it('parses priceMax from "below 30000"', () => {
+    expect(parseIntent('find phones below 30000').filters.priceMax).toBe(30000);
+  });
+
+  it('parses priceMax from "budget 30000"', () => {
+    expect(parseIntent('find phones budget 30000').filters.priceMax).toBe(30000);
+  });
+
+  it('parses priceMax from "less than 30000"', () => {
+    expect(parseIntent('phones less than 30000').filters.priceMax).toBe(30000);
+  });
+
+  // ── Rating variation tests ─────────────────────────────────────────────────
+
+  it('parses ratingMin from "4+ rating"', () => {
+    expect(parseIntent('smartphones 4+ rating').filters.ratingMin).toBe(4);
+  });
+
+  it('parses ratingMin from "rating greater than 4"', () => {
+    expect(parseIntent('phones with rating greater than 4').filters.ratingMin).toBe(4);
+  });
+
+  it('parses ratingMin from "4.5+ rating"', () => {
+    expect(parseIntent('phones 4.5+ rating').filters.ratingMin).toBe(4.5);
+  });
 });
 
 // ─── Test Group 2: Task Graph ─────────────────────────────────────────────────
 
 describe('Test Group 2: Task Graph', () => {
-  it('creates one task per site', () => {
+  it('creates one task per site for SEARCH_PRODUCT', () => {
     const intent = parseIntent('Suggest smartphones under 30000 with rating above 4');
     const tasks  = planTasks(intent);
     expect(tasks).toHaveLength(2);
@@ -131,6 +177,24 @@ describe('Test Group 2: Task Graph', () => {
     const navStep    = amazonTask.steps.find(s => s.action === 'navigate')!;
     expect(navStep.url).toContain('amazon');
   });
+
+  it('generates a single task for LOGIN intent', () => {
+    const tasks = planTasks(parseIntent('login to my account'));
+    expect(tasks).toHaveLength(1);
+    expect(tasks[0].id).toContain('login');
+  });
+
+  it('generates a single task for FORM_FILL intent', () => {
+    const tasks = planTasks(parseIntent('fill leave form and submit'));
+    expect(tasks).toHaveLength(1);
+    expect(tasks[0].id).toContain('form');
+  });
+
+  it('generates a single task for TABLE_LOOKUP intent', () => {
+    const tasks = planTasks(parseIntent('find employee John'));
+    expect(tasks).toHaveLength(1);
+    expect(tasks[0].id).toContain('table');
+  });
 });
 
 // ─── Test Group 3: Execution ──────────────────────────────────────────────────
@@ -168,6 +232,12 @@ describe('Test Group 3: Execution', () => {
     const mockPage = createMockPage(MOCK_HTML);
     const products = await executeTask(tasks[0], mockPage);
     expect(products.length).toBeGreaterThan(0);
+  });
+
+  it('returns empty array for a task with no steps', async () => {
+    const mockPage = createMockPage(MOCK_HTML);
+    const products = await executeTask({ id: 'empty_task', steps: [] }, mockPage);
+    expect(products).toEqual([]);
   });
 });
 
@@ -290,9 +360,63 @@ describe('Test Group 6: Aggregation', () => {
   });
 });
 
-// ─── Test Group 7: End-to-End ─────────────────────────────────────────────────
+// ─── Test Group 7: Failure Handling ──────────────────────────────────────────
 
-describe('Test Group 7: End-to-End', () => {
+describe('Test Group 7: Failure Handling', () => {
+  it('continues when the first task throws — second task still succeeds', async () => {
+    let callCount = 0;
+    const partiallyFailingPage = {
+      goto: jest.fn().mockImplementation(async () => {
+        callCount++;
+        if (callCount === 1) throw new Error('Simulated network error');
+        // second call succeeds normally
+      }),
+      content: jest.fn().mockResolvedValue(MOCK_HTML),
+    } as unknown as Page;
+
+    const result = await runGoal(
+      'Suggest smartphones under 30000 with rating above 4',
+      async () => partiallyFailingPage,
+    );
+
+    // System must not throw
+    expect(result).toBeDefined();
+    expect(result.products).toBeDefined();
+    // Second task succeeded → at least one product should pass filters
+    expect(result.products.length).toBeGreaterThan(0);
+  });
+
+  it('returns empty products when ALL tasks fail', async () => {
+    const fullyFailingPage = {
+      goto:    jest.fn().mockRejectedValue(new Error('Network error')),
+      content: jest.fn().mockResolvedValue(''),
+    } as unknown as Page;
+
+    const result = await runGoal(
+      'Suggest smartphones under 30000 with rating above 4',
+      async () => fullyFailingPage,
+    );
+
+    expect(result).toBeDefined();
+    expect(result.products).toEqual([]);
+    expect(result.topProducts).toEqual([]);
+  });
+
+  it('does not throw even when all tasks fail', async () => {
+    const failingPage = {
+      goto:    jest.fn().mockRejectedValue(new Error('Timeout')),
+      content: jest.fn().mockResolvedValue(''),
+    } as unknown as Page;
+
+    await expect(
+      runGoal('Suggest smartphones under 30000', async () => failingPage)
+    ).resolves.toBeDefined();
+  });
+});
+
+// ─── Test Group 8: End-to-End ─────────────────────────────────────────────────
+
+describe('Test Group 8: End-to-End', () => {
   it('runGoal returns a structured GoalResult', async () => {
     const mockPage = createMockPage(MOCK_HTML);
     const result   = await runGoal(
@@ -304,6 +428,16 @@ describe('Test Group 7: End-to-End', () => {
     expect(result.intent.filters.priceMax).toBe(30000);
     expect(result.intent.filters.ratingMin).toBe(4);
     expect(Array.isArray(result.products)).toBe(true);
+    expect(Array.isArray(result.topProducts)).toBe(true);
+  });
+
+  it('products and topProducts reference the same results', async () => {
+    const mockPage   = createMockPage(MOCK_HTML);
+    const { products, topProducts } = await runGoal(
+      'Suggest smartphones under 30000 with rating above 4',
+      async () => mockPage,
+    );
+    expect(products).toEqual(topProducts);
   });
 
   it('all returned products pass the price and rating filters', async () => {
@@ -355,5 +489,25 @@ describe('Test Group 7: End-to-End', () => {
     if (products.length >= 2) {
       expect(products[0].rating).toBeGreaterThanOrEqual(products[1].rating);
     }
+  });
+
+  it('handles "below 30000" price variation end-to-end', async () => {
+    const mockPage = createMockPage(MOCK_HTML);
+    const { intent, products } = await runGoal(
+      'Suggest smartphones below 30000 with rating above 4',
+      async () => mockPage,
+    );
+    expect(intent.filters.priceMax).toBe(30000);
+    expect(products.length).toBeGreaterThan(0);
+  });
+
+  it('handles "4+ rating" variation end-to-end', async () => {
+    const mockPage = createMockPage(MOCK_HTML);
+    const { intent, products } = await runGoal(
+      'Suggest smartphones below 30000 with 4+ rating',
+      async () => mockPage,
+    );
+    expect(intent.filters.ratingMin).toBe(4);
+    expect(products.length).toBeGreaterThan(0);
   });
 });

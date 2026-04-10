@@ -22,30 +22,58 @@ const KEYWORD_CANONICAL: Record<string, string> = {
   tv:          'tv',
 };
 
+// Handles: under, below, less than, within, budget, upto, up to
+// Uses bounded quantifiers to avoid ReDoS on adversarial whitespace inputs.
 const PRICE_RE =
-  /(?:under|below|less\s+than|within|upto|up\s+to)\s+(?:rs\.?\s*|₹\s*|inr\s*)?(\d[\d,]*)/i;
+  /(?:under|below|less[ \t]+than|within|budget|upto|up[ \t]+to)[ \t]{1,5}(?:rs\.?[ \t]{0,3}|₹[ \t]{0,3}|inr[ \t]{0,3})?(\d[\d,]*)/i;
 
-const RATING_RE =
-  /rating\s+(?:above|over|greater\s+than|more\s+than|[≥>=]+)\s*(\d+(?:\.\d+)?)/i;
+function extractPriceMax(lower: string): number | undefined {
+  const m = PRICE_RE.exec(lower);
+  return m ? parseInt(m[1].replace(/,/g, ''), 10) : undefined;
+}
+
+function extractRatingMin(lower: string): number | undefined {
+  // "4+ rating" / "4+ stars"
+  const plusMatch = /(\d+(?:\.\d+)?)\s*\+\s*(?:rating|stars?)?/.exec(lower);
+  if (plusMatch) return parseFloat(plusMatch[1]);
+
+  // "rating above 4" / "rating greater than 4" / "rating >= 4"
+  const stdMatch =
+    /(?:rating|stars?)\s+(?:above|over|greater\s+than|more\s+than|[≥>=]+)\s*(\d+(?:\.\d+)?)/.exec(lower);
+  if (stdMatch) return parseFloat(stdMatch[1]);
+
+  // "> 4" or ">= 4" when followed by optional "rating"/"stars"
+  // Uses non-overlapping character classes to prevent ReDoS.
+  const cmpMatch = /[>≥][ \t]*=?[ \t]*(\d+(?:\.\d+)?)[ \t]*(?:rating|stars?)?/.exec(lower);
+  if (cmpMatch) return parseFloat(cmpMatch[1]);
+
+  return undefined;
+}
+
+// "fill … form" / "fill out form" / "submit form" — FORM_FILL indicator
+const FORM_FILL_RE =
+  /\b(?:fill(?:[ \t]+(?:out|in))?[ \t]+(?:the[ \t]+)?(?:\w+[ \t]+)?form|submit[ \t]+(?:the[ \t]+)?form)\b/;
+
+// "find employee", "look up", "lookup", "table record" — TABLE_LOOKUP indicator
+const TABLE_LOOKUP_RE =
+  /\b(?:employee|look[ \t]*up|lookup|find[ \t]+(?:employee|record|user)|table[ \t]+record)\b/;
 
 function detectType(lower: string): IntentType {
   if (/\b(?:login|sign[- ]in|log[- ]in)\b/.test(lower)) return 'LOGIN';
-  if (/\b(?:go\s+to|navigate\s+to|open)\b/.test(lower)) return 'NAVIGATE';
+  if (FORM_FILL_RE.test(lower))                          return 'FORM_FILL';
+  if (TABLE_LOOKUP_RE.test(lower))                       return 'TABLE_LOOKUP';
+  if (/\b(?:go[ \t]+to|navigate[ \t]+to|open)\b/.test(lower)) return 'NAVIGATE';
   return 'SEARCH_PRODUCT';
 }
 
 function extractFilters(lower: string): Filters {
   const filters: Filters = {};
 
-  const priceMatch = PRICE_RE.exec(lower);
-  if (priceMatch) {
-    filters.priceMax = parseInt(priceMatch[1].replace(/,/g, ''), 10);
-  }
+  const priceMax = extractPriceMax(lower);
+  if (priceMax !== undefined) filters.priceMax = priceMax;
 
-  const ratingMatch = RATING_RE.exec(lower);
-  if (ratingMatch) {
-    filters.ratingMin = parseFloat(ratingMatch[1]);
-  }
+  const ratingMin = extractRatingMin(lower);
+  if (ratingMin !== undefined) filters.ratingMin = ratingMin;
 
   const keyword = PRODUCT_KEYWORDS.find(kw => lower.includes(kw));
   if (keyword) {
@@ -68,6 +96,8 @@ function detectSites(lower: string, type: IntentType): string[] {
 /**
  * Deterministically parses a natural-language goal string into a typed Intent.
  * No LLM calls — purely keyword/regex driven.
+ *
+ * Supported intent types: SEARCH_PRODUCT, LOGIN, FORM_FILL, NAVIGATE, TABLE_LOOKUP
  */
 export function parseIntent(input: string): Intent {
   const lower = input.toLowerCase();
