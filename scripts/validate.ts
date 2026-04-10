@@ -147,6 +147,7 @@ function runJestTests(): TestRunResult {
     { label: 'e2e:sdk',     pattern: 'tests/e2e/sdk.e2e.test.ts',           timeout: 180_000 },
     { label: 'e2e:phase2',  pattern: 'tests/e2e/phase2.e2e.test.ts',        timeout: 120_000 },
     { label: 'e2e:goal',    pattern: 'tests/e2e/goal.e2e.test.ts',          timeout: 120_000 },
+    { label: 'e2e:phase3-hardening', pattern: 'tests/e2e/phase3-hardening.e2e.test.ts', timeout: 120_000 },
   ];
 
   let combinedOutput = '';
