@@ -36,7 +36,7 @@ export class AutomationSDK {
       throw new Error('SDK is not connected. Call connect() first.');
     }
 
-    const page = this.connectionManager.getPage();
+    const page = await this.connectionManager.getPage();
     let result: ActionResult;
 
     switch (payload.action) {
@@ -77,7 +77,7 @@ export class AutomationSDK {
     return this.connectionManager.isConnected();
   }
 
-  getPage(): Page {
+  async getPage(): Promise<Page> {
     return this.connectionManager.getPage();
   }
 

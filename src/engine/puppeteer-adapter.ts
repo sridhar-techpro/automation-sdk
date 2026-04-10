@@ -11,6 +11,24 @@ export class PuppeteerAdapter {
       () => puppeteerCore.connect({ browserWSEndpoint: wsEndpoint }),
       { retries: 3, delay: 500, backoff: 2 }
     );
+
+    // Null out internal references when the browser WebSocket connection drops
+    // unexpectedly (e.g. browser crash, network loss).  isConnected() will then
+    // return false and callers can decide to reconnect.
+    this.browser.on('disconnected', () => {
+      this.browser = null;
+      this.page = null;
+    });
+
+    // Clear the cached page whenever any target is destroyed so that the next
+    // call to getPage() triggers the recovery path instead of returning a
+    // reference to a closed page.
+    this.browser.on('targetdestroyed', () => {
+      if (this.page?.isClosed()) {
+        this.page = null;
+      }
+    });
+
     const pages = await this.browser.pages();
     this.page = pages.length > 0 ? pages[0] : await this.browser.newPage();
   }
@@ -20,8 +38,21 @@ export class PuppeteerAdapter {
     return this.browser;
   }
 
-  getPage(): Page {
-    if (!this.page) throw new Error('No page available');
+  /**
+   * Returns the current page, recovering automatically if the previously
+   * cached page has been closed or destroyed.  The recovered page is a
+   * fresh blank page ready for navigation.
+   */
+  async getPage(): Promise<Page> {
+    if (!this.browser) throw new Error('Not connected to browser');
+
+    if (!this.page || this.page.isClosed()) {
+      // Try to reuse an existing open page before creating a new one.
+      const pages = await this.browser.pages();
+      const open = pages.filter((p) => !p.isClosed());
+      this.page = open.length > 0 ? open[0] : await this.browser.newPage();
+    }
+
     return this.page;
   }
 
