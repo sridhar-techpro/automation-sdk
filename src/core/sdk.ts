@@ -1,5 +1,7 @@
 import type { Page } from 'puppeteer-core';
 import { ActionPayload, ActionResult, SDKConfig } from './types';
+import { GoalResult } from '../ai/types';
+import { runGoal } from '../ai/goal-runner';
 import { ConnectionManager } from '../engine/connection-manager';
 import { ActionLogger } from '../tracer/logger';
 import { DomainWhitelist } from '../governance/whitelist';
@@ -160,6 +162,22 @@ export class AutomationSDK {
    */
   async executeOnTab<T>(index: number, action: (page: Page) => Promise<T>): Promise<T> {
     return this._getTabManager().executeOnTab(index, action);
+  }
+
+  // ─── AI-native goal execution ─────────────────────────────────────────────
+
+  /**
+   * Accepts a natural-language goal, converts it into a multi-site task graph,
+   * executes it using the SDK's connected browser page, and returns structured
+   * product results.
+   *
+   * Requires an active connection — call connect() first.
+   */
+  async executeGoal(input: string): Promise<GoalResult> {
+    if (!this.connectionManager.isConnected()) {
+      throw new Error('SDK is not connected. Call connect() first.');
+    }
+    return runGoal(input, () => this.connectionManager.getPage());
   }
 
   // ─── Screenshot ───────────────────────────────────────────────────────────
