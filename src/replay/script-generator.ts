@@ -2,6 +2,9 @@ import { StepRecord } from '../recorder/types';
 import { selectPrimaryAndFallbacks } from '../selectors/selector-ranker';
 import { ReplayScript, ReplayStep } from './types';
 
+const NAVIGATE_TIMEOUT = 30000;
+const DEFAULT_ACTION_TIMEOUT = 10000;
+
 function generateId(): string {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 9)}`;
 }
@@ -17,12 +20,12 @@ export function generateReplayScript(goal: string, records: StepRecord[]): Repla
     const wait: ReplayStep['wait'] = {};
     if (rec.action === 'navigate') {
       wait.before = 'domcontentloaded';
-      wait.timeout = 30000;
+      wait.timeout = NAVIGATE_TIMEOUT;
     } else if (rec.action === 'click') {
       wait.after = rec.domPath ?? undefined;
-      wait.timeout = 10000;
+      wait.timeout = DEFAULT_ACTION_TIMEOUT;
     } else {
-      wait.timeout = 10000;
+      wait.timeout = DEFAULT_ACTION_TIMEOUT;
     }
 
     return {
