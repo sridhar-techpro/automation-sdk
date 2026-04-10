@@ -20,6 +20,7 @@ export interface SDKConfig {
   defaultTimeout: number;
   retries: number;
   retryDelay: number;
+  connectTimeout?: number;
   allowedDomains?: string[];
 }
 

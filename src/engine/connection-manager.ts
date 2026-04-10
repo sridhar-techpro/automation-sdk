@@ -7,15 +7,17 @@ const DEFAULT_ENDPOINT = 'ws://localhost:9222';
 export class ConnectionManager {
   private adapter: PuppeteerAdapter;
   private endpoint: string;
+  private connectTimeout: number;
   private connected: boolean = false;
 
-  constructor(endpoint: string = DEFAULT_ENDPOINT) {
+  constructor(endpoint: string = DEFAULT_ENDPOINT, connectTimeout = 30000) {
     this.endpoint = endpoint;
+    this.connectTimeout = connectTimeout;
     this.adapter = new PuppeteerAdapter();
   }
 
   async connect(): Promise<void> {
-    await withRetry(() => this.adapter.connect(this.endpoint), {
+    await withRetry(() => this.adapter.connect(this.endpoint, this.connectTimeout), {
       retries: 3,
       delay: 500,
       backoff: 2,

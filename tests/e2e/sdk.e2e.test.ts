@@ -120,6 +120,58 @@ describe('Test 1: Background Execution', () => {
     );
     expect(resultVisible).toBe(true);
   });
+
+  it('executes CDP action with two real Chrome tabs open (multi-tab background)', async () => {
+    // Disconnect the SDK before opening a second tab.  Calling browser.newPage()
+    // while the SDK is connected sends Target.attachToTarget for the new page,
+    // which disrupts the SDK's existing CDP session and causes execution-context
+    // errors.  Creating the page while disconnected is safe.
+    await sdk.disconnect();
+
+    // Open a second Chrome tab (the "foreground" decoy).  Two real renderer
+    // processes / tabs now exist in the same browser — the multi-tab scenario
+    // that background execution must handle in production.
+    const decoyPage = await browser.newPage();
+    await decoyPage.goto('about:blank');
+
+    // Reconnect the SDK.  browser.pages() returns [sdkPage, decoyPage]; the
+    // adapter picks index 0 (the original SDK page) and ignores decoyPage.
+    await sdk.connect();
+    const sdkPage = await sdk.getPage();
+    await sdkPage.goto(testUrl(), { waitUntil: 'domcontentloaded' });
+
+    // Simulate background state on the SDK's tab.  We cannot call
+    // decoyPage.bringToFront() here: in headless Chrome that triggers
+    // Runtime.executionContextsCleared on the SDK's tab, destroying its
+    // execution context.  The evaluate() approach correctly replicates every
+    // DOM-visible effect of a backgrounded tab without that side-effect.
+    await sdkPage.evaluate(() => {
+      Object.defineProperty(document, 'hidden', { get: () => true, configurable: true });
+      Object.defineProperty(document, 'visibilityState', {
+        get: () => 'hidden' as DocumentVisibilityState,
+        configurable: true,
+      });
+      document.dispatchEvent(new Event('visibilitychange'));
+      window.dispatchEvent(new Event('blur'));
+    });
+
+    // With two real tabs open and the SDK's tab backgrounded, CDP must still
+    // execute reliably on the backgrounded tab.
+    const result = await sdk.execute({ action: 'click', target: '#btn' });
+    expect(result.success).toBe(true);
+    expect(result.action).toBe('click');
+
+    const resultVisible = await sdkPage.$eval('#result', (el) =>
+      window.getComputedStyle(el as HTMLElement).display !== 'none',
+    );
+    expect(resultVisible).toBe(true);
+
+    // DO NOT close decoyPage here — in headless Chrome, closing a tab that
+    // shares a renderer process with the SDK's tab can trigger
+    // Runtime.executionContextsCleared on the SDK's tab, invalidating its
+    // execution context for every subsequent test.  browser.close() in
+    // afterAll cleans up all remaining tabs.
+  });
 });
 
 // ── Test 2: Retry Stability ───────────────────────────────────────────────────

@@ -6,16 +6,25 @@ export class PuppeteerAdapter {
   private browser: Browser | null = null;
   private page: Page | null = null;
 
-  async connect(wsEndpoint: string): Promise<void> {
-    this.browser = await withRetry(
-      () => puppeteerCore.connect({ browserWSEndpoint: wsEndpoint }),
-      { retries: 3, delay: 500, backoff: 2 }
-    );
+  async connect(wsEndpoint: string, timeout = 30000): Promise<void> {
+    const connectWithTimeout = (): Promise<Browser> => {
+      const connectPromise = puppeteerCore.connect({ browserWSEndpoint: wsEndpoint });
+      const timeoutPromise = new Promise<never>((_, reject) =>
+        setTimeout(
+          () => reject(new Error(`Browser connection timed out after ${timeout}ms`)),
+          timeout,
+        ),
+      );
+      return Promise.race([connectPromise, timeoutPromise]);
+    };
+
+    this.browser = await withRetry(connectWithTimeout, { retries: 3, delay: 500, backoff: 2 });
 
     // Null out internal references when the browser WebSocket connection drops
     // unexpectedly (e.g. browser crash, network loss).  isConnected() will then
     // return false and callers can decide to reconnect.
     this.browser.on('disconnected', () => {
+      console.debug('[PuppeteerAdapter] Browser disconnected — clearing references');
       this.browser = null;
       this.page = null;
     });
@@ -25,6 +34,7 @@ export class PuppeteerAdapter {
     // reference to a closed page.
     this.browser.on('targetdestroyed', () => {
       if (this.page?.isClosed()) {
+        console.debug('[PuppeteerAdapter] Tracked page destroyed — clearing page reference');
         this.page = null;
       }
     });
@@ -71,6 +81,6 @@ export class PuppeteerAdapter {
   }
 
   isConnected(): boolean {
-    return this.browser !== null;
+    return !!this.browser?.isConnected();
   }
 }

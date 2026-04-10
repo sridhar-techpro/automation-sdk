@@ -16,7 +16,7 @@ export class AutomationSDK {
   constructor(config: SDKConfig) {
     this.config = config;
     const endpoint = config.browserWSEndpoint ?? 'ws://localhost:9222';
-    this.connectionManager = new ConnectionManager(endpoint);
+    this.connectionManager = new ConnectionManager(endpoint, config.connectTimeout);
     this.logger = new ActionLogger();
     this.whitelist = new DomainWhitelist();
     if (config.allowedDomains) {
