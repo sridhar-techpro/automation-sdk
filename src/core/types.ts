@@ -60,3 +60,37 @@ export interface TraceStep {
   message?: string;
   timestamp: number;
 }
+
+// ─── Reliability Engine types ─────────────────────────────────────────────────
+
+export type LoadState = 'domcontentloaded' | 'networkidle';
+
+export interface ScrollDiscoveryOptions {
+  /** Total search budget in milliseconds. Default: 30 000. */
+  timeout?: number;
+  /** Pixels to scroll per step. Default: 300. */
+  scrollStep?: number;
+  /** Maximum number of scroll steps before giving up. Default: 20. */
+  maxScrolls?: number;
+  /** Milliseconds to wait after each scroll step. Default: 200. */
+  waitAfterScroll?: number;
+}
+
+export interface ProgressiveDiscoveryOptions {
+  /** Total budget for the entire discovery run. Default: 30 000 ms. */
+  timeout?: number;
+  /** Partial text to try when the exact selector fails. */
+  partialText?: string;
+  /** ARIA role to try when both selector and text-based fallbacks fail. */
+  role?: string;
+  /**
+   * Whether to attempt scroll-based discovery as the last resort.
+   * Default: true.
+   */
+  scrollDiscovery?: boolean;
+}
+
+export interface WaitForElementAfterActionOptions {
+  /** Maximum ms to wait for the target element. Default: 30 000. */
+  timeout?: number;
+}

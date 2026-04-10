@@ -1,5 +1,5 @@
-import type { Page } from 'puppeteer-core';
-import { ActionPayload, ActionResult, SDKConfig } from './types';
+import type { Page, ElementHandle } from 'puppeteer-core';
+import { ActionPayload, ActionResult, SDKConfig, LoadState, ScrollDiscoveryOptions, WaitForElementAfterActionOptions } from './types';
 import { GoalResult } from '../ai/types';
 import { runGoal } from '../ai/goal-runner';
 import { ConnectionManager } from '../engine/connection-manager';
@@ -16,6 +16,9 @@ import {
   buildTestIdSelector,
   buildTextSelector,
 } from '../selectors/advanced-selectors';
+import { waitForLoadState } from '../reliability/load-state';
+import { findElementWithScroll } from '../reliability/scroll-discovery';
+import { waitForElementAfterAction } from '../reliability/event-driven';
 
 export class AutomationSDK {
   private config: SDKConfig;
@@ -210,5 +213,52 @@ export class AutomationSDK {
 
   getByText(text: string, options?: { exact?: boolean }): Locator {
     return this.locator(buildTextSelector(text, options?.exact ?? true));
+  }
+
+  // ─── Reliability Engine API ───────────────────────────────────────────────
+
+  /**
+   * Waits for the page to reach the specified load state.
+   *
+   * - `domcontentloaded` — DOM is parsed and deferred scripts have run.
+   * - `networkidle` — no network requests in flight for ~500 ms.
+   *
+   * Call this after navigation to ensure the page is ready for interaction,
+   * or before extraction to ensure dynamic content has settled.
+   */
+  async waitForLoadState(state: LoadState, timeout?: number): Promise<void> {
+    const page = await this.connectionManager.getPage();
+    await waitForLoadState(page, state, timeout ?? this.config.defaultTimeout);
+  }
+
+  /**
+   * Searches for `selector` in the current viewport; if not found, scrolls
+   * the page down incrementally and retries after each step.
+   *
+   * Use for elements that are lazily inserted into the DOM by scroll events,
+   * or for elements positioned far below the initial viewport.
+   */
+  async findWithScroll(
+    selector: string,
+    options?: ScrollDiscoveryOptions,
+  ): Promise<ElementHandle> {
+    const page = await this.connectionManager.getPage();
+    return findElementWithScroll(page, selector, options);
+  }
+
+  /**
+   * Performs `action` and then waits for `targetSelector` to become visible.
+   * The wait is started *before* the action to avoid missing fast UI updates.
+   *
+   * Use for: dropdown opens after click, form field appears after change,
+   * modal opens after click.
+   */
+  async waitForElementAfterAction(
+    action: () => Promise<void>,
+    targetSelector: string,
+    options?: WaitForElementAfterActionOptions,
+  ): Promise<ElementHandle> {
+    const page = await this.connectionManager.getPage();
+    return waitForElementAfterAction(page, action, targetSelector, options);
   }
 }
