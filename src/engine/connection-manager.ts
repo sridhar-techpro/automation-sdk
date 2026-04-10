@@ -28,7 +28,7 @@ export class ConnectionManager {
     this.connected = false;
   }
 
-  getPage(): Page {
+  async getPage(): Promise<Page> {
     return this.adapter.getPage();
   }
 

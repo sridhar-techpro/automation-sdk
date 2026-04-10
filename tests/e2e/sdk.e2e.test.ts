@@ -77,7 +77,7 @@ beforeAll(async () => {
     retryDelay: 200,
   });
   await sdk.connect();
-  await sdk.getPage().goto(testUrl(), { waitUntil: 'domcontentloaded' });
+  await (await sdk.getPage()).goto(testUrl(), { waitUntil: 'domcontentloaded' });
 }, 60000);
 
 afterAll(async () => {
@@ -89,7 +89,8 @@ afterAll(async () => {
 // ── Test 1: Background Execution ──────────────────────────────────────────────
 describe('Test 1: Background Execution', () => {
   it('executes CDP action while page visibility API reports hidden/blurred state', async () => {
-    await sdk.getPage().goto(testUrl(), { waitUntil: 'domcontentloaded' });
+    const page = await sdk.getPage();
+    await page.goto(testUrl(), { waitUntil: 'domcontentloaded' });
 
     // Apply the exact DOM state Chrome sets when a tab moves to the background:
     //   • document.hidden = true
@@ -98,7 +99,7 @@ describe('Test 1: Background Execution', () => {
     // In a real background tab Chrome also throttles setTimeout/rAF in the
     // renderer, but CDP commands travel through the DevTools channel which is
     // entirely separate from the renderer event loop and is never throttled.
-    await sdk.getPage().evaluate(() => {
+    await page.evaluate(() => {
       Object.defineProperty(document, 'hidden', { get: () => true, configurable: true });
       Object.defineProperty(document, 'visibilityState', {
         get: () => 'hidden' as DocumentVisibilityState,
@@ -114,7 +115,7 @@ describe('Test 1: Background Execution', () => {
     expect(result.success).toBe(true);
     expect(result.action).toBe('click');
 
-    const resultVisible = await sdk.getPage().$eval('#result', (el) =>
+    const resultVisible = await page.$eval('#result', (el) =>
       window.getComputedStyle(el as HTMLElement).display !== 'none',
     );
     expect(resultVisible).toBe(true);
@@ -124,17 +125,18 @@ describe('Test 1: Background Execution', () => {
 // ── Test 2: Retry Stability ───────────────────────────────────────────────────
 describe('Test 2: Retry Stability', () => {
   it('auto-waits for element that appears after 500ms', async () => {
-    await sdk.getPage().goto(testUrl(), { waitUntil: 'domcontentloaded' });
-    await sdk.getPage().waitForSelector('#delayed', { visible: true, timeout: 5000 });
+    const page = await sdk.getPage();
+    await page.goto(testUrl(), { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('#delayed', { visible: true, timeout: 5000 });
 
-    const isVisible = await sdk.getPage().$eval('#delayed', (el) =>
+    const isVisible = await page.$eval('#delayed', (el) =>
       window.getComputedStyle(el as HTMLElement).display !== 'none',
     );
     expect(isVisible).toBe(true);
   });
 
   it('auto-wait: SDK waits for element that appears after 1200ms', async () => {
-    await sdk.getPage().goto(testUrl(), { waitUntil: 'domcontentloaded' });
+    await (await sdk.getPage()).goto(testUrl(), { waitUntil: 'domcontentloaded' });
     // #long-delayed-btn appears after 1200ms via setTimeout.
     // SDK defaultTimeout is 15s — waitForSelector will wait and succeed.
     const result = await sdk.execute({ action: 'click', target: '#long-delayed-btn' });
@@ -143,7 +145,7 @@ describe('Test 2: Retry Stability', () => {
   });
 
   it('retry: element initially disabled → ActionabilityError → retry → enabled → success', async () => {
-    await sdk.getPage().goto(testUrl(), { waitUntil: 'domcontentloaded' });
+    await (await sdk.getPage()).goto(testUrl(), { waitUntil: 'domcontentloaded' });
     // #delayed-enable-btn is <button disabled> on page load, enabled after 500ms.
     // Attempt 1: waitForSelector finds the button (visible); checkActionability
     //   detects disabled → throws ActionabilityError → withRetry fires.
@@ -157,27 +159,28 @@ describe('Test 2: Retry Stability', () => {
 // ── Test 3: Selector Intelligence ─────────────────────────────────────────────
 describe('Test 3: Selector Intelligence', () => {
   it('clicks element via exact text selector (text=Login)', async () => {
-    await sdk.getPage().goto(testUrl(), { waitUntil: 'domcontentloaded' });
+    const page = await sdk.getPage();
+    await page.goto(testUrl(), { waitUntil: 'domcontentloaded' });
 
     const result = await sdk.execute({ action: 'click', target: 'text=Login' });
     expect(result.success).toBe(true);
     expect(result.action).toBe('click');
 
-    const resultVisible = await sdk.getPage().$eval('#result', (el) =>
+    const resultVisible = await page.$eval('#result', (el) =>
       window.getComputedStyle(el as HTMLElement).display !== 'none',
     );
     expect(resultVisible).toBe(true);
   });
 
   it('clicks element via partial text selector (text*=Log)', async () => {
-    await sdk.getPage().goto(testUrl(), { waitUntil: 'domcontentloaded' });
+    await (await sdk.getPage()).goto(testUrl(), { waitUntil: 'domcontentloaded' });
 
     const result = await sdk.execute({ action: 'click', target: 'text*=Log' });
     expect(result.success).toBe(true);
   });
 
   it('clicks element via CSS selector (#btn)', async () => {
-    await sdk.getPage().goto(testUrl(), { waitUntil: 'domcontentloaded' });
+    await (await sdk.getPage()).goto(testUrl(), { waitUntil: 'domcontentloaded' });
 
     const result = await sdk.execute({ action: 'click', target: '#btn' });
     expect(result.success).toBe(true);
@@ -201,7 +204,10 @@ describe('Test 4: Multi-step Flow', () => {
     expect(typeResult.success).toBe(true);
     expect(typeResult.action).toBe('type');
 
-    const typedValue = await sdk.getPage().$eval('#email', (el) => (el as HTMLInputElement).value);
+    const typedValue = await (await sdk.getPage()).$eval(
+      '#email',
+      (el) => (el as HTMLInputElement).value,
+    );
     expect(typedValue).toBe('user@example.com');
 
     // Step 3: Click
@@ -210,7 +216,7 @@ describe('Test 4: Multi-step Flow', () => {
     expect(clickResult.action).toBe('click');
 
     // Step 4: Validate outcome
-    const resultVisible = await sdk.getPage().$eval('#result', (el) =>
+    const resultVisible = await (await sdk.getPage()).$eval('#result', (el) =>
       window.getComputedStyle(el as HTMLElement).display !== 'none',
     );
     expect(resultVisible).toBe(true);
@@ -239,7 +245,7 @@ describe('Test 5: CDP Connection Stability', () => {
     expect(sdk.isConnected()).toBe(true);
 
     // Re-navigate after reconnect so the page is in a known state.
-    await sdk.getPage().goto(testUrl(), { waitUntil: 'domcontentloaded' });
+    await (await sdk.getPage()).goto(testUrl(), { waitUntil: 'domcontentloaded' });
 
     const result = await sdk.execute({ action: 'click', target: '#btn' });
     expect(result.success).toBe(true);
@@ -259,15 +265,32 @@ describe('Test 5: CDP Connection Stability', () => {
   });
 
   it('page URL is preserved across disconnect/reconnect cycle', async () => {
-    await sdk.getPage().goto(testUrl(), { waitUntil: 'domcontentloaded' });
-    const urlBefore = sdk.getPage().url();
+    await (await sdk.getPage()).goto(testUrl(), { waitUntil: 'domcontentloaded' });
+    const urlBefore = (await sdk.getPage()).url();
 
     await sdk.disconnect();
     await sdk.connect();
-    await sdk.getPage().goto(testUrl(), { waitUntil: 'domcontentloaded' });
+    await (await sdk.getPage()).goto(testUrl(), { waitUntil: 'domcontentloaded' });
 
-    expect(sdk.getPage().url()).toBe(urlBefore);
+    expect((await sdk.getPage()).url()).toBe(urlBefore);
     expect(sdk.isConnected()).toBe(true);
+  });
+
+  it('recovers page reference after target is destroyed (targetdestroyed event)', async () => {
+    // Grab the current page reference and close it — this fires the browser's
+    // 'targetdestroyed' event, which the adapter handles by nulling this.page.
+    const oldPage = await sdk.getPage();
+    await oldPage.close();
+
+    // getPage() must recover: it detects the closed/null page and creates a
+    // new one rather than returning the stale (closed) reference.
+    const recoveredPage = await sdk.getPage();
+    expect(recoveredPage.isClosed()).toBe(false);
+
+    // The recovered page must be usable for real automation work.
+    await recoveredPage.goto(testUrl(), { waitUntil: 'domcontentloaded' });
+    const result = await sdk.execute({ action: 'click', target: '#btn' });
+    expect(result.success).toBe(true);
   });
 });
 
@@ -293,7 +316,7 @@ describe('Test 6: Failure Path Validation', () => {
   });
 
   beforeEach(async () => {
-    await failFastSdk.getPage().goto(testUrl(), { waitUntil: 'domcontentloaded' });
+    await (await failFastSdk.getPage()).goto(testUrl(), { waitUntil: 'domcontentloaded' });
   });
 
   it('returns a failure ActionResult (does not throw) for a non-existent CSS selector', async () => {
@@ -362,13 +385,13 @@ describe('Test 6: Failure Path Validation', () => {
 // ── Test 7: Performance Baseline ──────────────────────────────────────────────
 describe('Test 7: Performance Baseline', () => {
   it('all action types complete within production time bounds', async () => {
-    await sdk.getPage().goto(testUrl(), { waitUntil: 'domcontentloaded' });
+    await (await sdk.getPage()).goto(testUrl(), { waitUntil: 'domcontentloaded' });
 
     const clickResult = await sdk.execute({ action: 'click', target: '#btn' });
     expect(clickResult.success).toBe(true);
     expect(clickResult.duration).toBeLessThan(5000);
 
-    await sdk.getPage().goto(testUrl(), { waitUntil: 'domcontentloaded' });
+    await (await sdk.getPage()).goto(testUrl(), { waitUntil: 'domcontentloaded' });
     const typeResult = await sdk.execute({
       action: 'type',
       target: '#email',
@@ -389,4 +412,5 @@ describe('Test 7: Performance Baseline', () => {
     console.log(`\nPerformance Baseline:\n${report}`);
   });
 });
+
 
