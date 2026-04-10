@@ -32,6 +32,7 @@ import { WorkflowStore } from '../../src/workflow/workflow-store';
 import type { StepRecord } from '../../src/recorder/types';
 
 const CHROME_EXECUTABLE = process.env.CHROME_PATH ?? '/usr/bin/google-chrome';
+const FAST_FAIL_TIMEOUT = 1500;
 
 // ── Test HTML ─────────────────────────────────────────────────────────────────
 
@@ -596,13 +597,13 @@ describe('Selector fallback', () => {
     const script = sdk.generateScript('fallback test');
     // Override timeouts to fail fast on the wrong primary selector
     for (const step of script.steps) {
-      step.wait.timeout = 1500;
+      step.wait.timeout = FAST_FAIL_TIMEOUT;
       step.retry = 1;
     }
     // Use a fast-fail SDK instance for the failing selector
     const fastSdk = new AutomationSDK({
       browserWSEndpoint: browser.wsEndpoint(),
-      defaultTimeout: 1500,
+      defaultTimeout: FAST_FAIL_TIMEOUT,
       retries: 1,
       retryDelay: 200,
     });

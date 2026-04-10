@@ -27,7 +27,9 @@ export function rankSelectors(candidates: SelectorCandidate[]): SelectorCandidat
 export function isBrittleSelector(selector: string): boolean {
   return (
     /nth-child|nth-of-type|\[\d+\]/.test(selector) ||
-    /\.[a-z0-9]{8,}/i.test(selector)
+    // Hash-like class: 8+ hex/alphanumeric chars with no vowels or mixed case typical of CSS modules
+    /\.[0-9a-f]{8,}(?:\b|[^a-zA-Z])/i.test(selector) ||
+    /\.[a-zA-Z]{0,2}[0-9][a-zA-Z0-9]{6,}/.test(selector)
   );
 }
 
