@@ -1,130 +1,354 @@
-# 🚀 TASK: Enhance Automation SDK to Playwright-Level Capabilities
+# 🚀 TASK: Enhance Automation SDK with Locator System + Advanced Execution (Production-Grade)
+
+---
+
+## 🧠 ROLE
+
+You are extending a **production-grade Automation SDK**.
+
+The SDK already supports:
+
+* CDP-based execution using puppeteer-core
+* retry + wait + actionability
+* selector engine (css + text)
+* E2E tested reliability
+
+Your job is to enhance it to near Playwright-level capabilities WITHOUT breaking existing behavior.
 
 ---
 
 ## 🎯 OBJECTIVE
 
-Extend the existing Automation SDK to support advanced features similar to Playwright.
+Introduce:
 
-DO NOT rewrite existing code — extend it.
-
----
-
-## 🧩 FEATURES TO IMPLEMENT
-
----
-
-### 1. ADVANCED SELECTOR ENGINE
-
-Add support for:
-
-* role-based selectors:
-  getByRole('button', { name: 'Submit' })
-
-* label-based:
-  getByLabel('Email')
-
-* placeholder-based:
-  getByPlaceholder('Search')
+* Locator system (Playwright-inspired)
+* Advanced selector handling
+* CSS + XPath execution layer
+* Frame + shadow DOM support
+* Multi-tab orchestration
 
 ---
 
-### 2. FRAME SUPPORT
+## 🏗️ ARCHITECTURE (STRICT)
+
+SDK (locator + selector + reliability)
+↓
+Execution Engine (CSS/XPath → Puppeteer Core via CDP)
+↓
+Browser
+
+---
+
+## 🚨 CRITICAL: PUPPETEER USAGE RULE
+
+This project MUST use **puppeteer-core ONLY**.
+
+DO NOT:
+
+* install "puppeteer"
+* use puppeteer.launch()
+* download Chromium
+* create new browser instances
+
+ALWAYS:
+
+* use puppeteer-core
+* connect via:
+  puppeteerCore.connect({ browserWSEndpoint })
+
+---
+
+## 🚨 CRITICAL: CDP EXECUTION RULE
+
+All automation MUST run on an already running browser.
+
+DO NOT:
+
+* manage browser lifecycle
+* spawn new browsers
+* assume isolation
+
+This SDK must remain compatible with future Chrome extension (chrome.debugger).
+
+---
+
+## 🚨 HARD CONSTRAINTS
+
+* DO NOT rewrite Phase 1 code
+* DO NOT break existing tests
+* DO NOT add heavy dependencies
+* DO NOT bypass SDK abstraction layer
+
+---
+
+# 🧩 PART 1 — LOCATOR SYSTEM (CORE)
+
+---
+
+## Implement:
+
+```ts
+sdk.locator(selector)
+```
+
+Returns a Locator object.
+
+---
+
+## Locator API (MANDATORY)
+
+```ts
+locator.click()
+locator.type(value)
+locator.nth(index)
+locator.first()
+locator.last()
+locator.filter({ hasText?: string })
+locator.locator(childSelector)
+```
+
+---
+
+## Requirements:
+
+* Lazy evaluation (resolve at execution time)
+* Chainable API
+* Integrated with retry + wait
+* Works for CSS, XPath, text, and advanced selectors
+
+---
+
+# 🧩 PART 2 — ADVANCED SELECTORS
+
+---
+
+## Add support for:
+
+* getByRole(role, { name })
+* getByLabel(text)
+* getByPlaceholder(text)
+* getByTestId(id)
+* getByText(text) (enhance existing)
+
+---
+
+## Implementation rules:
+
+* Convert internally → CSS/XPath
+* Integrate into existing selector engine
+* Reuse retry + wait
+
+---
+
+# 🧩 PART 3 — SELECTOR EXECUTION ENGINE
+
+---
+
+## Implement:
+
+```ts
+resolveSelector(selector): {
+  type: "css" | "xpath"
+  value: string
+}
+```
+
+---
+
+## Execution Rules:
+
+### CSS:
+
+* use page.$ / waitForSelector
+
+### XPath:
+
+* use page.$x / evaluate
+
+---
+
+## Must Support:
+
+* auto detection (css vs xpath)
+* fallback if selector fails
+* compatibility with locator system
+
+---
+
+# 🧩 PART 4 — FRAME SUPPORT
+
+---
+
+## Implement:
+
+```ts
+sdk.frame(selector).locator(...).click()
+```
+
+---
+
+## Requirements:
+
+* support nested iframes
+* maintain frame context
+* safe fallback if frame missing
+
+---
+
+# 🧩 PART 5 — SHADOW DOM SUPPORT
+
+---
+
+Enhance selector engine to:
+
+* traverse shadow roots recursively
+* support nested shadow DOM
+
+---
+
+# 🧩 PART 6 — MULTI-TAB MANAGEMENT
+
+---
 
 Implement:
 
 ```ts
-page.frame(selector)
+sdk.getTabs()
+sdk.switchToTab(index)
+sdk.executeOnTab(index, action)
 ```
 
-* handle nested iframes
-* allow actions inside frames
+---
+
+## Requirements:
+
+* track all pages
+* execute on background tabs
+* maintain context safely
 
 ---
 
-### 3. SHADOW DOM SUPPORT
-
-* traverse shadow roots
-* allow selectors inside shadow DOM
+# 🧩 PART 7 — ENHANCED ACTIONABILITY
 
 ---
 
-### 4. NAVIGATION STATE MANAGEMENT
+Extend checks:
 
-Implement:
+* visible
+* stable (no layout shift)
+* enabled
+* not covered
 
-* waitForLoadState("domcontentloaded")
-* waitForLoadState("networkidle")
-
----
-
-### 5. MULTI-TAB MANAGEMENT
-
-Support:
-
-* multiple pages
-* switching between tabs
-* tracking active page
+Must integrate with retry
 
 ---
 
-### 6. ACTIONABILITY (ENHANCED)
-
-Before every action:
-
-* element is visible
-* element is stable (no movement)
-* element is enabled
-* element is interactable
+# 🧩 PART 8 — SCREENSHOT SUPPORT
 
 ---
-
-### 7. SCREENSHOT SUPPORT
-
-Implement:
 
 ```ts
-page.screenshot()
+sdk.screenshot()
+locator.screenshot()
 ```
 
 ---
 
-### 8. TRACING IMPROVEMENT
-
-Capture:
-
-* step execution timeline
-* failures with context
-* selector resolution logs
+# 🧩 PART 9 — TRACING IMPROVEMENT
 
 ---
 
-## 🧪 TEST REQUIREMENTS
+Enhance logs:
 
-Add E2E tests for:
+* step timeline
+* selector resolution path
+* failure context
+
+---
+
+# 🧪 TEST REQUIREMENTS (MANDATORY)
+
+---
+
+## Test Group 1: Locator System
+
+* chaining
+* nth / first / last
+* filter({ hasText })
+
+---
+
+## Test Group 2: Selector Execution
+
+* CSS execution
+* XPath execution
+* fallback behavior
+
+---
+
+## Test Group 3: Frame Handling
 
 * iframe interaction
-* shadow DOM interaction
-* multi-tab workflows
-* delayed navigation
+* nested iframe
 
 ---
 
-## 🚨 REQUIREMENTS
+## Test Group 4: Shadow DOM
 
-* Maintain TypeScript strict mode
-* No breaking changes
-* Extend existing architecture only
-* Maintain production-grade reliability
+* shadow root interaction
 
 ---
 
-## 🚨 GOAL
+## Test Group 5: Multi-Tab
 
-Achieve Playwright-like capabilities in:
+* switch tabs
+* execute on background tab
 
-* selectors
-* reliability
-* execution flow
+---
+
+## Test Group 6: Advanced Selectors
+
+* getByRole
+* getByLabel
+* getByPlaceholder
+* getByTestId
+
+---
+
+# 🚨 RELIABILITY REQUIREMENTS
+
+* No flaky tests
+* Must pass all Phase 1 tests unchanged
+* Deterministic execution
+
+---
+
+# 🚨 EXECUTION STRATEGY
+
+1. Build Locator class
+2. Extend selector engine
+3. Add CSS/XPath execution
+4. Add frame + shadow support
+5. Add multi-tab management
+6. Add tests and validate
+
+---
+
+# 🚨 SUCCESS CRITERIA
+
+* All Phase 1 tests pass
+* All Phase 2 tests pass
+* No regressions
+* Clean architecture maintained
+
+---
+
+# 🚀 FINAL GOAL
+
+Achieve near Playwright-level capability while maintaining:
+
+* CDP-based execution
+* extension compatibility
+* production-grade reliability
 
 ---
