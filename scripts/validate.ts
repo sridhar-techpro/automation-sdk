@@ -312,6 +312,119 @@ function buildSummary(
   return lines.join('\n');
 }
 
+// ─── Step 4b: Build docs/VALIDATION.md ───────────────────────────────────────
+
+/**
+ * Produces the full content for docs/VALIDATION.md from the current run's data.
+ * The file is overwritten on every `pnpm validate` run so it always reflects the
+ * most recent results.  Historical run bundles are preserved under validation/run-*.
+ */
+function buildValidationDoc(
+  timestamp: string,
+  jestResult: TestRunResult,
+  scenarioRecords: ScenarioRecord[],
+  totalMs: number,
+): string {
+  const scenarioPassed = scenarioRecords.filter(s => s.success).length;
+
+  function sumJestStat(pattern: RegExp): string {
+    const matches = [...jestResult.output.matchAll(pattern)];
+    if (matches.length === 0) return 'unknown';
+    let passed = 0, failed = 0, total = 0;
+    for (const m of matches) {
+      const passedM = /(\d+)\s+passed/.exec(m[1]);
+      const failedM = /(\d+)\s+failed/.exec(m[1]);
+      const totalM  = /(\d+)\s+total/.exec(m[1]);
+      if (passedM) passed += parseInt(passedM[1], 10);
+      if (failedM) failed += parseInt(failedM[1], 10);
+      if (totalM)  total  += parseInt(totalM[1],  10);
+    }
+    const parts: string[] = [];
+    if (failed > 0) parts.push(`${failed} failed`);
+    if (passed > 0) parts.push(`${passed} passed`);
+    if (total > 0)  parts.push(`${total} total`);
+    return parts.join(', ') || 'unknown';
+  }
+
+  const totalSuites = sumJestStat(/Test Suites:\s+(.+)/g);
+  const totalTests  = sumJestStat(/Tests:\s+(.+)/g);
+  const overallStatus = jestResult.passed && scenarioPassed === scenarioRecords.length
+    ? '✅ PASSED'
+    : '❌ FAILED';
+
+  const lines: string[] = [
+    '# Validation Tracker',
+    '',
+    '> This file is automatically updated by `pnpm validate` after every validation run.',
+    '> Full run bundles (system-info, test-results, goal-results) are stored under `validation/run-<timestamp>/`.',
+    '',
+    '---',
+    '',
+    '## Latest Run',
+    '',
+    `<!-- AUTO-UPDATED by scripts/validate.ts on ${timestamp} -->`,
+    '',
+    '| Field | Value |',
+    '|-------|-------|',
+    `| **Timestamp** | ${timestamp} |`,
+    `| **Overall status** | ${overallStatus} |`,
+    `| **Total duration** | ${fmtMs(totalMs)} |`,
+    `| **Test suites** | ${totalSuites} |`,
+    `| **Tests** | ${totalTests} |`,
+    `| **Goal scenarios** | ${scenarioPassed} / ${scenarioRecords.length} passed |`,
+    '',
+    '### Goal Scenarios',
+    '',
+    '| # | Input | Status | Duration |',
+    '|---|-------|--------|----------|',
+    ...scenarioRecords.map((s, i) =>
+      `| ${i + 1} | ${s.input} | ${s.success ? '✅' : '❌'} | ${fmtMs(s.durationMs)} |`,
+    ),
+    '',
+  ];
+
+  if (scenarioRecords.some(s => !s.success)) {
+    lines.push('### Failures', '');
+    for (const s of scenarioRecords.filter(r => !r.success)) {
+      lines.push(`- \`${s.input}\`: ${s.error}`);
+    }
+    lines.push('');
+  }
+
+  lines.push(
+    '---',
+    '',
+    '## Test Suite Coverage',
+    '',
+    '| Suite | File | Type |',
+    '|-------|------|------|',
+    '| Unit — AI | `tests/unit/ai.unit.test.ts` | Unit |',
+    '| Unit — Phase 2 | `tests/unit/phase2.unit.test.ts` | Unit |',
+    '| Unit — Selectors | `tests/unit/selectors.unit.test.ts` | Unit |',
+    '| E2E — SDK core | `tests/e2e/sdk.e2e.test.ts` | E2E |',
+    '| E2E — Phase 2 | `tests/e2e/phase2.e2e.test.ts` | E2E |',
+    '| E2E — Goal | `tests/e2e/goal.e2e.test.ts` | E2E |',
+    '| E2E — Phase 3 Hardening | `tests/e2e/phase3-hardening.e2e.test.ts` | E2E |',
+    '',
+    '---',
+    '',
+    '## Known Issues',
+    '',
+    '### Flaky Behaviour',
+    '',
+    '| Issue | Mitigation |',
+    '|-------|------------|',
+    '| `page.bringToFront()` destroys sibling execution contexts in headless Chrome | Use `page.evaluate()` to simulate focus |',
+    '| First `req.abort()` on cold browser can reset interception state | Warmup intercepted navigation in `beforeAll` |',
+    '| Multiple Chrome instances competing for resources | Run suites sequentially with `--runInBand` |',
+    '',
+    '> See `docs/TRACEABILITY.md` for full scenario → feature mapping.',
+    '',
+  );
+
+  return lines.join('\n');
+}
+
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 async function main(): Promise<void> {
@@ -393,6 +506,11 @@ async function main(): Promise<void> {
   // ── 7. Print summary ────────────────────────────────────────────────────────
   console.log('\n' + summary);
   console.log(`📁 Validation bundle: ${runDir}\n`);
+
+  // ── 7b. Update docs/VALIDATION.md ───────────────────────────────────────────
+  const validationDoc = buildValidationDoc(timestamp, jestResult, scenarioRecords, totalMs);
+  writeFile(path.join(REPO_ROOT, 'docs', 'VALIDATION.md'), validationDoc);
+  console.log('📄 docs/VALIDATION.md updated\n');
 
   // Exit with non-zero code if any validation step failed
   const overallSuccess = jestResult.passed && allErrors.length === 0;
