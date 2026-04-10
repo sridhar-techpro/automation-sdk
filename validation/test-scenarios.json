@@ -1,8 +1,37 @@
 [
   "Suggest smartphones under 30000 with rating above 4",
   "phones below 30k with 4+ rating",
+
   "Login to portal using email and password",
+  "Login with multi-step authentication flow",
+
   "Fill leave form for tomorrow and submit",
+  "Fill multi-step form using next button and submit",
+
+  "Select options from dropdown and submit form",
+  "Select value from custom dropdown and continue",
+
+  "Choose gender using radio button and submit",
+  "Select multiple interests using checkboxes",
+
+  "Search and wait for results to load before clicking",
+  "Handle delayed loading elements and continue",
+
   "Find employee John in table and open details",
-  "Open dashboard and download report"
+  "Find employee across paginated table",
+
+  "Click hyperlink and navigate to details page",
+  "Click custom link implemented using div and navigate",
+
+  "Open dashboard and download report",
+  "Navigate through multiple pages and perform action",
+
+  "Click button inside iframe",
+  "Interact with shadow DOM element",
+
+  "Open link in new tab and extract data",
+  "Perform actions while tab is in background",
+
+  "Handle missing elements gracefully",
+  "Retry action when element is temporarily unavailable"
 ]
