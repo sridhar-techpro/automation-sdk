@@ -7,45 +7,45 @@
 
 ## Latest Run
 
-<!-- AUTO-UPDATED by scripts/validate.ts on 2026-04-10T17-05-11-656Z -->
+<!-- AUTO-UPDATED by scripts/validate.ts on 2026-04-10T17-17-47-499Z -->
 
 | Field | Value |
 |-------|-------|
-| **Timestamp** | 2026-04-10T17-05-11-656Z |
-| **Overall status** | ❌ FAILED |
-| **Total duration** | 47.7s |
-| **Test suites** | 1 failed, 7 passed, 8 total |
-| **Tests** | 1 failed, 173 passed, 174 total |
+| **Timestamp** | 2026-04-10T17-17-47-499Z |
+| **Overall status** | ✅ PASSED |
+| **Total duration** | 36.0s |
+| **Test suites** | 8 passed, 8 total |
+| **Tests** | 174 passed, 174 total |
 | **Goal scenarios** | 24 / 24 passed |
 
 ### Goal Scenarios
 
 | # | Input | Status | Duration |
 |---|-------|--------|----------|
-| 1 | Suggest smartphones under 30000 with rating above 4 | ✅ | 65ms |
-| 2 | phones below 30k with 4+ rating | ✅ | 68ms |
-| 3 | Login to portal using email and password | ✅ | 4ms |
-| 4 | Login with multi-step authentication flow | ✅ | 2ms |
-| 5 | Fill leave form for tomorrow and submit | ✅ | 3ms |
+| 1 | Suggest smartphones under 30000 with rating above 4 | ✅ | 57ms |
+| 2 | phones below 30k with 4+ rating | ✅ | 67ms |
+| 3 | Login to portal using email and password | ✅ | 5ms |
+| 4 | Login with multi-step authentication flow | ✅ | 3ms |
+| 5 | Fill leave form for tomorrow and submit | ✅ | 2ms |
 | 6 | Fill multi-step form using next button and submit | ✅ | 62ms |
-| 7 | Select options from dropdown and submit form | ✅ | 2ms |
-| 8 | Select value from custom dropdown and continue | ✅ | 62ms |
-| 9 | Choose gender using radio button and submit | ✅ | 65ms |
-| 10 | Select multiple interests using checkboxes | ✅ | 68ms |
-| 11 | Search and wait for results to load before clicking | ✅ | 64ms |
+| 7 | Select options from dropdown and submit form | ✅ | 1ms |
+| 8 | Select value from custom dropdown and continue | ✅ | 61ms |
+| 9 | Choose gender using radio button and submit | ✅ | 64ms |
+| 10 | Select multiple interests using checkboxes | ✅ | 66ms |
+| 11 | Search and wait for results to load before clicking | ✅ | 60ms |
 | 12 | Handle delayed loading elements and continue | ✅ | 66ms |
 | 13 | Find employee John in table and open details | ✅ | 2ms |
-| 14 | Find employee across paginated table | ✅ | 2ms |
-| 15 | Click hyperlink and navigate to details page | ✅ | 2ms |
-| 16 | Click custom link implemented using div and navigate | ✅ | 60ms |
-| 17 | Open dashboard and download report | ✅ | 3ms |
-| 18 | Navigate through multiple pages and perform action | ✅ | 146ms |
-| 19 | Click button inside iframe | ✅ | 70ms |
-| 20 | Interact with shadow DOM element | ✅ | 66ms |
-| 21 | Open link in new tab and extract data | ✅ | 1ms |
-| 22 | Perform actions while tab is in background | ✅ | 62ms |
-| 23 | Handle missing elements gracefully | ✅ | 60ms |
-| 24 | Retry action when element is temporarily unavailable | ✅ | 62ms |
+| 14 | Find employee across paginated table | ✅ | 8ms |
+| 15 | Click hyperlink and navigate to details page | ✅ | 7ms |
+| 16 | Click custom link implemented using div and navigate | ✅ | 116ms |
+| 17 | Open dashboard and download report | ✅ | 2ms |
+| 18 | Navigate through multiple pages and perform action | ✅ | 74ms |
+| 19 | Click button inside iframe | ✅ | 68ms |
+| 20 | Interact with shadow DOM element | ✅ | 72ms |
+| 21 | Open link in new tab and extract data | ✅ | 4ms |
+| 22 | Perform actions while tab is in background | ✅ | 66ms |
+| 23 | Handle missing elements gracefully | ✅ | 62ms |
+| 24 | Retry action when element is temporarily unavailable | ✅ | 59ms |
 
 ---
 
