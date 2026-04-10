@@ -1,8 +1,8 @@
-import type { Page, ElementHandle } from 'puppeteer-core';
+import type { Page, Frame, ElementHandle } from 'puppeteer-core';
 import { WaitOptions } from '../core/types';
 
 export async function resolveCSSSelector(
-  page: Page,
+  page: Page | Frame,
   selector: string,
   options?: WaitOptions
 ): Promise<ElementHandle> {

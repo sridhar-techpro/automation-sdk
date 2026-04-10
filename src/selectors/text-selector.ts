@@ -1,4 +1,4 @@
-import type { Page, ElementHandle } from 'puppeteer-core';
+import type { Page, Frame, ElementHandle } from 'puppeteer-core';
 import { WaitOptions } from '../core/types';
 
 const DEFAULT_TEXT_TIMEOUT = 30000;
@@ -20,7 +20,7 @@ function escapeXPathText(text: string): string {
 }
 
 export async function resolveTextSelector(
-  page: Page,
+  page: Page | Frame,
   text: string,
   exact: boolean,
   options?: WaitOptions
