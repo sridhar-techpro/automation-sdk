@@ -19,6 +19,12 @@ import {
 import { waitForLoadState } from '../reliability/load-state';
 import { findElementWithScroll } from '../reliability/scroll-discovery';
 import { waitForElementAfterAction } from '../reliability/event-driven';
+import { ActionRecorder } from '../recorder';
+import { generateReplayScript } from '../replay/script-generator';
+import { ReplayEngine } from '../replay/replay-engine';
+import { WorkflowStore } from '../workflow/workflow-store';
+import { SuccessRateTracker } from '../metrics/success-tracker';
+import type { ReplayScript, WorkflowRecord, RunMetrics } from '../replay/types';
 
 export class AutomationSDK {
   private config: SDKConfig;
@@ -26,6 +32,10 @@ export class AutomationSDK {
   private logger: ActionLogger;
   private whitelist: DomainWhitelist;
   private policyEnforcer: PolicyEnforcer;
+  private recorder: ActionRecorder;
+  private workflowStore: WorkflowStore;
+  private replayEngine: ReplayEngine;
+  private successTracker: SuccessRateTracker;
 
   constructor(config: SDKConfig) {
     this.config = config;
@@ -39,6 +49,10 @@ export class AutomationSDK {
       }
     }
     this.policyEnforcer = new PolicyEnforcer(this.whitelist);
+    this.recorder = new ActionRecorder();
+    this.workflowStore = new WorkflowStore();
+    this.replayEngine = new ReplayEngine(() => this.connectionManager.getPage());
+    this.successTracker = new SuccessRateTracker(this.workflowStore);
   }
 
   async connect(): Promise<void> {
@@ -260,5 +274,95 @@ export class AutomationSDK {
   ): Promise<ElementHandle> {
     const page = await this.connectionManager.getPage();
     return waitForElementAfterAction(page, action, targetSelector, options);
+  }
+
+  // ─── Phase 3.3: Planning + Recording + Replay ─────────────────────────────
+
+  /**
+   * Calls the backend planner and returns ordered intent steps.
+   * Requires the backend to be running (or provide a mock URL for tests).
+   */
+  async planGoal(
+    goal: string,
+    backendUrl = 'http://127.0.0.1:8000',
+  ): Promise<Array<{ action: string; target: string }>> {
+    const res = await fetch(`${backendUrl}/plan`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ goal, context: {} }),
+    });
+    if (!res.ok) throw new Error(`Planner returned ${res.status}: ${await res.text()}`);
+    const data = (await res.json()) as { steps: Array<{ action: string; target: string }> };
+    return data.steps;
+  }
+
+  /** Returns the current ActionRecorder instance. */
+  getRecorder(): ActionRecorder {
+    return this.recorder;
+  }
+
+  /**
+   * Generates a replayable script from the most recently recorded steps
+   * and clears the recorder buffer.
+   */
+  generateScript(goal: string): ReplayScript {
+    const records = this.recorder.getRecords();
+    const script = generateReplayScript(goal, records);
+    this.recorder.clear();
+    return script;
+  }
+
+  /** Saves a replay script as a named workflow. */
+  saveWorkflow(
+    goal: string,
+    script: ReplayScript,
+    metadata?: Record<string, unknown>,
+  ): WorkflowRecord {
+    return this.workflowStore.save(goal, script, metadata);
+  }
+
+  /** Retrieves a saved workflow by ID. */
+  getWorkflow(id: string): WorkflowRecord | undefined {
+    return this.workflowStore.get(id);
+  }
+
+  /** Finds a saved workflow by goal string. */
+  findWorkflow(goal: string): WorkflowRecord | undefined {
+    return this.workflowStore.findByGoal(goal);
+  }
+
+  /** Lists all saved workflows. */
+  listWorkflows(): WorkflowRecord[] {
+    return this.workflowStore.list();
+  }
+
+  /**
+   * Replays a script deterministically (no LLM).
+   * Records metrics and updates the success rate automatically.
+   */
+  async replayScript(script: ReplayScript): Promise<RunMetrics> {
+    if (!this.connectionManager.isConnected()) {
+      throw new Error('SDK is not connected. Call connect() first.');
+    }
+    const metrics = await this.replayEngine.replay(script);
+    this.successTracker.recordRun(metrics);
+    return metrics;
+  }
+
+  /** Replays a workflow by ID. */
+  async replayWorkflow(id: string): Promise<RunMetrics> {
+    const wf = this.workflowStore.get(id);
+    if (!wf) throw new Error(`Workflow not found: ${id}`);
+    return this.replayScript(wf.script);
+  }
+
+  /** Returns the SuccessRateTracker for inspection / testing. */
+  getSuccessTracker(): SuccessRateTracker {
+    return this.successTracker;
+  }
+
+  /** Returns the WorkflowStore for direct access. */
+  getWorkflowStore(): WorkflowStore {
+    return this.workflowStore;
   }
 }
