@@ -1,0 +1,23 @@
+[
+  {
+    "pattern": "custom dropdown (role=combobox)",
+    "fix": "Click the element with role=combobox to open the listbox, then click the option with the target text",
+    "confidence": 0.8,
+    "source": "local",
+    "lastUpdated": "2026-04-10T00:00:00.000Z"
+  },
+  {
+    "pattern": "JS-hydrated submit button",
+    "fix": "Wait for the button to become enabled (not disabled) before clicking — it is rendered disabled until client-side JS attaches event handlers",
+    "confidence": 0.75,
+    "source": "local",
+    "lastUpdated": "2026-04-10T00:00:00.000Z"
+  },
+  {
+    "pattern": "price displayed with rupee symbol (₹28,000)",
+    "fix": "Strip non-numeric characters except '.' before parseFloat — use .replace(/[^0-9.]/g, '')",
+    "confidence": 0.9,
+    "source": "local",
+    "lastUpdated": "2026-04-10T00:00:00.000Z"
+  }
+]

@@ -3,6 +3,7 @@ import { SDKConfig, LocatorState } from '../core/types';
 import { resolveSelectorAll } from '../selectors/selector-engine';
 import { checkActionability } from '../reliability/actionability';
 import { withRetry } from '../reliability/retry';
+import { findElementWithScroll, ScrollDiscoveryOptions, scrollIntoViewIfNeeded } from '../reliability/scroll-discovery';
 
 export class Locator {
   private readonly _context: Page | Frame | null;
@@ -154,5 +155,24 @@ export class Locator {
   async screenshot(): Promise<Buffer> {
     const element = await this.resolve();
     return element.screenshot() as Promise<Buffer>;
+  }
+
+  /**
+   * Resolves this locator using scroll-based discovery: scrolls the page down
+   * incrementally until the element appears, then scrolls it into the viewport
+   * and clicks it.
+   *
+   * Use when the element may be below the initial viewport or lazily inserted
+   * into the DOM by a scroll event.
+   */
+  async scrollFind(options?: ScrollDiscoveryOptions): Promise<ElementHandle> {
+    const ctx = await this._getContext();
+    if (typeof (ctx as { goto?: unknown }).goto !== 'function') {
+      throw new Error('scrollFind() requires a Page context (not a Frame)');
+    }
+    const page = ctx as Page;
+    const element = await findElementWithScroll(page, this._selector, options);
+    await scrollIntoViewIfNeeded(element);
+    return element;
   }
 }

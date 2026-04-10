@@ -12,6 +12,7 @@
     "test": "jest --runInBand --forceExit",
     "test:e2e": "jest tests/e2e --runInBand --forceExit",
     "test:unit": "jest tests/unit --runInBand --forceExit",
+    "validate": "ts-node --project tsconfig.scripts.json scripts/validate.ts",
     "start:chrome": "chrome --remote-debugging-port=9222"
   },
   "dependencies": {

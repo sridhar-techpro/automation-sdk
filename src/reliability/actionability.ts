@@ -58,6 +58,35 @@ export async function checkActionability(
 }
 
 /**
+ * Polls until all actionability checks pass or the timeout expires.
+ *
+ * Unlike `checkActionability` (which throws immediately on the first failed
+ * check), `ensureElementReady` retries every 50 ms.  This is useful when an
+ * element is already in the DOM but temporarily disabled, animating, or
+ * partially rendered.
+ */
+export async function ensureElementReady(
+  element: ElementHandle,
+  options: ActionabilityOptions & { timeout?: number } = {},
+): Promise<void> {
+  const timeout = options.timeout ?? 5000;
+  const deadline = Date.now() + timeout;
+  let lastError: Error = new ActionabilityError('ensureElementReady timed out');
+
+  while (Date.now() < deadline) {
+    try {
+      await checkActionability(element, options);
+      return; // all checks passed
+    } catch (err) {
+      lastError = err instanceof Error ? err : new ActionabilityError(String(err));
+      await new Promise<void>((r) => setTimeout(r, 50));
+    }
+  }
+
+  throw lastError;
+}
+
+/**
  * Verifies the element's bounding box does not shift between two samples
  * taken 50 ms apart (guards against layout animations / reflows).
  */
