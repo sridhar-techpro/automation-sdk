@@ -249,16 +249,28 @@ function buildSummary(
   const scenarioPassed = scenarios.filter(s => s.success).length;
   const scenarioFailed = scenarios.filter(s => !s.success).length;
 
-  // Parse aggregate jest totals across all sections
-  const suiteMatches = [...jestResult.output.matchAll(/Test Suites:\s+(.+)/g)];
-  const testsMatches = [...jestResult.output.matchAll(/Tests:\s+(.+)/g)];
-  // Sum total passing suites/tests across all runs
-  const totalSuites = suiteMatches.length > 0
-    ? suiteMatches.map(m => m[1]).join(', ')
-    : 'unknown';
-  const totalTests = testsMatches.length > 0
-    ? testsMatches.map(m => m[1]).join(', ')
-    : 'unknown';
+  // Aggregate jest totals by summing the numeric values across all suite runs.
+  function sumJestStat(pattern: RegExp): string {
+    const matches = [...jestResult.output.matchAll(pattern)];
+    if (matches.length === 0) return 'unknown';
+    let passed = 0, failed = 0, total = 0;
+    for (const m of matches) {
+      const passedM = /(\d+)\s+passed/.exec(m[1]);
+      const failedM = /(\d+)\s+failed/.exec(m[1]);
+      const totalM  = /(\d+)\s+total/.exec(m[1]);
+      if (passedM) passed += parseInt(passedM[1], 10);
+      if (failedM) failed += parseInt(failedM[1], 10);
+      if (totalM)  total  += parseInt(totalM[1],  10);
+    }
+    const parts: string[] = [];
+    if (failed > 0) parts.push(`${failed} failed`);
+    if (passed > 0) parts.push(`${passed} passed`);
+    if (total > 0)  parts.push(`${total} total`);
+    return parts.join(', ') || 'unknown';
+  }
+
+  const totalSuites = sumJestStat(/Test Suites:\s+(.+)/g);
+  const totalTests  = sumJestStat(/Tests:\s+(.+)/g);
 
   const lines: string[] = [
     '# Validation Summary',

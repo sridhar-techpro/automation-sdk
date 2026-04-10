@@ -24,9 +24,9 @@ const KEYWORD_CANONICAL: Record<string, string> = {
 
 // Handles: under, below, less than, within, budget, upto, up to
 // Supports optional "k"/"K" suffix (e.g. 30k → 30000).
-// Uses bounded quantifiers to avoid ReDoS on adversarial whitespace inputs.
+// Uses \d+(?:,\d+)* (non-overlapping groups) to prevent ReDoS on digit strings.
 const PRICE_RE =
-  /(?:under|below|less[ \t]+than|within|budget|upto|up[ \t]+to)[ \t]{1,5}(?:rs\.?[ \t]{0,3}|₹[ \t]{0,3}|inr[ \t]{0,3})?(\d[\d,]*)(k)?/i;
+  /(?:under|below|less[ \t]+than|within|budget|upto|up[ \t]+to)[ \t]{1,5}(?:rs\.?[ \t]{0,3}|₹[ \t]{0,3}|inr[ \t]{0,3})?(\d+(?:,\d+)*)(k)?/i;
 
 function extractPriceMax(lower: string): number | undefined {
   const m = PRICE_RE.exec(lower);
@@ -37,18 +37,16 @@ function extractPriceMax(lower: string): number | undefined {
 
 function extractRatingMin(lower: string): number | undefined {
   // "4+ rating" / "4+ stars"
-  // Uses non-backtracking literal characters only — no ReDoS risk.
   const plusMatch = /(\d+(?:\.\d+)?)[ \t]*\+[ \t]*(?:rating|stars?)?/.exec(lower);
   if (plusMatch) return parseFloat(plusMatch[1]);
 
   // "rating above 4" / "rating greater than 4" / "rating >= 4"
-  // Bounded whitespace to prevent ReDoS on long whitespace-only strings.
+  // [≥>=] (no +) matches exactly one comparison operator; bounded whitespace.
   const stdMatch =
-    /(?:rating|stars?)[ \t]{1,5}(?:above|over|greater[ \t]{1,5}than|more[ \t]{1,5}than|[≥>=]+)[ \t]{0,5}(\d+(?:\.\d+)?)/.exec(lower);
+    /(?:rating|stars?)[ \t]{1,5}(?:above|over|greater[ \t]{1,5}than|more[ \t]{1,5}than|[≥>=])[ \t]{0,5}(\d+(?:\.\d+)?)/.exec(lower);
   if (stdMatch) return parseFloat(stdMatch[1]);
 
   // "> 4" or ">= 4" when followed by optional "rating"/"stars"
-  // Uses non-overlapping character classes to prevent ReDoS.
   const cmpMatch = /[>≥][ \t]{0,5}=?[ \t]{0,5}(\d+(?:\.\d+)?)[ \t]{0,5}(?:rating|stars?)?/.exec(lower);
   if (cmpMatch) return parseFloat(cmpMatch[1]);
 
