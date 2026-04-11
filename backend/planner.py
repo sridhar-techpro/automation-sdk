@@ -1,7 +1,7 @@
 import json
 import os
 
-from models import PlanRequest, PlanResponse, PlanStep
+from models import PlanRequest, PlanResponse, PlanStep,PlanWithContextRequest, PlanWithContextResponse, ExtensionActionStep, ChatRequest, ChatResponse
 
 
 def plan_with_llm(req: PlanRequest) -> PlanResponse:

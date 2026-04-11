@@ -1,6 +1,10 @@
 import sys
 import json
 from typing import List
+from pathlib import Path
+
+from dotenv import load_dotenv
+load_dotenv(Path(__file__).parent / ".env")
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -15,8 +19,12 @@ try:
         LogEntry,
         LogBatch,
         LogResponse,
+        PlanWithContextRequest,
+        PlanWithContextResponse,
+        ChatRequest,
+        ChatResponse
     )
-    from .planner import plan_with_llm
+    from .planner import plan_with_llm, plan_with_context, chat_with_llm
 except ImportError:
     from matcher import match_workflow  # type: ignore[no-redef]
     from models import (  # type: ignore[no-redef]
@@ -27,8 +35,12 @@ except ImportError:
         LogEntry,
         LogBatch,
         LogResponse,
+        PlanWithContextRequest,
+        PlanWithContextResponse,
+        ChatRequest,
+        ChatResponse
     )
-    from planner import plan_with_llm  # type: ignore[no-redef]
+    from planner import plan_with_llm, plan_with_context, chat_with_llm  # type: ignore[no-redef]
 
 app = FastAPI(title="Automation Planner", version="1.0.0")
 
@@ -67,16 +79,6 @@ def chat(req: ChatRequest) -> ChatResponse:
     server environment only — never passed in the request body.
     """
     return chat_with_llm(req)
-    """
-    Context-aware extension action planner.
-
-    Accepts a natural-language goal and the current page HTML.  The LLM
-    (gpt-4o-mini) returns concrete CSS selectors the extension executes
-    directly.  Falls back to a heuristic mock when OPENAI_API_KEY is not set.
-
-    The API key is NEVER accepted as a request field — server-side env var only.
-    """
-    return plan_with_context(req)
 
 
 @app.post("/match-workflow", response_model=MatchResponse)

@@ -7,8 +7,13 @@ dist-scripts/
 # The latest run directory is force-added via `git add -f` so reviewers
 # can see current test results without checking in every run.
 validation/run-*/
-.env
+
 backend/
 validation/*
 validation/**/*
 logs/
+backend/__pycache__/
+__pycache__/
+backend/__pycache__/__init__.cpython-312.pyc
+backend/__pycache__/main.cpython-312.pyc
+backend/__pycache__/matcher.cpython-312.pyc
