@@ -35,6 +35,10 @@ function executeNavigate(url: string): void {
   window.location.href = url;
 }
 
+function executeScroll(): void {
+  window.scrollBy(0, window.innerHeight);
+}
+
 async function executeAction(payload: ExtensionActionPayload): Promise<ExtensionActionResult> {
   const start = Date.now();
   try {
@@ -47,6 +51,9 @@ async function executeAction(payload: ExtensionActionPayload): Promise<Extension
         break;
       case 'navigate':
         executeNavigate(payload.target);
+        break;
+      case 'scroll':
+        executeScroll();
         break;
       case 'screenshot':
         // Screenshots are handled at the browser level (background/DevTools);

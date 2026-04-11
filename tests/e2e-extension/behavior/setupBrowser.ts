@@ -117,7 +117,7 @@ export async function setupBrowser(): Promise<Browser> {
   });
 
   browser.on("disconnected", () => {
-    fs.rmSync(userDataDir, { recursive: true, force: true });
+    try { fs.rmSync(userDataDir, { recursive: true, force: true }); } catch { /* best effort — Windows may lock files */ }
   });
 
   return browser;

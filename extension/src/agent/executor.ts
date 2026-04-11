@@ -21,7 +21,10 @@ export async function executeStep(
   const start = Date.now();
 
   return new Promise<StepResult>((resolve) => {
-    chrome.runtime.sendMessage(
+    // Send directly to the content script in the target tab (not to background onMessage,
+    // which a service worker cannot trigger on itself via chrome.runtime.sendMessage).
+    chrome.tabs.sendMessage(
+      tabId,
       {
         type: 'EXECUTE_ACTION',
         payload: {
@@ -29,9 +32,8 @@ export async function executeStep(
           target: step.target,
           value: step.value,
         },
-        tabId,
       },
-      (response: { result?: { success: boolean; error?: string } }) => {
+      (response: { type: string; result: { success: boolean; error?: string } } | undefined) => {
         const duration = Date.now() - start;
         if (chrome.runtime.lastError) {
           resolve({

@@ -1,24 +1,35 @@
 /**
  * Planner — calls backend /llm with the planner prompt + goal,
- * returns structured steps.
+ * returns a per-site execution plan.
  *
  * The backend reads OPENAI_API_KEY from its environment only.
  * No keys are stored here.
  */
 
 export interface PlanStep {
-  action: 'navigate' | 'click' | 'type' | 'extract' | 'wait';
+  action: 'navigate' | 'click' | 'type' | 'extract' | 'wait' | 'scroll';
   target: string;
   value?: string;
   url?: string;
   description?: string;
 }
 
-export interface Plan {
+export interface SitePlan {
+  site: string;
   steps: PlanStep[];
 }
 
+/** The canonical plan the planner returns. */
+export interface Plan {
+  sites: SitePlan[];
+}
+
 const BACKEND = 'http://127.0.0.1:8000';
+
+function stripFences(raw: string): string {
+  const fence = raw.match(/```(?:json)?\s*([\s\S]*?)```/s);
+  return fence ? fence[1].trim() : raw.trim();
+}
 
 export async function planGoal(
   goal: string,
@@ -32,19 +43,28 @@ export async function planGoal(
     body: JSON.stringify({ prompt }),
   });
 
-  if (!resp.ok) {
-    throw new Error(`Backend /llm returned HTTP ${resp.status}`);
-  }
+  if (!resp.ok) throw new Error(`Backend /llm returned HTTP ${resp.status}`);
 
   const data = await resp.json() as { response: string };
+  const jsonStr = stripFences(data.response);
 
   try {
-    const parsed = JSON.parse(data.response) as Plan;
-    return parsed;
+    const parsed = JSON.parse(jsonStr) as Record<string, unknown>;
+
+    // New format: { sites: [{site, steps}] }
+    if (Array.isArray(parsed['sites'])) {
+      return parsed as unknown as Plan;
+    }
+
+    // Legacy format: { steps: [...] } — wrap in a single anonymous site
+    if (Array.isArray(parsed['steps'])) {
+      return { sites: [{ site: 'default', steps: parsed['steps'] as PlanStep[] }] };
+    }
+
+    // Unknown shape — treat as empty plan so orchestrator falls back
+    return { sites: [] };
   } catch {
-    // Backend returned prose instead of JSON — wrap as a single description step
-    return {
-      steps: [{ action: 'navigate', target: goal, description: data.response }],
-    };
+    // Non-JSON response — empty plan triggers orchestrator fallback
+    return { sites: [] };
   }
 }

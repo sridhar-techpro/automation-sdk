@@ -16,11 +16,12 @@ export async function reasonAboutProducts(
   filters: Record<string, string>,
   promptTemplate: string,
 ): Promise<ReasoningResult> {
-  // Local pre-filter: apply minRating, minReviews, inStock
+  // Local pre-filter — only exclude a product if we have RELIABLE data that fails the filter.
+  // reviews === 0 means "not extracted" (unknown), not "zero reviews" — keep those products.
   let filtered = products.filter((p) => {
-    if (filters['minRating'] && p.rating < parseFloat(filters['minRating'])) return false;
-    if (filters['minReviews'] && p.reviews < parseInt(filters['minReviews'], 10)) return false;
-    if (!p.inStock) return false;
+    if (filters['minRating'] && p.rating > 0 && p.rating < parseFloat(filters['minRating'])) return false;
+    if (filters['minReviews'] && p.reviews > 0 && p.reviews < parseInt(filters['minReviews'], 10)) return false;
+    if (p.inStock === false) return false;  // only exclude if explicitly false, not if unknown
     return true;
   });
 
@@ -28,10 +29,10 @@ export async function reasonAboutProducts(
   filtered.sort((a, b) => b.rating - a.rating || b.reviews - a.reviews);
   const top3 = filtered.slice(0, 3);
 
-  // If we have data, call /llm for prose reasoning
+  // Send to LLM for intelligent final reasoning (apply remaining goal filters, generate prose)
   if (top3.length > 0) {
     try {
-      const prompt = `${promptTemplate}\n\nProducts:\n${JSON.stringify(top3, null, 2)}`;
+      const prompt = `${promptTemplate}\n\nUser filters: ${JSON.stringify(filters)}\n\nProducts:\n${JSON.stringify(top3, null, 2)}`;
       const resp = await fetch(`${BACKEND}/llm`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -46,7 +47,7 @@ export async function reasonAboutProducts(
 
   // Fallback: generate local reasoning
   const reasoning = top3.length > 0
-    ? `Top ${top3.length} products selected based on rating ≥ ${filters['minRating'] ?? 4} and ≥ ${filters['minReviews'] ?? 500} reviews.`
+    ? `Top ${top3.length} products selected based on available data (rating: ${filters['minRating'] ?? 'any'}, reviews: ${filters['minReviews'] ?? 'any'}).`
     : 'No products matched the specified filters.';
 
   return { topProducts: top3, reasoning };

@@ -43,16 +43,22 @@ describe("REAL Extension Workflow", () => {
   let chromeAvailable = true;
 
   beforeAll(async () => {
-    // ── STEP 0: Build extension (dist/ must exist before Chrome loads it) ────
+    // ── STEP 0: Kill any stale Chrome processes from previous runs ────────────
+    try {
+      execSync('taskkill /F /IM chrome.exe /T 2>nul || true', { shell: 'cmd.exe', stdio: 'ignore' });
+      console.log("[smartphone-workflow] Stale Chrome instances killed.");
+    } catch { /* none running — that's fine */ }
+
+    // ── STEP 1: Build extension ───────────────────────────────────────────────
     ensureExtensionBuilt();
 
-    // ── STEP 1: Start Python backend ─────────────────────────────────────────
+    // ── STEP 2: Start Python backend ─────────────────────────────────────────
     // Inherits OPENAI_API_KEY from the environment.
     // With the key set → real gpt-4o-mini. Without it → deterministic mock with "Top".
     backendProc = await startBackend(BACKEND_PORT, 30_000);
     await clearBackendLogs(BACKEND_PORT);
 
-    // ── STEP 2: Launch browser + get extension ID ─────────────────────────────
+    // ── STEP 3: Launch browser + get extension ID ─────────────────────────────
     try {
       ctx = await setupTest();
     } catch (err) {
@@ -118,17 +124,24 @@ and suggest top 3 phones with reasoning.
     await sendBtn.click();
 
     // STEP 4 — wait for result (CRITICAL)
+    // Allow up to 85s: planner(~8s) + 2×nav(~5s) + extraction LLM(~25s) + reasoning(~5s)
     await page.waitForFunction(() => {
       return document.body.innerText.includes("Top");
-    }, { timeout: 60000 });
+    }, { timeout: 85000 });
 
     // STEP 5 — validate output
     const text = await page.evaluate(() => document.body.innerText);
     expect(text).toContain("Top");
 
-    // STEP 6 — assert backend captured logs
+    // STEP 6 — assert backend captured logs with real scraped content
     const logs = await getBackendLogs(BACKEND_PORT);
     console.log(`[test] Backend captured ${logs.length} log entries`);
-    expect(logs.length).toBeGreaterThanOrEqual(0);
-  }, 90_000);
+    expect(logs.length).toBeGreaterThan(0);
+
+    // Verify the pipeline actually scraped a real page (not LLM knowledge)
+    const captureLog = logs.find((l: { message: string }) => l.message.includes('text captured'));
+    expect(captureLog).toBeDefined();
+    const capturedChars = typeof captureLog?.data?.chars === 'number' ? captureLog.data.chars : 0;
+    expect(capturedChars).toBeGreaterThan(100);
+  }, 120_000);
 });

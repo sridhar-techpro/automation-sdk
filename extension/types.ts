@@ -5,7 +5,7 @@
 
 // ─── Action types (mirrors SDK ActionPayload) ─────────────────────────────────
 
-export type ExtensionAction = 'click' | 'type' | 'navigate' | 'screenshot';
+export type ExtensionAction = 'click' | 'type' | 'navigate' | 'screenshot' | 'scroll';
 
 export interface ExtensionActionPayload {
   action: ExtensionAction;
@@ -31,8 +31,9 @@ export type PopupToBackground =
 
 export type BackgroundToPopup =
   | { type: 'ACTION_RESULT'; result: ExtensionActionResult }
-  | { type: 'GOAL_RESULT';   success: boolean; stepsExecuted: number;
-      stepResults: ExtensionActionResult[]; error?: string }
+    | { type: 'GOAL_RESULT';   success: boolean; stepsExecuted: number;
+      stepResults: ExtensionActionResult[]; error?: string;
+      summary?: string; topProducts?: unknown[]; reasoning?: string }
   | { type: 'STATUS'; connected: boolean; tabId: number | null };
 
 // ─── Background ↔ Content Script messages ─────────────────────────────────────

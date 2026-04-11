@@ -33,5 +33,18 @@ export function parseIntent(raw: string): Goal {
   const reviewMatch = lower.match(/minimum\s*([\d,]+)\s*reviews?/);
   if (reviewMatch) filters['minReviews'] = reviewMatch[1].replace(',', '');
 
+  // Extract a concise search query: take everything up to the first comma or newline,
+  // strip known instruction phrases, then trim to first 60 chars
+  const firstLine = raw.split(/[,\n]/)[0].trim();
+  const cleaned = firstLine
+    .replace(/^search\s+(for\s+)?/i, '')
+    .replace(/^find\s+/i, '')
+    .replace(/\bunder\s*[₹$]?[\d,]+/i, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim()
+    .slice(0, 60);
+  filters['searchQuery'] = cleaned || firstLine.slice(0, 60);
+
   return { raw, intent, sites, filters };
 }
+

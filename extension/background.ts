@@ -19,6 +19,7 @@ import type {
   LogEntry,
   LogLevel,
 } from './types';
+import { orchestrate } from './src/agent/orchestrator';
 
 // ─── Configuration ────────────────────────────────────────────────────────────
 
@@ -29,7 +30,6 @@ chrome.action.onClicked.addListener(() => {
   chrome.tabs.create({ url: chrome.runtime.getURL('side-panel/index.html') });
 });
 const BACKEND_LOG_URL = `${BACKEND_BASE_URL}/logs`;
-const BACKEND_LLM_URL = `${BACKEND_BASE_URL}/llm`;
 const LOG_MAX_RETRIES = 3;
 const LOG_RETRY_BASE_MS = 200; // exponential backoff: 200 → 400 → 800 ms
 
@@ -119,91 +119,23 @@ chrome.runtime.onMessage.addListener(
       const { goal, tabId } = msg;
 
       void (async () => {
-        await sendLog('info', 'Planning goal', { goal, tabId });
-
-        // 1. Capture current page HTML so the backend LLM can pick precise selectors
-        let pageHtml = '';
         try {
-          const injected = await chrome.scripting.executeScript({
-            target: { tabId },
-            func: () => document.body.innerHTML,
+          const result = await orchestrate(goal, tabId);
+          sendResponse({
+            type: 'GOAL_RESULT',
+            success: result.success,
+            stepsExecuted: result.stepsExecuted,
+            stepResults: [],
+            summary: result.summary,
+            topProducts: result.topProducts,
+            reasoning: result.reasoning,
           });
-          pageHtml = (injected[0]?.result as string) ?? '';
-        } catch (e) {
-          await sendLog('warn', 'Could not get page HTML', {
-            error: e instanceof Error ? e.message : String(e),
-          });
-        }
-
-        // 2. Ask backend /llm to plan the goal → returns concrete CSS selector steps
-        let steps: Array<{ action: string; target: string; value?: string | null }> = [];
-        try {
-          const prompt =
-            `You are an extension action planner. Given a natural-language goal and page HTML, ` +
-            `return ONLY a JSON object: {"steps": [{"action": "click"|"type"|"navigate"|"screenshot", ` +
-            `"target": "<css-selector-or-url>", "value": "<text, only for type actions>"}]}.\n\n` +
-            `Goal: ${goal}\n\nPage HTML (first 3000 chars):\n${pageHtml.slice(0, 3_000)}`;
-
-          const planResp = await fetch(BACKEND_LLM_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ prompt }),
-          });
-          const llmData = await planResp.json() as { response: string };
-          let plan: { steps: Array<{ action: string; target: string; value?: string | null }> };
-          try {
-            plan = JSON.parse(llmData.response) as typeof plan;
-          } catch {
-            plan = { steps: [] };
-          }
-          steps = plan.steps ?? [];
-          await sendLog('info', 'Plan received', { goal, stepsCount: steps.length });
         } catch (err) {
           const errMsg = err instanceof Error ? err.message : String(err);
-          await sendLog('error', 'Backend plan failed', { error: errMsg });
+          await sendLog('error', 'Orchestration failed', { error: errMsg });
           sendResponse({ type: 'GOAL_RESULT', success: false, stepsExecuted: 0,
-            stepResults: [], error: `Backend unavailable: ${errMsg}` });
-          return;
+            stepResults: [], error: errMsg });
         }
-
-        // 3. Execute each planned step via the content script
-        const stepResults: ExtensionActionResult[] = [];
-        for (const step of steps) {
-          const payload: ExtensionActionPayload = {
-            action: step.action as ExtensionAction,
-            target: step.target,
-            value:  step.value ?? undefined,
-          };
-          await sendLog('info', 'Executing step', { action: payload.action, target: payload.target });
-          try {
-            const result = await sendToContentScript(tabId, { type: 'EXECUTE_ACTION', payload });
-            stepResults.push(result);
-            await sendLog(result.success ? 'info' : 'error', 'Step result', {
-              action: result.action, target: result.target,
-              success: result.success, duration: result.duration,
-              ...(result.error ? { error: result.error } : {}),
-            });
-          } catch (err) {
-            const errMsg = err instanceof Error ? err.message : String(err);
-            await sendLog('error', 'Step execution failed', { error: errMsg, target: step.target });
-            stepResults.push({
-              success: false, action: payload.action, target: payload.target,
-              timestamp: Date.now(), duration: 0, error: errMsg,
-            });
-          }
-        }
-
-        const allSuccess = stepResults.length > 0 && stepResults.every((r) => r.success);
-        await sendLog('info', 'Goal execution complete', {
-          goal, success: allSuccess, stepsExecuted: stepResults.length,
-        });
-
-        sendResponse({
-          type: 'GOAL_RESULT',
-          success: allSuccess,
-          stepsExecuted: stepResults.length,
-          stepResults,
-        });
       })();
 
       return true; // keep message channel open for async sendResponse
