@@ -55,19 +55,18 @@ is explicitly out of scope until a future phase.
 
 ---
 
-## Learning Capabilities (Foundation Only)
+## Learning Capabilities (Phase 3.4 — Active)
 
-These capabilities have infrastructure in place but are not yet actively used
-by the runtime:
-
-| Capability | Current State | Planned |
-|-----------|---------------|---------|
-| Local knowledge base | `feedback/knowledge-base.json` exists with schema | Read/write at goal-execution time |
-| Trace storage | `feedback/traces/` directory exists | Automated trace writes per execution |
-| Feedback loop | Not wired | Capture failures → suggest fixes → store in knowledge base |
-| Selector fix suggestions | Not implemented | Learn from repeated resolution failures |
-| Workflow correction | Not implemented | Detect task timeouts and record alternative sequences |
-| Retry-strategy tuning | Not implemented | Adjust retry parameters based on historical success rates |
+| Capability | Status | Detail |
+|-----------|--------|--------|
+| **Semantic workflow matching** | ✅ | `SemanticMatcher` — keyword Jaccard similarity + optional backend LLM semantic match |
+| **Active feedback loop** | ✅ | `FeedbackLoop` — captures failures, prompts for fixes in TTY, learns from user corrections |
+| **Self-healing replay** | ✅ | `ReplayEngine` uses `KnowledgeStore` to try fix selectors when all known selectors fail |
+| **Failure store** | ✅ | `FailureStore` — persists `FailureRecord[]` to `feedback/failures.json` |
+| **Knowledge store** | ✅ | `KnowledgeStore` — loads/saves `KnowledgeEntry[]`, handles legacy string-fix format |
+| **Knowledge base** | ✅ | `feedback/knowledge-base.json` — actively read and written at runtime |
+| **Trace storage** | 🟡 | `feedback/traces/` directory exists; automated writes not yet implemented |
+| **Global learning** | ❌ | Planned for Phase 4 — cross-instance pattern sharing |
 
 ---
 

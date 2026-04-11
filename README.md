@@ -109,7 +109,10 @@ pnpm run validate
 | Feedback loop / active learning | 🟡 | Phase 3 | Learning | foundation only |
 | Local knowledge base | 🟡 | Phase 3 | Learning | file exists; not active |
 | LLM integration (dynamic planning) | ❌ | Phase 3.3 | AI | planned |
-| Memory system (cross-session recall) | ❌ | Phase 3.4 | AI | planned |
+| Semantic workflow matching (keyword + semantic) | ✅ | Phase 3.4 | AI | stable |
+| Active learning feedback loop | ✅ | Phase 3.4 | Learning | stable |
+| Self-healing workflows via knowledge store | ✅ | Phase 3.4 | Reliability | stable |
+| Memory system (cross-session recall) | 🟡 | Phase 3.4 | AI | partial (local only) |
 | Global knowledge sync | ❌ | Phase 4 | Learning | planned |
 
 **Status key:** ✅ built & tested · 🟡 foundation in place · ❌ planned

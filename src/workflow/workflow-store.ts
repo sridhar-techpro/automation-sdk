@@ -61,6 +61,23 @@ export class WorkflowStore {
     return undefined;
   }
 
+  findByKeyword(goal: string): WorkflowRecord | undefined {
+    const goalTokens = new Set(goal.toLowerCase().split(/\W+/).filter(Boolean));
+    let best: WorkflowRecord | undefined;
+    let bestScore = 0;
+    for (const wf of this.workflows.values()) {
+      const wfTokens = new Set(wf.goal.toLowerCase().split(/\W+/).filter(Boolean));
+      const intersection = [...goalTokens].filter((t) => wfTokens.has(t)).length;
+      const union = new Set([...goalTokens, ...wfTokens]).size;
+      const score = union > 0 ? intersection / union : 0;
+      if (score > bestScore) {
+        bestScore = score;
+        best = wf;
+      }
+    }
+    return bestScore >= 0.5 ? best : undefined;
+  }
+
   list(): WorkflowRecord[] {
     return [...this.workflows.values()];
   }
