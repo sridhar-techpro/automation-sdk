@@ -75,6 +75,24 @@ interface TestRunResult {
   passed: boolean;
   output: string;
   durationMs: number;
+  suiteResults: SuiteResult[];
+}
+
+interface StabilityMetrics {
+  timestamp: string;
+  totalTests: number;
+  passedTests: number;
+  failedTests: number;
+  successRate: number;
+  totalSuites: number;
+  passedSuites: number;
+  scenariosPassed: number;
+  scenariosTotal: number;
+  scenarioSuccessRate: number;
+  fallbackUsage: number;
+  avgRetries: number;
+  testDurationMs: number;
+  suiteDurations: Record<string, number>;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -164,101 +182,156 @@ function killOrphanChrome(): void {
 
 // ─── Step 2: Run Jest tests ───────────────────────────────────────────────────
 
-function runJestTests(): TestRunResult {
+interface SuiteResult {
+  label:      string;
+  passed:     boolean;
+  durationMs: number;
+  output:     string;
+  tests:      number;
+  failures:   number;
+}
+
+/**
+ * Runs a single Jest suite with async `spawn` so the parent event loop remains
+ * unblocked.  Output is written to a temp file (real fd, not a pipe) to avoid
+ * any I/O back-pressure that could interfere with the Puppeteer/CDP event loop
+ * running inside Jest's child process.
+ */
+function runSuite(
+  label: string,
+  pattern: string,
+  timeoutMs: number,
+  jestBin: string,
+): Promise<SuiteResult> {
+  return new Promise<SuiteResult>((resolve) => {
+    const suiteStart = Date.now();
+    const outFile = path.join(os.tmpdir(), `jest-suite-${label.replace(/[^a-z0-9]/gi, '_')}-${Date.now()}.log`);
+    let outFd: number;
+    try {
+      outFd = fs.openSync(outFile, 'w');
+    } catch {
+      outFd = -1;
+    }
+
+    const child = cp.spawn(
+      jestBin,
+      [pattern, '--runInBand', '--forceExit', '--verbose'],
+      {
+        cwd:   REPO_ROOT,
+        env:   { ...process.env, CI: '1' },
+        // Writing to a real file fd (not a pipe) eliminates pipe back-pressure
+        // that can starve the event loop inside Jest's Puppeteer/CDP handlers.
+        stdio: outFd >= 0 ? (['ignore', outFd, outFd] as cp.StdioOptions) : ['ignore', 'pipe', 'pipe'],
+        shell: false,
+      },
+    );
+
+    // Collect piped output as a fallback when the file fd failed.
+    let pipedOut = '';
+    if (outFd < 0) {
+      (child.stdout as NodeJS.ReadableStream | null)?.on('data', (d: Buffer) => { pipedOut += d.toString(); });
+      (child.stderr as NodeJS.ReadableStream | null)?.on('data', (d: Buffer) => { pipedOut += d.toString(); });
+    }
+
+    // Hard kill after timeoutMs to prevent hangs.
+    const timer = setTimeout(() => {
+      try { child.kill('SIGTERM'); } catch { /* ignore */ }
+    }, timeoutMs);
+
+    child.on('close', (code, signal) => {
+      clearTimeout(timer);
+
+      if (outFd >= 0) {
+        try { fs.closeSync(outFd); } catch { /* ignore */ }
+      }
+
+      let out = '';
+      if (outFd >= 0) {
+        try { out = fs.readFileSync(outFile, 'utf8'); } catch { out = ''; }
+        try { fs.unlinkSync(outFile); } catch { /* ignore */ }
+      } else {
+        out = pipedOut;
+      }
+
+      const passed  = code === 0 && signal == null;
+      const tests   = parseJestCount(out, /Tests:\s+.*?(\d+)\s+total/);
+      const failures = parseJestCount(out, /Tests:\s+.*?(\d+)\s+failed/);
+
+      const durationMs = Date.now() - suiteStart;
+
+      if (!passed) {
+        const reason = signal ? `signal=${signal}` : `status=${code}`;
+        console.log(`  ↳ [${label}] FAILED ✗ (${reason})`);
+      } else {
+        console.log(`  ↳ [${label}] passed ✓  (${tests} tests, ${fmtMs(durationMs)})`);
+      }
+
+      resolve({ label, passed, durationMs, output: out, tests, failures });
+    });
+
+    child.on('error', (err) => {
+      clearTimeout(timer);
+      if (outFd >= 0) { try { fs.closeSync(outFd); } catch { /* ignore */ } }
+      console.log(`  ↳ [${label}] ERROR: ${err.message}`);
+      resolve({ label, passed: false, durationMs: Date.now() - suiteStart, output: err.message, tests: 0, failures: 0 });
+    });
+  });
+}
+
+function parseJestCount(output: string, re: RegExp): number {
+  const m = re.exec(output);
+  return m ? parseInt(m[1], 10) : 0;
+}
+
+async function runJestTests(): Promise<TestRunResult> {
   const start = Date.now();
-  console.log('  ↳ Running jest test suites…');
+  console.log('  ↳ Running jest test suites sequentially (async spawn)…');
 
   const jestBin = path.join(REPO_ROOT, 'node_modules', '.bin', 'jest');
 
   // Run each suite individually to avoid Chrome resource contention when
   // multiple E2E suites share the same Jest worker pool.
   const suites = [
-    { label: 'unit',        pattern: 'tests/unit',                          timeout: 60_000  },
-    { label: 'e2e:sdk',     pattern: 'tests/e2e/sdk.e2e.test.ts',           timeout: 180_000 },
-    { label: 'e2e:phase2',  pattern: 'tests/e2e/phase2.e2e.test.ts',        timeout: 120_000 },
-    { label: 'e2e:goal',    pattern: 'tests/e2e/goal.e2e.test.ts',          timeout: 120_000 },
-    { label: 'e2e:phase3-hardening', pattern: 'tests/e2e/phase3-hardening.e2e.test.ts', timeout: 120_000 },
-    { label: 'e2e:ui-coverage',      pattern: 'tests/e2e/ui-coverage.e2e.test.ts',       timeout: 120_000 },
-    { label: 'e2e:reliability-engine', pattern: 'tests/e2e/reliability-engine.e2e.test.ts', timeout: 180_000 },
-    { label: 'e2e:replay',             pattern: 'tests/e2e/replay.e2e.test.ts',             timeout: 180_000 },
-    { label: 'e2e:enterprise-app',     pattern: 'tests/e2e/enterprise-app.e2e.test.ts',     timeout: 180_000 },
+    { label: 'unit',                     pattern: 'tests/unit',                                      timeout: 60_000  },
+    { label: 'e2e:sdk',                  pattern: 'tests/e2e/sdk.e2e.test.ts',                       timeout: 180_000 },
+    { label: 'e2e:phase2',               pattern: 'tests/e2e/phase2.e2e.test.ts',                    timeout: 120_000 },
+    { label: 'e2e:goal',                 pattern: 'tests/e2e/goal.e2e.test.ts',                      timeout: 120_000 },
+    { label: 'e2e:phase3-hardening',     pattern: 'tests/e2e/phase3-hardening.e2e.test.ts',          timeout: 120_000 },
+    { label: 'e2e:ui-coverage',          pattern: 'tests/e2e/ui-coverage.e2e.test.ts',               timeout: 120_000 },
+    { label: 'e2e:reliability-engine',   pattern: 'tests/e2e/reliability-engine.e2e.test.ts',        timeout: 180_000 },
+    { label: 'e2e:replay',               pattern: 'tests/e2e/replay.e2e.test.ts',                    timeout: 180_000 },
+    { label: 'e2e:enterprise-app',       pattern: 'tests/e2e/enterprise-app.e2e.test.ts',            timeout: 180_000 },
+    { label: 'e2e:replay-consistency',   pattern: 'tests/e2e/replay-consistency.test.ts',            timeout: 120_000 },
+    { label: 'e2e:performance',          pattern: 'tests/e2e/performance.test.ts',                   timeout: 120_000 },
   ];
 
   let combinedOutput = '';
   let passed = true;
+  const suiteResults: SuiteResult[] = [];
 
   for (const suite of suites) {
     console.log(`  ↳ [${suite.label}] running…`);
-    // Kill any orphan Chrome left over from a previous suite or run to avoid
-    // CDP interference (port/memory contention) when the next suite launches.
+    // Kill any orphan Chrome left over from a previous suite before launching
+    // a new one to avoid CDP interference (port/memory contention).
     if (suite.label.startsWith('e2e:')) {
       killOrphanChrome();
     }
 
-    // Capture Jest output via a temp file so that the child process writes to
-    // a real file descriptor (not a pipe).  When stdout is a pipe, Node.js may
-    // schedule writes asynchronously; for E2E tests that use Puppeteer the
-    // additional I/O pressure can delay the event loop, preventing CDP
-    // responses from being processed in time and causing intermittent hangs.
-    const outFile = path.join(os.tmpdir(), `jest-suite-${Date.now()}.log`);
-    let outFd: number | undefined;
-    let outStream: fs.WriteStream | undefined;
-    try {
-      outFd = fs.openSync(outFile, 'w');
-    } catch { /* fall back to pipe */ }
+    // await each suite so they run sequentially — concurrent Puppeteer
+    // instances fight for resources and cause flaky CDP timeouts.
+    const result = await runSuite(suite.label, suite.pattern, suite.timeout, jestBin);
+    suiteResults.push(result);
 
-    const spawnOpts: cp.SpawnSyncOptions = {
-      cwd: REPO_ROOT,
-      timeout: suite.timeout,
-      env: { ...process.env, CI: '1' },
-      ...(outFd !== undefined
-        ? { stdio: ['ignore', outFd, outFd] }
-        : { encoding: 'utf8' as BufferEncoding }),
-    };
+    combinedOutput += `\n\n=== ${suite.label.toUpperCase()} ===\n` + result.output;
 
-    const result = cp.spawnSync(
-      jestBin,
-      [suite.pattern, '--runInBand', '--forceExit', '--verbose'],
-      spawnOpts,
-    );
-
-    // Close the file descriptor after the process exits.
-    if (outFd !== undefined) {
-      try { fs.closeSync(outFd); } catch { /* ignore */ }
-    }
-
-    // Read captured output (file-based path) or use piped buffers.
-    let out: string;
-    if (outFd !== undefined) {
-      try {
-        out = fs.readFileSync(outFile, 'utf8');
-        fs.unlinkSync(outFile);
-      } catch {
-        out = '';
-      }
-    } else {
-      out = [
-        (result as cp.SpawnSyncReturns<string>).stdout ?? '',
-        (result as cp.SpawnSyncReturns<string>).stderr ?? '',
-      ].join('\n').trim();
-    }
-
-    combinedOutput += `\n\n=== ${suite.label.toUpperCase()} ===\n` + out;
-
-    if (result.status !== 0) {
+    if (!result.passed) {
       passed = false;
-      const reason = result.signal
-        ? `signal=${result.signal}`
-        : `status=${result.status}`;
-      console.log(`  ↳ [${suite.label}] FAILED ✗ (${reason})`);
-    } else {
-      console.log(`  ↳ [${suite.label}] passed ✓`);
     }
   }
 
   const durationMs = Date.now() - start;
   console.log(`  ↳ Jest finished in ${fmtMs(durationMs)} — ${passed ? 'PASSED ✓' : 'FAILED ✗'}`);
-  return { passed, output: combinedOutput.trim(), durationMs };
+  return { passed, output: combinedOutput.trim(), durationMs, suiteResults };
 }
 
 // ─── Step 3: Run goal scenarios ───────────────────────────────────────────────
@@ -318,6 +391,60 @@ async function runGoalScenarios(sdk: AutomationSDK): Promise<ScenarioRecord[]> {
   return records;
 }
 
+// ─── Step 4a: Collect stability metrics ──────────────────────────────────────
+
+/**
+ * Derives stability metrics from the Jest run output and scenario records.
+ * Parses retry counts, fallback usage, and success rates from the log output.
+ */
+function collectStabilityMetrics(
+  timestamp: string,
+  jestResult: TestRunResult,
+  scenarioRecords: ScenarioRecord[],
+): StabilityMetrics {
+  const totalTests = jestResult.suiteResults.reduce((sum, s) => sum + s.tests, 0);
+  const failedTests = jestResult.suiteResults.reduce((sum, s) => sum + s.failures, 0);
+  const passedTests = totalTests - failedTests;
+  const successRate = totalTests > 0 ? passedTests / totalTests : 1;
+
+  const passedSuites = jestResult.suiteResults.filter(s => s.passed).length;
+  const totalSuites = jestResult.suiteResults.length;
+
+  // Count retry occurrences in the combined output (ActionLogger logs ✗ for failures)
+  const failureLogCount = (jestResult.output.match(/✗ (CLICK|TYPE|NAVIGATE|WAIT)/g) ?? []).length;
+  const avgRetries = totalTests > 0 ? failureLogCount / totalTests : 0;
+
+  // Count fallback selector usage from replay test output
+  const fallbackMatches = (jestResult.output.match(/usedFallback.*?true/g) ?? []).length;
+  const fallbackUsage = totalTests > 0 ? Math.min(fallbackMatches / totalTests, 1) : 0;
+
+  const scenariosPassed = scenarioRecords.filter(s => s.success).length;
+  const scenariosTotal = scenarioRecords.length;
+  const scenarioSuccessRate = scenariosTotal > 0 ? scenariosPassed / scenariosTotal : 1;
+
+  const suiteDurations: Record<string, number> = {};
+  for (const s of jestResult.suiteResults) {
+    suiteDurations[s.label] = s.durationMs;
+  }
+
+  return {
+    timestamp,
+    totalTests,
+    passedTests,
+    failedTests,
+    successRate,
+    totalSuites,
+    passedSuites,
+    scenariosPassed,
+    scenariosTotal,
+    scenarioSuccessRate,
+    fallbackUsage,
+    avgRetries,
+    testDurationMs: jestResult.durationMs,
+    suiteDurations,
+  };
+}
+
 // ─── Step 4: Build summary ────────────────────────────────────────────────────
 
 /**
@@ -348,6 +475,7 @@ function buildSummary(
   jestResult: TestRunResult,
   scenarios: ScenarioRecord[],
   totalMs: number,
+  metrics: StabilityMetrics,
 ): string {
   const scenarioPassed = scenarios.filter(s => s.success).length;
   const scenarioFailed = scenarios.filter(s => !s.success).length;
@@ -369,6 +497,26 @@ function buildSummary(
     `| Duration | ${fmtMs(jestResult.durationMs)} |`,
     `| Suites | ${totalSuites} |`,
     `| Tests | ${totalTests} |`,
+    '',
+    '## Stability Metrics',
+    '',
+    `| Metric | Value |`,
+    `|--------|-------|`,
+    `| Success Rate | ${(metrics.successRate * 100).toFixed(1)}% |`,
+    `| Total Tests | ${metrics.totalTests} |`,
+    `| Passed Tests | ${metrics.passedTests} |`,
+    `| Failed Tests | ${metrics.failedTests} |`,
+    `| Avg Retries | ${metrics.avgRetries.toFixed(2)} |`,
+    `| Fallback Usage | ${(metrics.fallbackUsage * 100).toFixed(1)}% |`,
+    `| Scenario Success Rate | ${(metrics.scenarioSuccessRate * 100).toFixed(1)}% |`,
+    '',
+    '## Suite Durations',
+    '',
+    `| Suite | Duration |`,
+    `|-------|----------|`,
+    ...Object.entries(metrics.suiteDurations).map(([suite, ms]) =>
+      `| ${suite} | ${fmtMs(ms)} |`
+    ),
     '',
     '## Goal Scenarios',
     '',
@@ -406,6 +554,7 @@ function buildValidationDoc(
   jestResult: TestRunResult,
   scenarioRecords: ScenarioRecord[],
   totalMs: number,
+  metrics: StabilityMetrics,
 ): string {
   const scenarioPassed = scenarioRecords.filter(s => s.success).length;
 
@@ -435,6 +584,9 @@ function buildValidationDoc(
     `| **Test suites** | ${totalSuites} |`,
     `| **Tests** | ${totalTests} |`,
     `| **Goal scenarios** | ${scenarioPassed} / ${scenarioRecords.length} passed |`,
+    `| **Success rate** | ${(metrics.successRate * 100).toFixed(1)}% |`,
+    `| **Avg retries** | ${metrics.avgRetries.toFixed(2)} |`,
+    `| **Fallback usage** | ${(metrics.fallbackUsage * 100).toFixed(1)}% |`,
     '',
     '### Goal Scenarios',
     '',
@@ -459,15 +611,17 @@ function buildValidationDoc(
     '',
     '## Test Suite Coverage',
     '',
-    '| Suite | File | Type |',
-    '|-------|------|------|',
-    '| Unit — AI | `tests/unit/ai.unit.test.ts` | Unit |',
-    '| Unit — Phase 2 | `tests/unit/phase2.unit.test.ts` | Unit |',
-    '| Unit — Selectors | `tests/unit/selectors.unit.test.ts` | Unit |',
-    '| E2E — SDK core | `tests/e2e/sdk.e2e.test.ts` | E2E |',
-    '| E2E — Phase 2 | `tests/e2e/phase2.e2e.test.ts` | E2E |',
-    '| E2E — Goal | `tests/e2e/goal.e2e.test.ts` | E2E |',
-    '| E2E — Phase 3 Hardening | `tests/e2e/phase3-hardening.e2e.test.ts` | E2E |',
+    '| Suite | File | Type | Duration |',
+    '|-------|------|------|----------|',
+    '| Unit — AI | `tests/unit/ai.unit.test.ts` | Unit | — |',
+    '| Unit — Phase 2 | `tests/unit/phase2.unit.test.ts` | Unit | — |',
+    '| Unit — Selectors | `tests/unit/selectors.unit.test.ts` | Unit | — |',
+    '| E2E — SDK core | `tests/e2e/sdk.e2e.test.ts` | E2E | — |',
+    '| E2E — Phase 2 | `tests/e2e/phase2.e2e.test.ts` | E2E | — |',
+    '| E2E — Goal | `tests/e2e/goal.e2e.test.ts` | E2E | — |',
+    '| E2E — Phase 3 Hardening | `tests/e2e/phase3-hardening.e2e.test.ts` | E2E | — |',
+    '| E2E — Replay Consistency | `tests/e2e/replay-consistency.test.ts` | E2E | — |',
+    '| E2E — Performance | `tests/e2e/performance.test.ts` | E2E | — |',
     '',
     '---',
     '',
@@ -480,6 +634,7 @@ function buildValidationDoc(
     '| `page.bringToFront()` destroys sibling execution contexts in headless Chrome | Use `page.evaluate()` to simulate focus |',
     '| First `req.abort()` on cold browser can reset interception state | Warmup intercepted navigation in `beforeAll` |',
     '| Multiple Chrome instances competing for resources | Run suites sequentially with `--runInBand` |',
+    '| `spawnSync` blocks Node.js event loop → CDP stalls | Use async `spawn` with file-fd stdio |',
     '',
     '> See `docs/TRACEABILITY.md` for full scenario → feature mapping.',
     '',
@@ -505,7 +660,7 @@ async function main(): Promise<void> {
 
   // ── 2. Jest tests ───────────────────────────────────────────────────────────
   console.log('\n🧪 Running jest tests…');
-  const jestResult = runJestTests();
+  const jestResult = await runJestTests();
   writeFile(path.join(runDir, 'test-results.log'), jestResult.output);
 
   // ── 3. Goal scenarios (real SDK + real browser + mock interception) ─────────
@@ -563,7 +718,14 @@ async function main(): Promise<void> {
 
   // ── 6. Summary ──────────────────────────────────────────────────────────────
   const totalMs = Date.now() - totalStart;
-  const summary = buildSummary(timestamp, jestResult, scenarioRecords, totalMs);
+  const metrics = collectStabilityMetrics(timestamp, jestResult, scenarioRecords);
+
+  // Write metrics.json — tracks stability metrics across runs.
+  writeFile(path.join(runDir, 'metrics.json'), JSON.stringify(metrics, null, 2));
+  // Also write to the top-level validation/metrics.json so it's always current.
+  writeFile(path.join(REPO_ROOT, 'validation', 'metrics.json'), JSON.stringify(metrics, null, 2));
+
+  const summary = buildSummary(timestamp, jestResult, scenarioRecords, totalMs, metrics);
   writeFile(path.join(runDir, 'summary.md'), summary);
 
   // ── 7. Print summary ────────────────────────────────────────────────────────
@@ -571,7 +733,7 @@ async function main(): Promise<void> {
   console.log(`📁 Validation bundle: ${runDir}\n`);
 
   // ── 7b. Update docs/VALIDATION.md ───────────────────────────────────────────
-  const validationDoc = buildValidationDoc(timestamp, jestResult, scenarioRecords, totalMs);
+  const validationDoc = buildValidationDoc(timestamp, jestResult, scenarioRecords, totalMs, metrics);
   writeFile(path.join(REPO_ROOT, 'docs', 'VALIDATION.md'), validationDoc);
   console.log('📄 docs/VALIDATION.md updated\n');
 
