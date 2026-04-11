@@ -14,13 +14,16 @@ import type {
 
 // ─── DOM references ───────────────────────────────────────────────────────────
 
-const actionSelect = document.getElementById('action') as HTMLSelectElement;
-const targetInput  = document.getElementById('target')  as HTMLInputElement;
-const valueInput   = document.getElementById('value')   as HTMLInputElement;
+const goalInput    = document.getElementById('goal-input')  as HTMLTextAreaElement;
+const btnSend      = document.getElementById('btn-send')    as HTMLButtonElement;
+const goalStatusEl = document.getElementById('goal-status') as HTMLDivElement;
+const actionSelect = document.getElementById('action')      as HTMLSelectElement;
+const targetInput  = document.getElementById('target')      as HTMLInputElement;
+const valueInput   = document.getElementById('value')       as HTMLInputElement;
 const valueField   = document.getElementById('value-field') as HTMLDivElement;
-const btnRun       = document.getElementById('btn-run')   as HTMLButtonElement;
-const btnClear     = document.getElementById('btn-clear') as HTMLButtonElement;
-const statusEl     = document.getElementById('status')    as HTMLDivElement;
+const btnRun       = document.getElementById('btn-run')     as HTMLButtonElement;
+const btnClear     = document.getElementById('btn-clear')   as HTMLButtonElement;
+const statusEl     = document.getElementById('status')      as HTMLDivElement;
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -41,6 +44,16 @@ function setLoading(loading: boolean): void {
   btnRun.textContent = loading ? 'Running…' : 'Run';
 }
 
+function showGoalStatus(message: string, kind: 'success' | 'error' | 'info'): void {
+  goalStatusEl.textContent = message;
+  goalStatusEl.className = kind;
+}
+
+function setGoalLoading(loading: boolean): void {
+  btnSend.disabled = loading;
+  btnSend.textContent = loading ? 'Running…' : 'Send';
+}
+
 // ─── Action-select: show/hide value field ─────────────────────────────────────
 
 actionSelect.addEventListener('change', () => {
@@ -52,11 +65,65 @@ valueField.style.display = 'none';
 // ─── Clear button ─────────────────────────────────────────────────────────────
 
 btnClear.addEventListener('click', () => {
+  goalInput.value   = '';
   targetInput.value = '';
   valueInput.value  = '';
   actionSelect.value = 'navigate';
   valueField.style.display = 'none';
   clearStatus();
+  goalStatusEl.textContent = '';
+  goalStatusEl.className   = '';
+});
+
+// ─── Send button (goal → background → backend plan → execute steps) ───────────
+
+btnSend.addEventListener('click', () => {
+  const goal = goalInput.value.trim();
+  if (!goal) {
+    showGoalStatus('Please enter a goal.', 'error');
+    return;
+  }
+
+  resolveTargetTab((tabId) => {
+    if (tabId === undefined) {
+      showGoalStatus('No active tab found. Open a page first.', 'error');
+      return;
+    }
+
+    setGoalLoading(true);
+    goalStatusEl.textContent = '';
+    goalStatusEl.className   = '';
+
+    const msg: PopupToBackground = { type: 'PLAN_GOAL', goal, tabId };
+
+    chrome.runtime.sendMessage(msg, (response: BackgroundToPopup | undefined) => {
+      setGoalLoading(false);
+
+      if (chrome.runtime.lastError) {
+        showGoalStatus('Extension error — please reload.', 'error');
+        return;
+      }
+
+      if (!response || response.type !== 'GOAL_RESULT') {
+        showGoalStatus('Unexpected response from background.', 'error');
+        return;
+      }
+
+      if (response.success) {
+        showGoalStatus(
+          `Done — ${response.stepsExecuted} step${response.stepsExecuted !== 1 ? 's' : ''} executed.`,
+          'success',
+        );
+      } else {
+        showGoalStatus(
+          response.error
+            ? `Failed: ${response.error}`
+            : 'Execution failed — check backend logs.',
+          'error',
+        );
+      }
+    });
+  });
 });
 
 // ─── Run button ───────────────────────────────────────────────────────────────

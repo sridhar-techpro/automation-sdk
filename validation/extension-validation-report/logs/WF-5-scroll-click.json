@@ -10,11 +10,11 @@
         "success": true,
         "action": "click",
         "target": "[data-testid=\"scroll-target-btn\"]",
-        "timestamp": 1775887100020,
+        "timestamp": 1775891207299,
         "duration": 0
       }
     }
   ],
-  "startedAt": 1775887099990,
-  "endedAt": 1775887100021
+  "startedAt": 1775891207267,
+  "endedAt": 1775891207300
 }

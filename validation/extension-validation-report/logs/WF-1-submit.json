@@ -10,7 +10,7 @@
         "success": true,
         "action": "click",
         "target": "[data-testid=\"form-submit\"]",
-        "timestamp": 1775887098283,
+        "timestamp": 1775891205554,
         "duration": 0
       }
     },
@@ -24,7 +24,7 @@
         "success": true,
         "action": "type",
         "target": "[data-testid=\"form-name\"]",
-        "timestamp": 1775887098310,
+        "timestamp": 1775891205580,
         "duration": 0
       }
     },
@@ -38,8 +38,8 @@
         "success": true,
         "action": "type",
         "target": "[data-testid=\"form-email\"]",
-        "timestamp": 1775887098312,
-        "duration": 0
+        "timestamp": 1775891205582,
+        "duration": 1
       }
     },
     {
@@ -51,11 +51,11 @@
         "success": true,
         "action": "click",
         "target": "[data-testid=\"form-submit\"]",
-        "timestamp": 1775887098314,
+        "timestamp": 1775891205584,
         "duration": 0
       }
     }
   ],
-  "startedAt": 1775887098278,
-  "endedAt": 1775887098315
+  "startedAt": 1775891205549,
+  "endedAt": 1775891205585
 }

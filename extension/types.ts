@@ -26,10 +26,13 @@ export interface ExtensionActionResult {
 
 export type PopupToBackground =
   | { type: 'EXECUTE_ACTION'; payload: ExtensionActionPayload; tabId: number }
+  | { type: 'PLAN_GOAL';      goal: string; tabId: number }
   | { type: 'GET_STATUS' };
 
 export type BackgroundToPopup =
   | { type: 'ACTION_RESULT'; result: ExtensionActionResult }
+  | { type: 'GOAL_RESULT';   success: boolean; stepsExecuted: number;
+      stepResults: ExtensionActionResult[]; error?: string }
   | { type: 'STATUS'; connected: boolean; tabId: number | null };
 
 // ─── Background ↔ Content Script messages ─────────────────────────────────────

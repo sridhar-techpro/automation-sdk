@@ -39,6 +39,49 @@
       outline: none;
     }
     input:focus, select:focus { border-color: #cba6f7; }
+    textarea {
+      width: 100%;
+      padding: 6px 8px;
+      background: #313244;
+      border: 1px solid #45475a;
+      border-radius: 4px;
+      color: #cdd6f4;
+      font-size: 12px;
+      outline: none;
+      resize: vertical;
+      font-family: inherit;
+    }
+    textarea:focus { border-color: #89b4fa; }
+    .goal-actions { display: flex; gap: 6px; margin-top: 6px; }
+    #btn-send {
+      flex: 1;
+      padding: 7px 0;
+      border: none;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      background: #89b4fa;
+      color: #1e1e2e;
+      transition: opacity 0.15s;
+    }
+    #btn-send:hover:not(:disabled) { opacity: 0.85; }
+    #btn-send:disabled { opacity: 0.45; cursor: not-allowed; }
+    #goal-status {
+      margin-top: 6px;
+      padding: 5px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      display: none;
+    }
+    #goal-status.success { background: #a6e3a1; color: #1e1e2e; display: block; }
+    #goal-status.error   { background: #f38ba8; color: #1e1e2e; display: block; }
+    #goal-status.info    { background: #89dceb; color: #1e1e2e; display: block; }
+    .divider {
+      border: none;
+      border-top: 1px solid #45475a;
+      margin: 12px 0;
+    }
     .actions { display: flex; gap: 6px; margin-top: 12px; }
     button {
       flex: 1;
@@ -76,7 +119,20 @@
 <body>
   <h1>Automation SDK</h1>
 
+  <!-- ── Goal input (natural language) ──────────────────────────────── -->
   <div class="field">
+    <label for="goal-input">Goal</label>
+    <textarea id="goal-input" rows="3"
+      placeholder="e.g. Click the Add to Cart button for the first product"></textarea>
+    <div class="goal-actions">
+      <button id="btn-send" type="button">Send</button>
+    </div>
+    <div id="goal-status"></div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- ── Manual action (structured) ─────────────────────────────────── -->
     <label for="action">Action</label>
     <select id="action">
       <option value="navigate">Navigate</option>

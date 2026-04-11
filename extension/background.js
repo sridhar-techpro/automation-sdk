@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Background service worker for the Automation SDK Chrome Extension.
  *
@@ -8,9 +7,10 @@
  *  - Logs all events to the backend logging API
  *  - Returns results back to the popup
  */
-Object.defineProperty(exports, "__esModule", { value: true });
 // ─── Configuration ────────────────────────────────────────────────────────────
-const BACKEND_LOG_URL = 'http://127.0.0.1:8000/logs';
+const BACKEND_BASE_URL = 'http://127.0.0.1:8000';
+const BACKEND_LOG_URL = `${BACKEND_BASE_URL}/logs`;
+const BACKEND_PLAN_URL = `${BACKEND_BASE_URL}/plan-with-context`;
 const LOG_MAX_RETRIES = 3;
 const LOG_RETRY_BASE_MS = 200; // exponential backoff: 200 → 400 → 800 ms
 // ─── Logging helpers ──────────────────────────────────────────────────────────
@@ -75,6 +75,83 @@ function sendToContentScript(tabId, msg) {
 }
 // ─── Message handler ──────────────────────────────────────────────────────────
 chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
+    if (msg.type === 'PLAN_GOAL') {
+        const { goal, tabId } = msg;
+        void (async () => {
+            await sendLog('info', 'Planning goal', { goal, tabId });
+            // 1. Capture current page HTML so the backend LLM can pick precise selectors
+            let pageHtml = '';
+            try {
+                const injected = await chrome.scripting.executeScript({
+                    target: { tabId },
+                    func: () => document.body.innerHTML,
+                });
+                pageHtml = injected[0]?.result ?? '';
+            }
+            catch (e) {
+                await sendLog('warn', 'Could not get page HTML', {
+                    error: e instanceof Error ? e.message : String(e),
+                });
+            }
+            // 2. Ask backend to plan the goal → returns concrete CSS selector steps
+            let steps = [];
+            try {
+                const planResp = await fetch(BACKEND_PLAN_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ goal, pageHtml }),
+                });
+                const plan = await planResp.json();
+                steps = plan.steps ?? [];
+                await sendLog('info', 'Plan received', { goal, stepsCount: steps.length });
+            }
+            catch (err) {
+                const errMsg = err instanceof Error ? err.message : String(err);
+                await sendLog('error', 'Backend plan failed', { error: errMsg });
+                sendResponse({ type: 'GOAL_RESULT', success: false, stepsExecuted: 0,
+                    stepResults: [], error: `Backend unavailable: ${errMsg}` });
+                return;
+            }
+            // 3. Execute each planned step via the content script
+            const stepResults = [];
+            for (const step of steps) {
+                const payload = {
+                    action: step.action,
+                    target: step.target,
+                    value: step.value ?? undefined,
+                };
+                await sendLog('info', 'Executing step', { action: payload.action, target: payload.target });
+                try {
+                    const result = await sendToContentScript(tabId, { type: 'EXECUTE_ACTION', payload });
+                    stepResults.push(result);
+                    await sendLog(result.success ? 'info' : 'error', 'Step result', {
+                        action: result.action, target: result.target,
+                        success: result.success, duration: result.duration,
+                        ...(result.error ? { error: result.error } : {}),
+                    });
+                }
+                catch (err) {
+                    const errMsg = err instanceof Error ? err.message : String(err);
+                    await sendLog('error', 'Step execution failed', { error: errMsg, target: step.target });
+                    stepResults.push({
+                        success: false, action: payload.action, target: payload.target,
+                        timestamp: Date.now(), duration: 0, error: errMsg,
+                    });
+                }
+            }
+            const allSuccess = stepResults.length > 0 && stepResults.every((r) => r.success);
+            await sendLog('info', 'Goal execution complete', {
+                goal, success: allSuccess, stepsExecuted: stepResults.length,
+            });
+            sendResponse({
+                type: 'GOAL_RESULT',
+                success: allSuccess,
+                stepsExecuted: stepResults.length,
+                stepResults,
+            });
+        })();
+        return true; // keep message channel open for async sendResponse
+    }
     if (msg.type === 'GET_STATUS') {
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             const tabId = tabs[0]?.id ?? null;
@@ -119,3 +196,4 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
     return false;
 });
 void sendLog('info', 'Background service worker started');
+export {};

@@ -10,11 +10,11 @@
         "success": true,
         "action": "click",
         "target": "[data-testid=\"row-1\"]",
-        "timestamp": 1775887098772,
+        "timestamp": 1775891206043,
         "duration": 0
       }
     }
   ],
-  "startedAt": 1775887098748,
-  "endedAt": 1775887098773
+  "startedAt": 1775891206020,
+  "endedAt": 1775891206045
 }

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Popup script for the Automation SDK Chrome Extension.
  *
@@ -6,8 +5,10 @@
  * result status in the UI.  All logging is handled by the background worker;
  * the popup UI stays clean (no raw logs or stack traces displayed to users).
  */
-Object.defineProperty(exports, "__esModule", { value: true });
 // ─── DOM references ───────────────────────────────────────────────────────────
+const goalInput = document.getElementById('goal-input');
+const btnSend = document.getElementById('btn-send');
+const goalStatusEl = document.getElementById('goal-status');
 const actionSelect = document.getElementById('action');
 const targetInput = document.getElementById('target');
 const valueInput = document.getElementById('value');
@@ -30,6 +31,14 @@ function setLoading(loading) {
     btnClear.disabled = loading;
     btnRun.textContent = loading ? 'Running…' : 'Run';
 }
+function showGoalStatus(message, kind) {
+    goalStatusEl.textContent = message;
+    goalStatusEl.className = kind;
+}
+function setGoalLoading(loading) {
+    btnSend.disabled = loading;
+    btnSend.textContent = loading ? 'Running…' : 'Send';
+}
 // ─── Action-select: show/hide value field ─────────────────────────────────────
 actionSelect.addEventListener('change', () => {
     valueField.style.display = actionSelect.value === 'type' ? 'block' : 'none';
@@ -38,11 +47,51 @@ actionSelect.addEventListener('change', () => {
 valueField.style.display = 'none';
 // ─── Clear button ─────────────────────────────────────────────────────────────
 btnClear.addEventListener('click', () => {
+    goalInput.value = '';
     targetInput.value = '';
     valueInput.value = '';
     actionSelect.value = 'navigate';
     valueField.style.display = 'none';
     clearStatus();
+    goalStatusEl.textContent = '';
+    goalStatusEl.className = '';
+});
+// ─── Send button (goal → background → backend plan → execute steps) ───────────
+btnSend.addEventListener('click', () => {
+    const goal = goalInput.value.trim();
+    if (!goal) {
+        showGoalStatus('Please enter a goal.', 'error');
+        return;
+    }
+    resolveTargetTab((tabId) => {
+        if (tabId === undefined) {
+            showGoalStatus('No active tab found. Open a page first.', 'error');
+            return;
+        }
+        setGoalLoading(true);
+        goalStatusEl.textContent = '';
+        goalStatusEl.className = '';
+        const msg = { type: 'PLAN_GOAL', goal, tabId };
+        chrome.runtime.sendMessage(msg, (response) => {
+            setGoalLoading(false);
+            if (chrome.runtime.lastError) {
+                showGoalStatus('Extension error — please reload.', 'error');
+                return;
+            }
+            if (!response || response.type !== 'GOAL_RESULT') {
+                showGoalStatus('Unexpected response from background.', 'error');
+                return;
+            }
+            if (response.success) {
+                showGoalStatus(`Done — ${response.stepsExecuted} step${response.stepsExecuted !== 1 ? 's' : ''} executed.`, 'success');
+            }
+            else {
+                showGoalStatus(response.error
+                    ? `Failed: ${response.error}`
+                    : 'Execution failed — check backend logs.', 'error');
+            }
+        });
+    });
 });
 // ─── Run button ───────────────────────────────────────────────────────────────
 // ─── resolveTargetTab ─────────────────────────────────────────────────────────
@@ -120,3 +169,4 @@ btnRun.addEventListener('click', () => {
         });
     });
 });
+export {};

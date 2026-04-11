@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Content script for the Automation SDK Chrome Extension.
  *
@@ -7,7 +6,6 @@
  * structured results.  Errors are returned as structured results (not thrown)
  * so the background can log them centrally.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
 // ─── Action executors ─────────────────────────────────────────────────────────
 function executeClick(target) {
     const el = document.querySelector(target);
@@ -78,3 +76,4 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
     });
     return true; // keep channel open for async sendResponse
 });
+export {};

@@ -11,7 +11,20 @@
         "success": true,
         "action": "type",
         "target": "[data-testid=\"step1-name\"]",
-        "timestamp": 1775887098348,
+        "timestamp": 1775891205618,
+        "duration": 2
+      }
+    },
+    {
+      "payload": {
+        "action": "click",
+        "target": "[data-testid=\"step-next\"]"
+      },
+      "result": {
+        "success": true,
+        "action": "click",
+        "target": "[data-testid=\"step-next\"]",
+        "timestamp": 1775891205631,
         "duration": 0
       }
     },
@@ -24,20 +37,7 @@
         "success": true,
         "action": "click",
         "target": "[data-testid=\"step-next\"]",
-        "timestamp": 1775887098363,
-        "duration": 0
-      }
-    },
-    {
-      "payload": {
-        "action": "click",
-        "target": "[data-testid=\"step-next\"]"
-      },
-      "result": {
-        "success": true,
-        "action": "click",
-        "target": "[data-testid=\"step-next\"]",
-        "timestamp": 1775887098382,
+        "timestamp": 1775891205648,
         "duration": 0
       }
     },
@@ -50,11 +50,11 @@
         "success": true,
         "action": "click",
         "target": "[data-testid=\"workflow-submit\"]",
-        "timestamp": 1775887098397,
+        "timestamp": 1775891205666,
         "duration": 1
       }
     }
   ],
-  "startedAt": 1775887098343,
-  "endedAt": 1775887098398
+  "startedAt": 1775891205613,
+  "endedAt": 1775891205667
 }
