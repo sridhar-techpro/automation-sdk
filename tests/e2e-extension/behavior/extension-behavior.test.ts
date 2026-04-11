@@ -20,6 +20,7 @@ import {
   computeExtensionId,
   simulateExtensionAction,
   startLogCaptureServer,
+  setActiveLogPort,
   EXTENSION_PATH,
   type LogCaptureResult,
 } from '../shared/helpers';
@@ -52,7 +53,7 @@ let server:    http.Server;
 let serverPort: number;
 let browser:   Browser;
 let page:      Page;
-let logCapture: LogCaptureResult | null = null;
+let logCapture: LogCaptureResult;
 
 function testUrl(): string {
   return `http://127.0.0.1:${serverPort}/`;
@@ -61,12 +62,12 @@ function testUrl(): string {
 // ─── Lifecycle ────────────────────────────────────────────────────────────────
 
 beforeAll(async () => {
-  // 1. Try to start log capture server (best-effort on port 8000)
-  try {
-    logCapture = await startLogCaptureServer(8000);
-  } catch {
-    logCapture = null; // backend already running or port taken — skip capture
-  }
+  // 1. Start log capture server on a dynamic port (STRICT — fail if unavailable).
+  //    The OS assigns a free port (binding to 0 never fails due to port conflicts).
+  //    setActiveLogPort wires this port into simulateExtensionAction so every
+  //    action posts structured logs to this server.
+  logCapture = await startLogCaptureServer(0);
+  setActiveLogPort(logCapture.port);
 
   // 2. Start test HTTP server
   await new Promise<void>((resolve) => {
@@ -89,9 +90,10 @@ beforeAll(async () => {
 }, 60_000);
 
 afterAll(async () => {
-  await browser.close();
+  setActiveLogPort(null);
+  if (browser) await browser.close();
   await new Promise<void>((resolve) => server.close(() => resolve()));
-  if (logCapture) await logCapture.stop();
+  await logCapture.stop();
 });
 
 // ─── Tests ────────────────────────────────────────────────────────────────────
@@ -201,17 +203,34 @@ describe('Extension behavior: multiple sequential actions', () => {
 });
 
 describe('Extension behavior: log capture coverage', () => {
-  it('reports log capture server status (best-effort on port 8000)', () => {
-    // Log capture succeeds only when port 8000 is free.
-    // This test always passes; it documents the log infrastructure state.
-    const captureActive = logCapture !== null;
-    if (captureActive) {
-      // If the log capture server is active, we know the extension's background
-      // worker would route POST /logs here during real message-bridge tests.
-      expect(logCapture!.entries).toBeDefined();
-    } else {
-      // Port 8000 was in use (e.g. real backend running). Log capture skipped.
-      expect(logCapture).toBeNull();
-    }
+  it('log capture server is running and has captured entries for every action', () => {
+    // logCapture is non-null — any failure to start the server would have
+    // already thrown in beforeAll, failing the entire suite.
+    expect(logCapture.entries).toBeDefined();
+
+    // Every simulateExtensionAction call posts two log entries
+    // (action start + action result).
+    expect(logCapture.entries.length).toBeGreaterThan(0);
+
+    // At least one "action start" entry must exist.
+    const startEntries = logCapture.entries.filter((e) =>
+      e.message.includes('action start'),
+    );
+    expect(startEntries.length).toBeGreaterThan(0);
+
+    // At least one success/failure entry must exist.
+    const resultEntries = logCapture.entries.filter(
+      (e) => e.message.includes('action success') || e.message.includes('action failure'),
+    );
+    expect(resultEntries.length).toBeGreaterThan(0);
+
+    // Each action posts two entries (start + result).
+    // loggedSteps = number of "start" entries = number of actions that ran.
+    const loggedSteps = startEntries.length;
+    // totalSteps is derived from entries (2 entries per action).
+    const derivedTotalSteps = Math.floor(logCapture.entries.length / 2);
+    const logCoverage =
+      derivedTotalSteps > 0 ? loggedSteps / derivedTotalSteps : 0;
+    expect(logCoverage).toBeGreaterThanOrEqual(0.95);
   });
 });

@@ -28,6 +28,7 @@ import {
   simulateExtensionAction,
   simulateSelectOption,
   startLogCaptureServer,
+  setActiveLogPort,
   isVisible,
   textOf,
   valueOf,
@@ -92,7 +93,7 @@ let server:     http.Server;
 let serverPort: number;
 let browser:    Browser;
 let appPage:    Page;
-let logCapture: LogCaptureResult | null = null;
+let logCapture: LogCaptureResult;
 
 function appUrl(): string {
   return `http://127.0.0.1:${serverPort}/`;
@@ -105,12 +106,10 @@ async function nav(): Promise<void> {
 // ─── Lifecycle ────────────────────────────────────────────────────────────────
 
 beforeAll(async () => {
-  // 1. Try to start log capture server on port 8000 (best-effort)
-  try {
-    logCapture = await startLogCaptureServer(8000);
-  } catch {
-    logCapture = null;
-  }
+  // 1. Start log capture server on a dynamic port (STRICT — fail if unavailable).
+  //    The OS assigns a free port (binding to 0 never fails due to port conflicts).
+  logCapture = await startLogCaptureServer(0);
+  setActiveLogPort(logCapture.port);
 
   // 2. Start HTTP server for enterprise app
   await new Promise<void>((resolve) => {
@@ -150,9 +149,10 @@ afterAll(async () => {
   fs.mkdirSync(outDir, { recursive: true });
   fs.writeFileSync(path.join(outDir, 'extension-workflow-results.log'), wfLog + '\n');
 
+  setActiveLogPort(null);
   await browser.close();
   await new Promise<void>((resolve) => server.close(() => resolve()));
-  if (logCapture) await logCapture.stop();
+  await logCapture.stop();
 }, 15_000);
 
 // ═════════════════════════════════════════════════════════════════════════════
@@ -582,6 +582,27 @@ describe('WF-7: Failure + retry via extension', () => {
     });
     expect(submit.success).toBe(true);
     expect(await isVisible(appPage, 'form-success')).toBe(true);
+
+    // ── Failure trace log validation ─────────────────────────────────────────
+    // The log server must have captured the failure and the recovery.
+    const wf7Entries = logCapture.entries.filter(
+      (e) => e.data?.target === '#non-existent-submit',
+    );
+    // Failure must be logged.
+    const failLog = wf7Entries.find(
+      (e) => e.message === 'action failure' && e.level === 'error',
+    );
+    expect(failLog).toBeDefined();
+    expect(failLog?.data?.success).toBe(false);
+
+    // Recovery (retry success) must also be logged.
+    const retryLog = logCapture.entries.find(
+      (e) =>
+        e.message === 'action success' &&
+        e.data?.target === '[data-testid="form-name"]',
+    );
+    expect(retryLog).toBeDefined();
+    expect(retryLog?.data?.success).toBe(true);
   });
 
   it('action result always carries structured error info (never throws)', async () => {
@@ -600,6 +621,14 @@ describe('WF-7: Failure + retry via extension', () => {
       expect(typeof r.timestamp).toBe('number');
       expect(typeof r.duration).toBe('number');
     }
+
+    // Both failures must have been logged.
+    const failureLogs = logCapture.entries.filter(
+      (e) =>
+        e.message === 'action failure' &&
+        (e.data?.target === '#ghost-1' || e.data?.target === '#ghost-2'),
+    );
+    expect(failureLogs.length).toBe(2);
   });
 });
 
@@ -609,30 +638,43 @@ describe('WF-7: Failure + retry via extension', () => {
 
 describe('Log coverage metrics', () => {
   it('reports total steps, success rate, and log capture status', () => {
-    const capturedLogCount = logCapture ? logCapture.entries.length : 0;
-    const logCoverage      = totalSteps > 0 ? capturedLogCount / totalSteps : 0;
+    // logCapture is always non-null — strict startup ensures observability.
+    const allEntries     = logCapture.entries;
+    const startEntries   = allEntries.filter((e) => e.message.includes('action start'));
+    const successEntries = allEntries.filter((e) => e.message.includes('action success'));
+    const failureEntries = allEntries.filter((e) => e.message.includes('action failure'));
+
+    const loggedSteps = startEntries.length;
+    const logCoverage = totalSteps > 0
+      ? Math.min(loggedSteps / totalSteps, 1.0)
+      : 0;
 
     // Write metrics to report
     const outDir = path.join(__dirname, '../../../validation/extension-validation-report');
     const metrics = {
-      totalTests:           26,   // behavior(9) + workflow(15) + existing(4) - approximate
-      extensionTests:       11,   // behavior suite tests
-      workflowTests:        15,   // WF-1 through WF-7
-      successRate:          totalSteps > 0 ? successSteps / totalSteps : 1.0,
+      totalTests:      30,   // behavior(8) + popup-ux(8) + workflow(22) — approximate
+      extensionTests:  8,
+      workflowTests:   22,
+      successRate:     totalSteps > 0 ? successSteps / totalSteps : 1.0,
       totalSteps,
-      successSteps,
+      loggedSteps,
       logCoverage,
-      capturedLogs:         capturedLogCount,
-      retryRate:            0.0,  // retry scenarios tested in WF-7
-      logCaptureActive:     logCapture !== null,
+      capturedLogs:    allEntries.length,
+      successLogs:     successEntries.length,
+      failureLogs:     failureEntries.length,
+      retryRate:       0.0,
+      logCaptureActive: true,
     };
     fs.mkdirSync(outDir, { recursive: true });
     fs.writeFileSync(path.join(outDir, 'metrics.json'), JSON.stringify(metrics, null, 2));
 
-    // Assertions
+    // Core assertions
     expect(totalSteps).toBeGreaterThan(0);
-    // logCoverage is 0 when backend isn't running (expected in CI without backend)
-    expect(logCoverage).toBeGreaterThanOrEqual(0);
-    expect(logCoverage).toBeLessThanOrEqual(1.0);
+    expect(allEntries.length).toBeGreaterThan(0);
+    expect(startEntries.length).toBeGreaterThan(0);
+    expect(successEntries.length).toBeGreaterThan(0);
+
+    // MANDATORY: log coverage must be ≥ 95%
+    expect(logCoverage).toBeGreaterThanOrEqual(0.95);
   });
 });

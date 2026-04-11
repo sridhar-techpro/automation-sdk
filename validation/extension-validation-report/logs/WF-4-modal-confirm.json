@@ -10,7 +10,7 @@
         "success": true,
         "action": "click",
         "target": "[data-testid=\"modal-open\"]",
-        "timestamp": 1775884403795,
+        "timestamp": 1775887098951,
         "duration": 0
       }
     },
@@ -24,8 +24,8 @@
         "success": true,
         "action": "type",
         "target": "[data-testid=\"modal-input\"]",
-        "timestamp": 1775884403819,
-        "duration": 0
+        "timestamp": 1775887098982,
+        "duration": 1
       }
     },
     {
@@ -37,11 +37,11 @@
         "success": true,
         "action": "click",
         "target": "[data-testid=\"modal-confirm\"]",
-        "timestamp": 1775884403823,
-        "duration": 0
+        "timestamp": 1775887098990,
+        "duration": 1
       }
     }
   ],
-  "startedAt": 1775884403790,
-  "endedAt": 1775884403823
+  "startedAt": 1775887098948,
+  "endedAt": 1775887098991
 }

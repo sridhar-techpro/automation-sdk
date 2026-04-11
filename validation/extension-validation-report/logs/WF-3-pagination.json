@@ -10,8 +10,8 @@
         "success": true,
         "action": "click",
         "target": "[data-testid=\"page-next\"]",
-        "timestamp": 1775884403514,
-        "duration": 0
+        "timestamp": 1775887098689,
+        "duration": 1
       }
     },
     {
@@ -23,11 +23,11 @@
         "success": true,
         "action": "click",
         "target": "[data-testid=\"page-prev\"]",
-        "timestamp": 1775884403553,
+        "timestamp": 1775887098714,
         "duration": 1
       }
     }
   ],
-  "startedAt": 1775884403509,
-  "endedAt": 1775884403554
+  "startedAt": 1775887098685,
+  "endedAt": 1775887098715
 }

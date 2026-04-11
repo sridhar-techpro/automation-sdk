@@ -2,8 +2,10 @@
 // DO NOT EDIT — edit background.ts and rebuild
 
 const BACKEND_LOG_URL = 'http://127.0.0.1:8000/logs';
+const LOG_MAX_RETRIES = 3;
+const LOG_RETRY_BASE_MS = 200;
 
-async function sendLog(level, message, data) {
+async function sendLogWithRetry(level, message, data) {
   const entry = {
     level,
     source: 'background',
@@ -11,16 +13,29 @@ async function sendLog(level, message, data) {
     timestamp: Date.now(),
     data: data ?? {},
   };
-  try {
-    await fetch(BACKEND_LOG_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(entry),
-    });
-  } catch {
-    // Backend may not be running; logging failures are silent.
+  const body = JSON.stringify(entry);
+
+  for (let attempt = 0; attempt < LOG_MAX_RETRIES; attempt++) {
+    try {
+      const res = await fetch(BACKEND_LOG_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body,
+      });
+      if (res.ok) return;
+    } catch {
+      // network error — retry
+    }
+    if (attempt < LOG_MAX_RETRIES - 1) {
+      await new Promise((r) =>
+        setTimeout(r, LOG_RETRY_BASE_MS * Math.pow(2, attempt)),
+      );
+    }
   }
+  // All retries exhausted — drop silently to avoid crashing the service worker.
 }
+
+const sendLog = sendLogWithRetry;
 
 function sendToContentScript(tabId, msg) {
   return new Promise((resolve, reject) => {

@@ -2,12 +2,13 @@
   "totalTests": 30,
   "extensionTests": 8,
   "workflowTests": 22,
-  "successRate": 1.0,
+  "successRate": 0.9722222222222222,
   "totalSteps": 36,
-  "successSteps": 35,
-  "logCoverage": 0.0,
-  "capturedLogs": 0,
-  "retryRate": 0.0,
-  "logCaptureActive": false,
-  "note": "successSteps=35/36: WF-7 includes one intentional failure step (failure+retry). logCoverage=0: CI has no backend. Updated at runtime by tests/e2e-extension/workflows/product-workflows.test.ts"
+  "loggedSteps": 38,
+  "logCoverage": 1,
+  "capturedLogs": 76,
+  "successLogs": 35,
+  "failureLogs": 3,
+  "retryRate": 0,
+  "logCaptureActive": true
 }
