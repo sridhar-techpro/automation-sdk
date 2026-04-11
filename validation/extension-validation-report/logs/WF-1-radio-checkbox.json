@@ -10,7 +10,7 @@
         "success": true,
         "action": "click",
         "target": "[data-testid=\"radio-full-time\"]",
-        "timestamp": 1775891205508,
+        "timestamp": 1775892798093,
         "duration": 0
       }
     },
@@ -23,7 +23,7 @@
         "success": true,
         "action": "click",
         "target": "[data-testid=\"chk-feature-a\"]",
-        "timestamp": 1775891205513,
+        "timestamp": 1775892798101,
         "duration": 0
       }
     },
@@ -36,11 +36,11 @@
         "success": true,
         "action": "click",
         "target": "[data-testid=\"chk-feature-c\"]",
-        "timestamp": 1775891205520,
+        "timestamp": 1775892798104,
         "duration": 0
       }
     }
   ],
-  "startedAt": 1775891205502,
-  "endedAt": 1775891205521
+  "startedAt": 1775892798088,
+  "endedAt": 1775892798105
 }

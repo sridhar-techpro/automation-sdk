@@ -33,8 +33,8 @@ import {
 // ─── Popup file paths ─────────────────────────────────────────────────────────
 
 const EXTENSION_DIR = path.resolve(__dirname, '../../../extension');
-const POPUP_HTML    = fs.readFileSync(path.join(EXTENSION_DIR, 'popup.html'), 'utf8');
-const POPUP_JS      = fs.readFileSync(path.join(EXTENSION_DIR, 'popup.js'),   'utf8');
+const POPUP_HTML    = fs.readFileSync(path.join(EXTENSION_DIR, 'dist', 'popup.html'), 'utf8');
+const POPUP_JS      = fs.readFileSync(path.join(EXTENSION_DIR, 'dist', 'popup.js'),   'utf8');
 
 // ─── Suite state ──────────────────────────────────────────────────────────────
 

@@ -10,11 +10,11 @@
         "success": true,
         "action": "click",
         "target": "[data-testid=\"loading-trigger\"]",
-        "timestamp": 1775891206310,
+        "timestamp": 1775892799003,
         "duration": 0
       }
     }
   ],
-  "startedAt": 1775891206280,
-  "endedAt": 1775891206312
+  "startedAt": 1775892798980,
+  "endedAt": 1775892799004
 }

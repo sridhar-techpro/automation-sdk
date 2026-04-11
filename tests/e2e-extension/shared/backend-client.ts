@@ -42,9 +42,17 @@ export interface PlanWithContextResponse {
 
 /**
  * Starts the FastAPI backend with uvicorn and waits for it to be healthy.
+ * If the backend is already running on the given port, returns null (no-op).
  * The process inherits the caller's environment (including OPENAI_API_KEY).
  */
-export async function startBackend(port = BACKEND_PORT, timeoutMs = 25_000): Promise<ChildProcess> {
+export async function startBackend(port = BACKEND_PORT, timeoutMs = 25_000): Promise<ChildProcess | null> {
+  // If already running, skip — avoids "address already in use" errors
+  const alreadyUp = await waitForBackendHealth(port, 1_500).then(() => true).catch(() => false);
+  if (alreadyUp) {
+    console.log(`[backend-client] Backend already running on port ${port}`);
+    return null;
+  }
+
   const root = path.resolve(__dirname, '../../..');
 
   const proc = spawn(

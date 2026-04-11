@@ -79,3 +79,15 @@ class PlanWithContextResponse(BaseModel):
 
     steps: list[ExtensionActionStep]
     reasoning: str = ""      # overall plan summary from the LLM
+
+
+# ─── Natural-language chat models ─────────────────────────────────────────────
+
+class ChatRequest(BaseModel):
+    """Request body for /chat — a free-form natural language goal."""
+    goal: str
+
+
+class ChatResponse(BaseModel):
+    """Response from /chat — a human-readable AI answer."""
+    response: str

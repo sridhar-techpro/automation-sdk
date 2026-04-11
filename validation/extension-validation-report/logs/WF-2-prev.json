@@ -10,7 +10,7 @@
         "success": true,
         "action": "click",
         "target": "[data-testid=\"step-next\"]",
-        "timestamp": 1775891205700,
+        "timestamp": 1775892798283,
         "duration": 0
       }
     },
@@ -23,11 +23,11 @@
         "success": true,
         "action": "click",
         "target": "[data-testid=\"step-prev\"]",
-        "timestamp": 1775891205730,
+        "timestamp": 1775892798304,
         "duration": 0
       }
     }
   ],
-  "startedAt": 1775891205696,
-  "endedAt": 1775891205731
+  "startedAt": 1775892798279,
+  "endedAt": 1775892798305
 }

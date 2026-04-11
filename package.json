@@ -13,7 +13,7 @@
     "test:e2e": "jest tests/e2e --runInBand --forceExit",
     "test:unit": "jest tests/unit --runInBand --forceExit",
     "test:e2e-extension": "jest tests/e2e-extension --runInBand --forceExit",
-    "build:extension": "tsc -p extension/tsconfig.json",
+    "build:extension": "tsc -p extension/tsconfig.json && node scripts/package-extension.js",
     "validate": "ts-node --project tsconfig.scripts.json scripts/validate.ts",
     "generate-extension-report": "ts-node --project tsconfig.scripts.json scripts/generate-extension-report.ts",
     "start:chrome": "chrome --remote-debugging-port=9222"

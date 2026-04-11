@@ -3,6 +3,7 @@ import json
 from typing import List
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from .matcher import match_workflow
 from .models import (
@@ -15,10 +16,24 @@ from .models import (
     LogResponse,
     PlanWithContextRequest,
     PlanWithContextResponse,
+    ChatRequest,
+    ChatResponse,
 )
-from .planner import plan_with_llm, plan_with_context
+from .planner import plan_with_llm, plan_with_context, chat_with_llm
 
 app = FastAPI(title="Automation Planner", version="1.0.0")
+
+# ─── CORS ─────────────────────────────────────────────────────────────────────
+# Allow the Chrome extension (chrome-extension://<id>) to call backend APIs.
+# allow_origin_regex covers every extension ID without having to hard-code it.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:8000", "http://127.0.0.1:8000"],
+    allow_origin_regex=r"chrome-extension://.*",
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # ─── In-memory log store (for test introspection) ─────────────────────────────
 
@@ -32,6 +47,17 @@ def plan(req: PlanRequest) -> PlanResponse:
 
 @app.post("/plan-with-context", response_model=PlanWithContextResponse)
 def plan_ctx(req: PlanWithContextRequest) -> PlanWithContextResponse:
+    return plan_with_context(req)
+
+
+@app.post("/chat", response_model=ChatResponse)
+def chat(req: ChatRequest) -> ChatResponse:
+    """
+    Natural-language goal → human-readable AI response.
+    Used by the extension side panel.  OPENAI_API_KEY is read from the
+    server environment only — never passed in the request body.
+    """
+    return chat_with_llm(req)
     """
     Context-aware extension action planner.
 
