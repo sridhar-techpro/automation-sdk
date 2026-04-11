@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-04-11T01:20:43.000Z",
+  "nodeVersion": "v24.14.1",
+  "platform": "linux x64 6.17.0-1010-azure",
+  "pnpmVersion": "9.0.0",
+  "chromeExecutable": "/usr/bin/google-chrome",
+  "branch": "copilot/implement-llm-planning-stabilization-replay-engine"
+}
