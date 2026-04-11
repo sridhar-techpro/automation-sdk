@@ -1,0 +1,33 @@
+{
+  "scenario": "WF-2-prev",
+  "steps": [
+    {
+      "payload": {
+        "action": "click",
+        "target": "[data-testid=\"step-next\"]"
+      },
+      "result": {
+        "success": true,
+        "action": "click",
+        "target": "[data-testid=\"step-next\"]",
+        "timestamp": 1775884403247,
+        "duration": 0
+      }
+    },
+    {
+      "payload": {
+        "action": "click",
+        "target": "[data-testid=\"step-prev\"]"
+      },
+      "result": {
+        "success": true,
+        "action": "click",
+        "target": "[data-testid=\"step-prev\"]",
+        "timestamp": 1775884403269,
+        "duration": 1
+      }
+    }
+  ],
+  "startedAt": 1775884403242,
+  "endedAt": 1775884403270
+}

@@ -1,0 +1,33 @@
+{
+  "scenario": "WF-4-modal-close",
+  "steps": [
+    {
+      "payload": {
+        "action": "click",
+        "target": "[data-testid=\"modal-open\"]"
+      },
+      "result": {
+        "success": true,
+        "action": "click",
+        "target": "[data-testid=\"modal-open\"]",
+        "timestamp": 1775884403724,
+        "duration": 0
+      }
+    },
+    {
+      "payload": {
+        "action": "click",
+        "target": "[data-testid=\"modal-close\"]"
+      },
+      "result": {
+        "success": true,
+        "action": "click",
+        "target": "[data-testid=\"modal-close\"]",
+        "timestamp": 1775884403746,
+        "duration": 0
+      }
+    }
+  ],
+  "startedAt": 1775884403719,
+  "endedAt": 1775884403747
+}

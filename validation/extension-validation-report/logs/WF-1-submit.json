@@ -1,0 +1,61 @@
+{
+  "scenario": "WF-1-submit",
+  "steps": [
+    {
+      "payload": {
+        "action": "click",
+        "target": "[data-testid=\"form-submit\"]"
+      },
+      "result": {
+        "success": true,
+        "action": "click",
+        "target": "[data-testid=\"form-submit\"]",
+        "timestamp": 1775884403089,
+        "duration": 0
+      }
+    },
+    {
+      "payload": {
+        "action": "type",
+        "target": "[data-testid=\"form-name\"]",
+        "value": "Jane Extension"
+      },
+      "result": {
+        "success": true,
+        "action": "type",
+        "target": "[data-testid=\"form-name\"]",
+        "timestamp": 1775884403116,
+        "duration": 1
+      }
+    },
+    {
+      "payload": {
+        "action": "type",
+        "target": "[data-testid=\"form-email\"]",
+        "value": "jane@ext.test"
+      },
+      "result": {
+        "success": true,
+        "action": "type",
+        "target": "[data-testid=\"form-email\"]",
+        "timestamp": 1775884403118,
+        "duration": 0
+      }
+    },
+    {
+      "payload": {
+        "action": "click",
+        "target": "[data-testid=\"form-submit\"]"
+      },
+      "result": {
+        "success": true,
+        "action": "click",
+        "target": "[data-testid=\"form-submit\"]",
+        "timestamp": 1775884403119,
+        "duration": 0
+      }
+    }
+  ],
+  "startedAt": 1775884403084,
+  "endedAt": 1775884403120
+}

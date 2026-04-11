@@ -1,0 +1,20 @@
+{
+  "scenario": "WF-4-modal-open",
+  "steps": [
+    {
+      "payload": {
+        "action": "click",
+        "target": "[data-testid=\"modal-open\"]"
+      },
+      "result": {
+        "success": true,
+        "action": "click",
+        "target": "[data-testid=\"modal-open\"]",
+        "timestamp": 1775884403680,
+        "duration": 0
+      }
+    }
+  ],
+  "startedAt": 1775884403655,
+  "endedAt": 1775884403680
+}

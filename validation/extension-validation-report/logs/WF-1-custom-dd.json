@@ -1,0 +1,33 @@
+{
+  "scenario": "WF-1-custom-dd",
+  "steps": [
+    {
+      "payload": {
+        "action": "click",
+        "target": "[data-testid=\"priority-trigger\"]"
+      },
+      "result": {
+        "success": true,
+        "action": "click",
+        "target": "[data-testid=\"priority-trigger\"]",
+        "timestamp": 1775884402984,
+        "duration": 0
+      }
+    },
+    {
+      "payload": {
+        "action": "click",
+        "target": "[data-testid=\"priority-opt-high\"]"
+      },
+      "result": {
+        "success": true,
+        "action": "click",
+        "target": "[data-testid=\"priority-opt-high\"]",
+        "timestamp": 1775884403007,
+        "duration": 0
+      }
+    }
+  ],
+  "startedAt": 1775884402981,
+  "endedAt": 1775884403007
+}

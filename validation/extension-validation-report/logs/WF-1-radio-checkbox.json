@@ -1,0 +1,46 @@
+{
+  "scenario": "WF-1-radio-checkbox",
+  "steps": [
+    {
+      "payload": {
+        "action": "click",
+        "target": "[data-testid=\"radio-full-time\"]"
+      },
+      "result": {
+        "success": true,
+        "action": "click",
+        "target": "[data-testid=\"radio-full-time\"]",
+        "timestamp": 1775884403041,
+        "duration": 0
+      }
+    },
+    {
+      "payload": {
+        "action": "click",
+        "target": "[data-testid=\"chk-feature-a\"]"
+      },
+      "result": {
+        "success": true,
+        "action": "click",
+        "target": "[data-testid=\"chk-feature-a\"]",
+        "timestamp": 1775884403052,
+        "duration": 1
+      }
+    },
+    {
+      "payload": {
+        "action": "click",
+        "target": "[data-testid=\"chk-feature-c\"]"
+      },
+      "result": {
+        "success": true,
+        "action": "click",
+        "target": "[data-testid=\"chk-feature-c\"]",
+        "timestamp": 1775884403054,
+        "duration": 0
+      }
+    }
+  ],
+  "startedAt": 1775884403036,
+  "endedAt": 1775884403054
+}

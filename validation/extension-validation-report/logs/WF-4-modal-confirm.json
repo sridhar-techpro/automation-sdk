@@ -1,0 +1,47 @@
+{
+  "scenario": "WF-4-modal-confirm",
+  "steps": [
+    {
+      "payload": {
+        "action": "click",
+        "target": "[data-testid=\"modal-open\"]"
+      },
+      "result": {
+        "success": true,
+        "action": "click",
+        "target": "[data-testid=\"modal-open\"]",
+        "timestamp": 1775884403795,
+        "duration": 0
+      }
+    },
+    {
+      "payload": {
+        "action": "type",
+        "target": "[data-testid=\"modal-input\"]",
+        "value": "Extension note"
+      },
+      "result": {
+        "success": true,
+        "action": "type",
+        "target": "[data-testid=\"modal-input\"]",
+        "timestamp": 1775884403819,
+        "duration": 0
+      }
+    },
+    {
+      "payload": {
+        "action": "click",
+        "target": "[data-testid=\"modal-confirm\"]"
+      },
+      "result": {
+        "success": true,
+        "action": "click",
+        "target": "[data-testid=\"modal-confirm\"]",
+        "timestamp": 1775884403823,
+        "duration": 0
+      }
+    }
+  ],
+  "startedAt": 1775884403790,
+  "endedAt": 1775884403823
+}

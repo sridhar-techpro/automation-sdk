@@ -1,0 +1,20 @@
+{
+  "scenario": "WF-5-scroll-click",
+  "steps": [
+    {
+      "payload": {
+        "action": "click",
+        "target": "[data-testid=\"scroll-target-btn\"]"
+      },
+      "result": {
+        "success": true,
+        "action": "click",
+        "target": "[data-testid=\"scroll-target-btn\"]",
+        "timestamp": 1775884404870,
+        "duration": 0
+      }
+    }
+  ],
+  "startedAt": 1775884404838,
+  "endedAt": 1775884404871
+}

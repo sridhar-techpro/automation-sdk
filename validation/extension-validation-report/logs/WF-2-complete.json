@@ -1,0 +1,60 @@
+{
+  "scenario": "WF-2-complete",
+  "steps": [
+    {
+      "payload": {
+        "action": "type",
+        "target": "[data-testid=\"step1-name\"]",
+        "value": "Bob Extension"
+      },
+      "result": {
+        "success": true,
+        "action": "type",
+        "target": "[data-testid=\"step1-name\"]",
+        "timestamp": 1775884403156,
+        "duration": 0
+      }
+    },
+    {
+      "payload": {
+        "action": "click",
+        "target": "[data-testid=\"step-next\"]"
+      },
+      "result": {
+        "success": true,
+        "action": "click",
+        "target": "[data-testid=\"step-next\"]",
+        "timestamp": 1775884403172,
+        "duration": 0
+      }
+    },
+    {
+      "payload": {
+        "action": "click",
+        "target": "[data-testid=\"step-next\"]"
+      },
+      "result": {
+        "success": true,
+        "action": "click",
+        "target": "[data-testid=\"step-next\"]",
+        "timestamp": 1775884403197,
+        "duration": 0
+      }
+    },
+    {
+      "payload": {
+        "action": "click",
+        "target": "[data-testid=\"workflow-submit\"]"
+      },
+      "result": {
+        "success": true,
+        "action": "click",
+        "target": "[data-testid=\"workflow-submit\"]",
+        "timestamp": 1775884403212,
+        "duration": 0
+      }
+    }
+  ],
+  "startedAt": 1775884403151,
+  "endedAt": 1775884403212
+}

@@ -1,0 +1,62 @@
+{
+  "scenario": "WF-7-failure-retry",
+  "steps": [
+    {
+      "payload": {
+        "action": "click",
+        "target": "#non-existent-submit"
+      },
+      "result": {
+        "success": false,
+        "action": "click",
+        "target": "#non-existent-submit",
+        "timestamp": 1775884405125,
+        "duration": 1,
+        "error": "Element not found: #non-existent-submit"
+      }
+    },
+    {
+      "payload": {
+        "action": "type",
+        "target": "[data-testid=\"form-name\"]",
+        "value": "Retry User"
+      },
+      "result": {
+        "success": true,
+        "action": "type",
+        "target": "[data-testid=\"form-name\"]",
+        "timestamp": 1775884405132,
+        "duration": 1
+      }
+    },
+    {
+      "payload": {
+        "action": "type",
+        "target": "[data-testid=\"form-email\"]",
+        "value": "retry@ext.test"
+      },
+      "result": {
+        "success": true,
+        "action": "type",
+        "target": "[data-testid=\"form-email\"]",
+        "timestamp": 1775884405136,
+        "duration": 1
+      }
+    },
+    {
+      "payload": {
+        "action": "click",
+        "target": "[data-testid=\"form-submit\"]"
+      },
+      "result": {
+        "success": true,
+        "action": "click",
+        "target": "[data-testid=\"form-submit\"]",
+        "timestamp": 1775884405138,
+        "duration": 0
+      }
+    }
+  ],
+  "startedAt": 1775884405076,
+  "endedAt": 1775884405138
+}

@@ -18,5 +18,11 @@
   "action": {
     "default_popup": "popup.html",
     "default_title": "Automation SDK"
-  }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["popup.html", "popup.js"],
+      "matches": ["<all_urls>"]
+    }
+  ]
 }

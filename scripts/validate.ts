@@ -305,6 +305,8 @@ async function runJestTests(): Promise<TestRunResult> {
     { label: 'e2e:performance',          pattern: 'tests/e2e/performance.test.ts',                   timeout: 120_000 },
     { label: 'e2e:phase34-semantic',     pattern: 'tests/e2e/phase34-semantic.e2e.test.ts',           timeout: 180_000 },
     { label: 'e2e:extension',            pattern: 'tests/e2e/extension.e2e.test.ts',                   timeout: 180_000 },
+    { label: 'e2e:extension-behavior',   pattern: 'tests/e2e-extension/behavior',                       timeout: 120_000 },
+    { label: 'e2e:extension-workflows',  pattern: 'tests/e2e-extension/workflows',                      timeout: 180_000 },
   ];
 
   let combinedOutput = '';

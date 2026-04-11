@@ -1,0 +1,33 @@
+{
+  "scenario": "WF-3-pagination",
+  "steps": [
+    {
+      "payload": {
+        "action": "click",
+        "target": "[data-testid=\"page-next\"]"
+      },
+      "result": {
+        "success": true,
+        "action": "click",
+        "target": "[data-testid=\"page-next\"]",
+        "timestamp": 1775884403514,
+        "duration": 0
+      }
+    },
+    {
+      "payload": {
+        "action": "click",
+        "target": "[data-testid=\"page-prev\"]"
+      },
+      "result": {
+        "success": true,
+        "action": "click",
+        "target": "[data-testid=\"page-prev\"]",
+        "timestamp": 1775884403553,
+        "duration": 1
+      }
+    }
+  ],
+  "startedAt": 1775884403509,
+  "endedAt": 1775884403554
+}

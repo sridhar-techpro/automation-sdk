@@ -1,0 +1,21 @@
+{
+  "scenario": "WF-3-search",
+  "steps": [
+    {
+      "payload": {
+        "action": "type",
+        "target": "[data-testid=\"table-search\"]",
+        "value": "Alice"
+      },
+      "result": {
+        "success": true,
+        "action": "type",
+        "target": "[data-testid=\"table-search\"]",
+        "timestamp": 1775884403371,
+        "duration": 1
+      }
+    }
+  ],
+  "startedAt": 1775884403366,
+  "endedAt": 1775884403373
+}

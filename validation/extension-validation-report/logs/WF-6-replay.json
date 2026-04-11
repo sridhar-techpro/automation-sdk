@@ -1,0 +1,48 @@
+{
+  "scenario": "WF-6-replay",
+  "steps": [
+    {
+      "payload": {
+        "action": "type",
+        "target": "[data-testid=\"form-name\"]",
+        "value": "Replay User"
+      },
+      "result": {
+        "success": true,
+        "action": "type",
+        "target": "[data-testid=\"form-name\"]",
+        "timestamp": 1775884405042,
+        "duration": 1
+      }
+    },
+    {
+      "payload": {
+        "action": "type",
+        "target": "[data-testid=\"form-email\"]",
+        "value": "replay@ext.test"
+      },
+      "result": {
+        "success": true,
+        "action": "type",
+        "target": "[data-testid=\"form-email\"]",
+        "timestamp": 1775884405046,
+        "duration": 5
+      }
+    },
+    {
+      "payload": {
+        "action": "click",
+        "target": "[data-testid=\"form-submit\"]"
+      },
+      "result": {
+        "success": true,
+        "action": "click",
+        "target": "[data-testid=\"form-submit\"]",
+        "timestamp": 1775884405056,
+        "duration": 1
+      }
+    }
+  ],
+  "startedAt": 1775884404959,
+  "endedAt": 1775884405058
+}

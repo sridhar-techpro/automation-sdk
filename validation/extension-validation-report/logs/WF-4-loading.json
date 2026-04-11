@@ -1,0 +1,20 @@
+{
+  "scenario": "WF-4-loading",
+  "steps": [
+    {
+      "payload": {
+        "action": "click",
+        "target": "[data-testid=\"loading-trigger\"]"
+      },
+      "result": {
+        "success": true,
+        "action": "click",
+        "target": "[data-testid=\"loading-trigger\"]",
+        "timestamp": 1775884403885,
+        "duration": 0
+      }
+    }
+  ],
+  "startedAt": 1775884403862,
+  "endedAt": 1775884403885
+}
