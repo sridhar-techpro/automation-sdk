@@ -132,6 +132,36 @@ function collectSystemInfo(timestamp: string): Record<string, string> {
   };
 }
 
+// ─── Step 1b: Kill orphan Chrome/Chromium processes ──────────────────────────
+
+/**
+ * Kills any Chrome or Chromium processes left over from previous validation
+ * runs.  Orphan processes consume memory and can cause CDP connection failures
+ * in the next suite's beforeAll (the new puppeteer.launch() ends up contending
+ * for system resources or ports).  Safe to call even when no orphans exist.
+ *
+ * Targets processes with a Puppeteer temp user-data-dir in the command line
+ * (--user-data-dir=/tmp/puppeteer_dev_chrome_profile-*), which uniquely
+ * identifies Puppeteer-launched Chrome instances without risk of matching
+ * unrelated system processes.
+ */
+function killOrphanChrome(): void {
+  const patterns = [
+    'puppeteer_dev_chrome_profile',  // Puppeteer-launched Chrome (exact marker)
+    '/opt/google/chrome/chrome',     // Google Chrome on this runner
+    'chromium-browser',              // Chromium on Debian/Ubuntu
+  ];
+  for (const pattern of patterns) {
+    try {
+      cp.execSync(`pkill -9 -f "${pattern}" 2>/dev/null || true`, { encoding: 'utf8', stdio: 'pipe' });
+    } catch { /* ignore */ }
+  }
+  // Give OS time to reclaim ports and file descriptors before the next launch.
+  try {
+    cp.execSync('sleep 0.5', { encoding: 'utf8' });
+  } catch { /* ignore */ }
+}
+
 // ─── Step 2: Run Jest tests ───────────────────────────────────────────────────
 
 function runJestTests(): TestRunResult {
@@ -159,23 +189,68 @@ function runJestTests(): TestRunResult {
 
   for (const suite of suites) {
     console.log(`  ↳ [${suite.label}] running…`);
+    // Kill any orphan Chrome left over from a previous suite or run to avoid
+    // CDP interference (port/memory contention) when the next suite launches.
+    if (suite.label.startsWith('e2e:')) {
+      killOrphanChrome();
+    }
+
+    // Capture Jest output via a temp file so that the child process writes to
+    // a real file descriptor (not a pipe).  When stdout is a pipe, Node.js may
+    // schedule writes asynchronously; for E2E tests that use Puppeteer the
+    // additional I/O pressure can delay the event loop, preventing CDP
+    // responses from being processed in time and causing intermittent hangs.
+    const outFile = path.join(os.tmpdir(), `jest-suite-${Date.now()}.log`);
+    let outFd: number | undefined;
+    let outStream: fs.WriteStream | undefined;
+    try {
+      outFd = fs.openSync(outFile, 'w');
+    } catch { /* fall back to pipe */ }
+
+    const spawnOpts: cp.SpawnSyncOptions = {
+      cwd: REPO_ROOT,
+      timeout: suite.timeout,
+      env: { ...process.env, CI: '1' },
+      ...(outFd !== undefined
+        ? { stdio: ['ignore', outFd, outFd] }
+        : { encoding: 'utf8' as BufferEncoding }),
+    };
+
     const result = cp.spawnSync(
       jestBin,
       [suite.pattern, '--runInBand', '--forceExit', '--verbose'],
-      {
-        cwd: REPO_ROOT,
-        encoding: 'utf8',
-        timeout: suite.timeout,
-        env: { ...process.env, CI: '1' },
-      },
+      spawnOpts,
     );
 
-    const out = [result.stdout ?? '', result.stderr ?? ''].join('\n').trim();
+    // Close the file descriptor after the process exits.
+    if (outFd !== undefined) {
+      try { fs.closeSync(outFd); } catch { /* ignore */ }
+    }
+
+    // Read captured output (file-based path) or use piped buffers.
+    let out: string;
+    if (outFd !== undefined) {
+      try {
+        out = fs.readFileSync(outFile, 'utf8');
+        fs.unlinkSync(outFile);
+      } catch {
+        out = '';
+      }
+    } else {
+      out = [
+        (result as cp.SpawnSyncReturns<string>).stdout ?? '',
+        (result as cp.SpawnSyncReturns<string>).stderr ?? '',
+      ].join('\n').trim();
+    }
+
     combinedOutput += `\n\n=== ${suite.label.toUpperCase()} ===\n` + out;
 
     if (result.status !== 0) {
       passed = false;
-      console.log(`  ↳ [${suite.label}] FAILED ✗`);
+      const reason = result.signal
+        ? `signal=${result.signal}`
+        : `status=${result.status}`;
+      console.log(`  ↳ [${suite.label}] FAILED ✗ (${reason})`);
     } else {
       console.log(`  ↳ [${suite.label}] passed ✓`);
     }
