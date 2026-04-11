@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Enterprise Portal</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: sans-serif; padding: 24px; background: #f5f6fa; color: #222; }
+    h2 { font-size: 1.3rem; margin-bottom: 16px; padding-bottom: 6px; border-bottom: 2px solid #3b82f6; color: #1e40af; }
+    section { background: #fff; border-radius: 8px; padding: 24px; margin-bottom: 28px; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+    label { display: block; font-size: .85rem; font-weight: 600; margin-bottom: 4px; color: #374151; }
+    input[type=text], input[type=email], input[type=number], select, textarea {
+      width: 100%; padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px;
+      font-size: .9rem; margin-bottom: 12px; background: #fff;
+    }
+    input[type=text]:focus, input[type=email]:focus, select:focus, textarea:focus {
+      outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,.25);
+    }
+    button[type=button] {
+      padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;
+      font-size: .9rem; font-weight: 600; background: #3b82f6; color: #fff;
+    }
+    button[type=button]:hover { background: #2563eb; }
+    button[type=button]:disabled { background: #9ca3af; cursor: default; }
+    .hidden { display: none !important; }
+    .error-msg { color: #dc2626; font-size: .8rem; margin-top: -10px; margin-bottom: 10px; }
+    .success-msg { color: #16a34a; font-weight: 600; padding: 10px; background: #dcfce7; border-radius: 6px; margin-top: 12px; }
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: .75rem; font-weight: 700; }
+    .badge-blue { background: #dbeafe; color: #1d4ed8; }
+    .badge-green { background: #dcfce7; color: #15803d; }
+
+    /* ── Custom dropdown ────────────────────────────────────────────── */
+    .custom-dd { position: relative; display: inline-block; width: 100%; margin-bottom: 12px; }
+    .custom-dd-trigger {
+      width: 100%; padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px;
+      background: #fff; cursor: pointer; text-align: left; font-size: .9rem; color: #222;
+    }
+    .custom-dd-menu {
+      position: absolute; top: 100%; left: 0; right: 0; z-index: 20;
+      background: #fff; border: 1px solid #d1d5db; border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,.12); list-style: none; padding: 4px 0;
+    }
+    .custom-dd-menu li button {
+      width: 100%; padding: 8px 12px; background: none; color: #222; border: none;
+      text-align: left; cursor: pointer; font-size: .9rem; font-weight: 400;
+    }
+    .custom-dd-menu li button:hover { background: #f0f9ff; }
+
+    /* ── Steps ──────────────────────────────────────────────────────── */
+    .steps { display: flex; gap: 8px; margin-bottom: 20px; }
+    .step-dot {
+      width: 30px; height: 30px; border-radius: 50%; background: #e5e7eb; color: #6b7280;
+      display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .85rem;
+    }
+    .step-dot.active { background: #3b82f6; color: #fff; }
+    .step-dot.done   { background: #22c55e; color: #fff; }
+    .step-panel { display: none; }
+    .step-panel.active { display: block; }
+
+    /* ── Data table ─────────────────────────────────────────────────── */
+    .data-table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+    .data-table th { background: #f3f4f6; padding: 8px 12px; text-align: left; font-size: .85rem; color: #374151; border-bottom: 2px solid #e5e7eb; }
+    .data-table td { padding: 8px 12px; border-bottom: 1px solid #f3f4f6; font-size: .875rem; }
+    .data-table tr:hover td { background: #f0f9ff; cursor: pointer; }
+    .detail-panel {
+      background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-top: 12px;
+    }
+    .pagination { display: flex; align-items: center; gap: 12px; }
+    .pagination button { padding: 6px 14px; font-size: .85rem; }
+
+    /* ── Modal ──────────────────────────────────────────────────────── */
+    .modal-overlay {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,.45); z-index: 100; align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: #fff; border-radius: 10px; padding: 28px; min-width: 340px;
+      max-width: 480px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,.2);
+    }
+    .modal-box h3 { margin-bottom: 16px; font-size: 1.1rem; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 16px; justify-content: flex-end; }
+
+    /* ── Spinner ────────────────────────────────────────────────────── */
+    .spinner-ring {
+      width: 32px; height: 32px; border: 3px solid #e5e7eb;
+      border-top-color: #3b82f6; border-radius: 50%; animation: spin .7s linear infinite;
+      display: inline-block;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Toggle ─────────────────────────────────────────────────────── */
+    .toggle-track {
+      width: 48px; height: 26px; border-radius: 13px; background: #d1d5db; cursor: pointer;
+      position: relative; transition: background .2s; display: inline-block;
+    }
+    .toggle-track.on { background: #3b82f6; }
+    .toggle-thumb {
+      width: 20px; height: 20px; border-radius: 50%; background: #fff;
+      position: absolute; top: 3px; left: 3px; transition: left .2s;
+    }
+    .toggle-track.on .toggle-thumb { left: 25px; }
+
+    /* ── Tabs ───────────────────────────────────────────────────────── */
+    .tab-bar { display: flex; gap: 0; border-bottom: 2px solid #e5e7eb; margin-bottom: 16px; }
+    .tab-btn {
+      padding: 9px 18px; background: none; border: none; cursor: pointer; font-size: .9rem;
+      color: #6b7280; font-weight: 600; border-bottom: 2px solid transparent; margin-bottom: -2px;
+    }
+    .tab-btn[aria-selected=true] { color: #1d4ed8; border-bottom-color: #3b82f6; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* ── Scroll section ─────────────────────────────────────────────── */
+    .lazy-item {
+      padding: 10px; background: #f0f9ff; border: 1px solid #bae6fd;
+      border-radius: 6px; margin-bottom: 8px; font-size: .875rem;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     MODULE 1 — COMPLEX FORM
+═══════════════════════════════════════════════════════════════════════════ -->
+<section id="mod-form">
+  <h2>Module 1 — Complex Form</h2>
+
+  <label for="form-name">Full Name</label>
+  <input type="text" id="form-name" data-testid="form-name" placeholder="Full Name" autocomplete="off" />
+  <div id="error-name" data-testid="error-name" class="error-msg hidden">Name is required.</div>
+
+  <label for="form-email">Email Address</label>
+  <input type="email" id="form-email" data-testid="form-email" placeholder="Email Address" autocomplete="off" />
+  <div id="error-email" data-testid="error-email" class="error-msg hidden">Valid email is required.</div>
+
+  <label for="form-dept">Department</label>
+  <select id="form-dept" data-testid="form-dept">
+    <option value="">-- Select Department --</option>
+    <option value="engineering">Engineering</option>
+    <option value="design">Design</option>
+    <option value="marketing">Marketing</option>
+    <option value="hr">Human Resources</option>
+    <option value="finance">Finance</option>
+  </select>
+
+  <label>Priority</label>
+  <div class="custom-dd" id="priority-dd">
+    <button type="button" class="custom-dd-trigger" data-testid="priority-trigger" id="priority-trigger" aria-haspopup="listbox" aria-expanded="false">
+      <span data-testid="priority-selected">Select Priority</span>
+    </button>
+    <ul class="custom-dd-menu hidden" data-testid="priority-menu" role="listbox" id="priority-menu">
+      <li><button type="button" data-testid="priority-opt-low"    role="option" data-value="low">Low</button></li>
+      <li><button type="button" data-testid="priority-opt-medium" role="option" data-value="medium">Medium</button></li>
+      <li><button type="button" data-testid="priority-opt-high"   role="option" data-value="high">High</button></li>
+    </ul>
+  </div>
+
+  <label>Employment Type</label>
+  <div style="display:flex;gap:20px;margin-bottom:14px;">
+    <label style="font-weight:400;display:flex;align-items:center;gap:6px;">
+      <input type="radio" name="employment" data-testid="radio-full-time"  value="full-time"  /> Full-Time
+    </label>
+    <label style="font-weight:400;display:flex;align-items:center;gap:6px;">
+      <input type="radio" name="employment" data-testid="radio-part-time"  value="part-time"  /> Part-Time
+    </label>
+    <label style="font-weight:400;display:flex;align-items:center;gap:6px;">
+      <input type="radio" name="employment" data-testid="radio-contract"   value="contract"   /> Contract
+    </label>
+  </div>
+
+  <label>Features</label>
+  <div style="display:flex;gap:20px;margin-bottom:14px;">
+    <label style="font-weight:400;display:flex;align-items:center;gap:6px;">
+      <input type="checkbox" data-testid="chk-feature-a" id="chk-a" /> Analytics
+    </label>
+    <label style="font-weight:400;display:flex;align-items:center;gap:6px;">
+      <input type="checkbox" data-testid="chk-feature-b" id="chk-b" /> Reporting
+    </label>
+    <label style="font-weight:400;display:flex;align-items:center;gap:6px;">
+      <input type="checkbox" data-testid="chk-feature-c" id="chk-c" /> Automation
+    </label>
+  </div>
+
+  <label for="form-file">Attachment</label>
+  <input type="file" id="form-file" data-testid="form-file" style="margin-bottom:16px;" />
+
+  <div role="button" tabindex="0" data-testid="form-submit" id="form-submit"
+       style="display:inline-block;padding:10px 24px;background:#3b82f6;color:#fff;border-radius:6px;cursor:pointer;font-weight:700;"
+       aria-label="Submit Form">
+    Submit Form
+  </div>
+
+  <div id="form-success" data-testid="form-success" class="success-msg hidden">
+    ✅ Form submitted successfully!
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     MODULE 2 — MULTI-STEP WORKFLOW
+═══════════════════════════════════════════════════════════════════════════ -->
+<section id="mod-workflow">
+  <h2>Module 2 — Multi-Step Workflow</h2>
+
+  <div class="steps" aria-label="workflow steps">
+    <div class="step-dot active" data-testid="step-dot-1" id="step-dot-1">1</div>
+    <div class="step-dot"        data-testid="step-dot-2" id="step-dot-2">2</div>
+    <div class="step-dot"        data-testid="step-dot-3" id="step-dot-3">3</div>
+  </div>
+
+  <!-- Step 1 -->
+  <div class="step-panel active" data-testid="step-1-panel" id="step-1-panel">
+    <label for="step1-name">Your Name</label>
+    <input type="text" id="step1-name" data-testid="step1-name" placeholder="Enter your name" autocomplete="off" />
+
+    <label for="step1-user-type">Account Type</label>
+    <select id="step1-user-type" data-testid="step1-user-type">
+      <option value="">-- Select type --</option>
+      <option value="individual">Individual</option>
+      <option value="team">Team</option>
+      <option value="enterprise">Enterprise</option>
+    </select>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step-panel" data-testid="step-2-panel" id="step-2-panel">
+    <label for="step2-plan">Subscription Plan</label>
+    <select id="step2-plan" data-testid="step2-plan">
+      <option value="">-- Select plan --</option>
+      <option value="starter">Starter</option>
+      <option value="pro">Professional</option>
+      <option value="enterprise-plan">Enterprise Plan</option>
+    </select>
+
+    <!-- Conditional: only shown for "enterprise" account type -->
+    <div id="company-size-wrapper" class="hidden">
+      <label for="company-size">Company Size</label>
+      <select id="company-size" data-testid="company-size">
+        <option value="">-- Select size --</option>
+        <option value="1-50">1–50 employees</option>
+        <option value="51-200">51–200 employees</option>
+        <option value="201-1000">201–1000 employees</option>
+        <option value="1000+">1000+ employees</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="step-panel" data-testid="step-3-panel" id="step-3-panel">
+    <p style="margin-bottom:12px;color:#374151;">Review your selections and confirm.</p>
+    <div style="background:#f3f4f6;border-radius:6px;padding:12px;font-size:.875rem;">
+      <div>Name: <strong id="review-name" data-testid="review-name">—</strong></div>
+      <div>Type: <strong id="review-type" data-testid="review-type">—</strong></div>
+      <div>Plan: <strong id="review-plan" data-testid="review-plan">—</strong></div>
+    </div>
+    <button type="button" data-testid="workflow-submit" id="workflow-submit"
+            style="margin-top:14px;">Complete Setup</button>
+  </div>
+
+  <div id="workflow-success" data-testid="workflow-success" class="success-msg hidden">
+    🎉 Workflow completed!
+  </div>
+
+  <div style="display:flex;gap:10px;margin-top:16px;" id="workflow-nav">
+    <button type="button" data-testid="step-prev" id="step-prev" class="hidden"
+            style="background:#6b7280;">← Previous</button>
+    <button type="button" data-testid="step-next" id="step-next">Next →</button>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     MODULE 3 — DATA TABLE
+═══════════════════════════════════════════════════════════════════════════ -->
+<section id="mod-table">
+  <h2>Module 3 — Data Table</h2>
+
+  <div style="display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap;">
+    <input type="text"  data-testid="table-search" id="table-search"
+           placeholder="Search employees…" style="flex:1;min-width:180px;margin-bottom:0;" />
+    <select data-testid="table-filter" id="table-filter" style="flex:0 0 180px;margin-bottom:0;">
+      <option value="">All Departments</option>
+      <option value="Engineering">Engineering</option>
+      <option value="Design">Design</option>
+      <option value="Marketing">Marketing</option>
+      <option value="HR">HR</option>
+    </select>
+  </div>
+
+  <table class="data-table" aria-label="Employees">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Department</th>
+        <th>Role</th>
+      </tr>
+    </thead>
+    <tbody id="table-body" data-testid="table-body">
+      <!-- Populated by JS -->
+    </tbody>
+  </table>
+
+  <div class="pagination">
+    <button type="button" data-testid="page-prev" id="page-prev">Prev</button>
+    <span data-testid="page-indicator" id="page-indicator">Page 1 of 3</span>
+    <button type="button" data-testid="page-next" id="page-next">Next</button>
+  </div>
+
+  <div id="detail-panel" data-testid="detail-panel" class="detail-panel hidden">
+    <h3 style="margin-bottom:10px;font-size:1rem;">Employee Details</h3>
+    <div>Name: <strong data-testid="detail-name" id="detail-name"></strong></div>
+    <div>Department: <strong data-testid="detail-dept" id="detail-dept"></strong></div>
+    <div>Role: <strong data-testid="detail-role" id="detail-role"></strong></div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     MODULE 4 — DYNAMIC UI
+═══════════════════════════════════════════════════════════════════════════ -->
+<section id="mod-dynamic">
+  <h2>Module 4 — Dynamic UI</h2>
+
+  <!-- Modal -->
+  <button type="button" data-testid="modal-open" id="modal-open">Open Modal</button>
+
+  <div class="modal-overlay" data-testid="modal-overlay" id="modal-overlay">
+    <div class="modal-box" data-testid="modal-box">
+      <h3>Confirm Action</h3>
+      <label for="modal-input">Notes</label>
+      <input type="text" id="modal-input" data-testid="modal-input" placeholder="Add a note…" />
+      <div class="modal-actions">
+        <button type="button" data-testid="modal-close"   id="modal-close"
+                style="background:#6b7280;">Cancel</button>
+        <button type="button" data-testid="modal-confirm" id="modal-confirm">Confirm</button>
+      </div>
+    </div>
+  </div>
+  <div id="modal-result" data-testid="modal-result" class="success-msg hidden">
+    ✅ Modal confirmed.
+  </div>
+
+  <!-- Loading spinner -->
+  <div style="margin-top:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+    <button type="button" data-testid="loading-trigger" id="loading-trigger">Run Process</button>
+    <span class="spinner-ring hidden" data-testid="spinner" id="spinner"></span>
+    <span id="loading-result" data-testid="loading-result" class="hidden badge badge-green">
+      Process Complete
+    </span>
+  </div>
+
+  <!-- Delayed element (appears 800 ms after "Show" click) -->
+  <div style="margin-top:16px;">
+    <button type="button" data-testid="delayed-show-btn" id="delayed-show-btn">Show Delayed Badge</button>
+    <span id="delayed-badge" data-testid="delayed-badge" class="hidden badge badge-blue" style="margin-left:10px;">
+      Loaded!
+    </span>
+  </div>
+
+  <!-- Action menu (custom dropdown) -->
+  <div style="margin-top:16px;position:relative;display:inline-block;" id="action-menu-wrapper">
+    <button type="button" data-testid="action-menu-trigger" id="action-menu-trigger"
+            style="background:#6b7280;">Actions ▾</button>
+    <ul class="custom-dd-menu hidden" data-testid="action-menu" id="action-menu" style="min-width:140px;">
+      <li><button type="button" data-testid="action-opt-edit"   id="action-opt-edit">✏️ Edit</button></li>
+      <li><button type="button" data-testid="action-opt-delete" id="action-opt-delete">🗑️ Delete</button></li>
+    </ul>
+  </div>
+  <span id="action-result" data-testid="action-result" class="hidden badge badge-blue" style="margin-left:10px;">
+    Action taken
+  </span>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     MODULE 6 — MODERN UI PATTERNS
+═══════════════════════════════════════════════════════════════════════════ -->
+<section id="mod-modern">
+  <h2>Module 6 — Modern UI Patterns</h2>
+
+  <!-- Div-based button (role=button) -->
+  <div role="button" tabindex="0" data-testid="div-action-btn" id="div-action-btn"
+       style="display:inline-block;padding:9px 20px;background:#8b5cf6;color:#fff;border-radius:6px;cursor:pointer;font-weight:700;"
+       aria-label="Div Action">
+    Div Action
+  </div>
+  <span id="div-action-result" data-testid="div-action-result" class="hidden badge badge-green" style="margin-left:10px;">
+    Div button clicked
+  </span>
+
+  <!-- Span role=link -->
+  <div style="margin-top:14px;">
+    <span role="link" tabindex="0" data-testid="span-nav-link" id="span-nav-link"
+          style="color:#2563eb;text-decoration:underline;cursor:pointer;" aria-label="Navigate">
+      Navigate to Dashboard
+    </span>
+    <span id="span-link-result" data-testid="span-link-result" class="hidden badge badge-blue" style="margin-left:10px;">
+      Navigation triggered
+    </span>
+  </div>
+
+  <!-- Toggle switch -->
+  <div style="margin-top:16px;display:flex;align-items:center;gap:12px;">
+    <label style="font-weight:600;">Enable Notifications</label>
+    <div class="toggle-track" role="switch" tabindex="0" aria-checked="false"
+         data-testid="feature-toggle" id="feature-toggle">
+      <div class="toggle-thumb"></div>
+    </div>
+    <span data-testid="toggle-status" id="toggle-status">Off</span>
+  </div>
+
+  <!-- Tabs -->
+  <div style="margin-top:22px;">
+    <div class="tab-bar" role="tablist">
+      <button type="button" class="tab-btn" role="tab" aria-selected="true"
+              data-testid="tab-overview" data-tab="overview">Overview</button>
+      <button type="button" class="tab-btn" role="tab" aria-selected="false"
+              data-testid="tab-data"     data-tab="data">Data</button>
+      <button type="button" class="tab-btn" role="tab" aria-selected="false"
+              data-testid="tab-settings" data-tab="settings">Settings</button>
+    </div>
+    <div class="tab-content active" data-testid="tab-panel-overview" id="tab-panel-overview"
+         role="tabpanel">Overview content: latest metrics and summary.</div>
+    <div class="tab-content"        data-testid="tab-panel-data"     id="tab-panel-data"
+         role="tabpanel">Data content: raw export and filters.</div>
+    <div class="tab-content"        data-testid="tab-panel-settings" id="tab-panel-settings"
+         role="tabpanel">Settings content: configuration options.</div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     MODULE 5 — SCROLL + LAZY LOAD  (kept at bottom so scroll tests work)
+═══════════════════════════════════════════════════════════════════════════ -->
+
+<!-- Long spacer so scroll tests are meaningful -->
+<div style="height:2600px;"></div>
+
+<section id="mod-scroll" style="margin-bottom:24px;">
+  <h2>Module 5 — Scroll &amp; Lazy Load</h2>
+
+  <div id="scroll-sentinel" data-testid="scroll-sentinel"></div>
+
+  <!-- This button only appears when the IntersectionObserver fires -->
+  <div id="scroll-target-wrapper" data-testid="scroll-target-wrapper">
+    <!-- #scroll-target-btn injected here by IntersectionObserver -->
+  </div>
+  <div id="scroll-target-result" data-testid="scroll-target-result" class="success-msg hidden">
+    Below-fold button clicked ✅
+  </div>
+
+  <!-- Additional spacer before lazy section -->
+  <div style="height:800px;"></div>
+
+  <!-- Lazy sentinel — scroll event injects items into lazy-container -->
+  <div id="lazy-sentinel" data-testid="lazy-sentinel" style="height:1px;"></div>
+  <div id="lazy-container" data-testid="lazy-container"></div>
+  <div id="lazy-count" data-testid="lazy-count" class="hidden">Items loaded: 0</div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════════════════════════════════════ -->
+<script>
+/* ── MODULE 1: COMPLEX FORM ──────────────────────────────────────── */
+(function () {
+  // Custom priority dropdown
+  var trigger = document.getElementById('priority-trigger');
+  var menu    = document.getElementById('priority-menu');
+  trigger.addEventListener('click', function () {
+    var open = !menu.classList.contains('hidden');
+    menu.classList.toggle('hidden', open);
+    trigger.setAttribute('aria-expanded', String(!open));
+  });
+  document.addEventListener('click', function (e) {
+    if (!document.getElementById('priority-dd').contains(e.target)) {
+      menu.classList.add('hidden');
+      trigger.setAttribute('aria-expanded', 'false');
+    }
+  });
+  menu.querySelectorAll('button').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      document.querySelector('[data-testid="priority-selected"]').textContent = btn.textContent;
+      menu.classList.add('hidden');
+      trigger.setAttribute('aria-expanded', 'false');
+      trigger.dataset.value = btn.dataset.value;
+    });
+  });
+
+  // Div-based submit with validation
+  document.getElementById('form-submit').addEventListener('click', submitForm);
+  document.getElementById('form-submit').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' || e.key === ' ') submitForm();
+  });
+
+  function submitForm() {
+    var name  = document.getElementById('form-name').value.trim();
+    var email = document.getElementById('form-email').value.trim();
+    var valid = true;
+    document.getElementById('error-name').classList.toggle('hidden', name !== '');
+    document.getElementById('error-email').classList.toggle('hidden', email !== '' && email.includes('@'));
+    if (name  === '') valid = false;
+    if (email === '' || !email.includes('@')) valid = false;
+    document.getElementById('form-success').classList.toggle('hidden', !valid);
+  }
+})();
+
+/* ── MODULE 2: MULTI-STEP WORKFLOW ───────────────────────────────── */
+(function () {
+  var currentStep = 1;
+  var TOTAL_STEPS = 3;
+
+  function goToStep(n) {
+    // Update panels
+    document.querySelectorAll('.step-panel').forEach(function (p) {
+      p.classList.toggle('active', p.dataset.testid === 'step-' + n + '-panel');
+    });
+    // Update dots
+    for (var i = 1; i <= TOTAL_STEPS; i++) {
+      var dot = document.getElementById('step-dot-' + i);
+      dot.classList.toggle('active', i === n);
+      dot.classList.toggle('done',   i < n);
+    }
+    // Nav buttons
+    document.getElementById('step-prev').classList.toggle('hidden', n === 1);
+    document.getElementById('step-next').classList.toggle('hidden', n === TOTAL_STEPS);
+    // Hide submit until step 3
+    var submitBtn = document.getElementById('workflow-submit');
+    if (submitBtn) submitBtn.style.display = (n === TOTAL_STEPS) ? '' : 'none';
+    currentStep = n;
+    if (n === TOTAL_STEPS) populateReview();
+  }
+
+  function populateReview() {
+    document.getElementById('review-name').textContent =
+      document.getElementById('step1-name').value || '—';
+    document.getElementById('review-type').textContent =
+      document.getElementById('step1-user-type').value || '—';
+    document.getElementById('review-plan').textContent =
+      document.getElementById('step2-plan').value || '—';
+  }
+
+  document.getElementById('step-next').addEventListener('click', function () {
+    if (currentStep < TOTAL_STEPS) goToStep(currentStep + 1);
+  });
+  document.getElementById('step-prev').addEventListener('click', function () {
+    if (currentStep > 1) goToStep(currentStep - 1);
+  });
+
+  // Conditional "company-size" field
+  document.getElementById('step1-user-type').addEventListener('change', function () {
+    document.getElementById('company-size-wrapper').classList.toggle(
+      'hidden', this.value !== 'enterprise'
+    );
+  });
+
+  // Final submit
+  document.getElementById('workflow-submit').addEventListener('click', function () {
+    document.getElementById('workflow-success').classList.remove('hidden');
+    document.getElementById('workflow-nav').classList.add('hidden');
+  });
+
+  // Init
+  goToStep(1);
+})();
+
+/* ── MODULE 3: DATA TABLE ────────────────────────────────────────── */
+(function () {
+  var EMPLOYEES = [
+    { id: 1,  name: 'Alice Johnson',   dept: 'Engineering', role: 'Senior Engineer'     },
+    { id: 2,  name: 'Bob Smith',       dept: 'Design',      role: 'UX Designer'         },
+    { id: 3,  name: 'Carol White',     dept: 'Engineering', role: 'Lead Architect'      },
+    { id: 4,  name: 'David Brown',     dept: 'Marketing',   role: 'Growth Manager'      },
+    { id: 5,  name: 'Eve Davis',       dept: 'Design',      role: 'Visual Designer'     },
+    { id: 6,  name: 'Frank Wilson',    dept: 'Engineering', role: 'DevOps Engineer'     },
+    { id: 7,  name: 'Grace Lee',       dept: 'HR',          role: 'HR Manager'          },
+    { id: 8,  name: 'Henry Martinez',  dept: 'Marketing',   role: 'Brand Manager'       },
+    { id: 9,  name: 'Iris Chen',       dept: 'Engineering', role: 'Frontend Developer'  },
+    { id: 10, name: 'Jack Taylor',     dept: 'Design',      role: 'Product Designer'    },
+    { id: 11, name: 'Karen Anderson',  dept: 'HR',          role: 'Talent Specialist'   },
+    { id: 12, name: 'Liam Thompson',   dept: 'Marketing',   role: 'SEO Specialist'      },
+  ];
+  var PAGE_SIZE = 4;
+  var currentPage = 1;
+  var filteredData = EMPLOYEES.slice();
+
+  function applyFilters() {
+    var query  = document.getElementById('table-search').value.trim().toLowerCase();
+    var deptFilter = document.getElementById('table-filter').value;
+    filteredData = EMPLOYEES.filter(function (e) {
+      var matchSearch = !query || e.name.toLowerCase().includes(query) ||
+                        e.role.toLowerCase().includes(query);
+      var matchDept   = !deptFilter || e.dept === deptFilter;
+      return matchSearch && matchDept;
+    });
+    currentPage = 1;
+    renderTable();
+  }
+
+  function renderTable() {
+    var totalPages = Math.max(1, Math.ceil(filteredData.length / PAGE_SIZE));
+    if (currentPage > totalPages) currentPage = totalPages;
+    var start  = (currentPage - 1) * PAGE_SIZE;
+    var slice  = filteredData.slice(start, start + PAGE_SIZE);
+    var tbody  = document.getElementById('table-body');
+    tbody.innerHTML = '';
+    slice.forEach(function (emp) {
+      var tr = document.createElement('tr');
+      tr.setAttribute('data-testid', 'row-' + emp.id);
+      tr.setAttribute('data-id', String(emp.id));
+      tr.innerHTML =
+        '<td>' + emp.name + '</td>' +
+        '<td>' + emp.dept + '</td>' +
+        '<td>' + emp.role + '</td>';
+      tr.addEventListener('click', function () { showDetail(emp); });
+      tbody.appendChild(tr);
+    });
+    document.getElementById('page-indicator').textContent =
+      'Page ' + currentPage + ' of ' + totalPages;
+    document.getElementById('page-prev').disabled = currentPage <= 1;
+    document.getElementById('page-next').disabled = currentPage >= totalPages;
+  }
+
+  function showDetail(emp) {
+    document.getElementById('detail-name').textContent = emp.name;
+    document.getElementById('detail-dept').textContent = emp.dept;
+    document.getElementById('detail-role').textContent = emp.role;
+    document.getElementById('detail-panel').classList.remove('hidden');
+  }
+
+  document.getElementById('table-search').addEventListener('input', applyFilters);
+  document.getElementById('table-filter').addEventListener('change', applyFilters);
+  document.getElementById('page-prev').addEventListener('click', function () {
+    if (currentPage > 1) { currentPage--; renderTable(); }
+  });
+  document.getElementById('page-next').addEventListener('click', function () {
+    var totalPages = Math.ceil(filteredData.length / PAGE_SIZE);
+    if (currentPage < totalPages) { currentPage++; renderTable(); }
+  });
+
+  renderTable();
+})();
+
+/* ── MODULE 4: DYNAMIC UI ────────────────────────────────────────── */
+(function () {
+  // Modal
+  document.getElementById('modal-open').addEventListener('click', function () {
+    document.getElementById('modal-overlay').classList.add('open');
+  });
+  document.getElementById('modal-close').addEventListener('click', function () {
+    document.getElementById('modal-overlay').classList.remove('open');
+  });
+  document.getElementById('modal-confirm').addEventListener('click', function () {
+    document.getElementById('modal-overlay').classList.remove('open');
+    document.getElementById('modal-result').classList.remove('hidden');
+  });
+
+  // Loading spinner
+  document.getElementById('loading-trigger').addEventListener('click', function () {
+    var spinner = document.getElementById('spinner');
+    var result  = document.getElementById('loading-result');
+    spinner.classList.remove('hidden');
+    result.classList.add('hidden');
+    setTimeout(function () {
+      spinner.classList.add('hidden');
+      result.classList.remove('hidden');
+    }, 900);
+  });
+
+  // Delayed badge (800 ms)
+  document.getElementById('delayed-show-btn').addEventListener('click', function () {
+    setTimeout(function () {
+      document.getElementById('delayed-badge').classList.remove('hidden');
+    }, 800);
+  });
+
+  // Action menu
+  var actionTrigger = document.getElementById('action-menu-trigger');
+  var actionMenu    = document.getElementById('action-menu');
+  actionTrigger.addEventListener('click', function (e) {
+    e.stopPropagation();
+    actionMenu.classList.toggle('hidden');
+  });
+  document.addEventListener('click', function () { actionMenu.classList.add('hidden'); });
+  actionMenu.querySelectorAll('button').forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      document.getElementById('action-result').classList.remove('hidden');
+      actionMenu.classList.add('hidden');
+    });
+  });
+})();
+
+/* ── MODULE 6: MODERN UI PATTERNS ───────────────────────────────── */
+(function () {
+  // Div button
+  document.getElementById('div-action-btn').addEventListener('click', function () {
+    document.getElementById('div-action-result').classList.remove('hidden');
+  });
+  document.getElementById('div-action-btn').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      document.getElementById('div-action-result').classList.remove('hidden');
+    }
+  });
+
+  // Span link
+  document.getElementById('span-nav-link').addEventListener('click', function () {
+    document.getElementById('span-link-result').classList.remove('hidden');
+  });
+  document.getElementById('span-nav-link').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') {
+      document.getElementById('span-link-result').classList.remove('hidden');
+    }
+  });
+
+  // Toggle switch
+  var toggle = document.getElementById('feature-toggle');
+  toggle.addEventListener('click', function () {
+    var isOn = toggle.getAttribute('aria-checked') === 'true';
+    toggle.setAttribute('aria-checked', String(!isOn));
+    toggle.classList.toggle('on', !isOn);
+    document.getElementById('toggle-status').textContent = !isOn ? 'On' : 'Off';
+  });
+
+  // Tabs
+  document.querySelectorAll('.tab-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var tab = btn.dataset.tab;
+      document.querySelectorAll('.tab-btn').forEach(function (b) {
+        b.setAttribute('aria-selected', String(b.dataset.tab === tab));
+      });
+      document.querySelectorAll('.tab-content').forEach(function (p) {
+        p.classList.toggle('active', p.id === 'tab-panel-' + tab);
+      });
+    });
+  });
+})();
+
+/* ── MODULE 5: SCROLL + LAZY LOAD ───────────────────────────────── */
+(function () {
+  // IntersectionObserver: when scroll-sentinel is visible, inject scroll-target-btn
+  var sentinel = document.getElementById('scroll-sentinel');
+  var observer = new IntersectionObserver(function (entries, obs) {
+    if (!entries[0].isIntersecting) return;
+    obs.disconnect();
+    var wrapper = document.getElementById('scroll-target-wrapper');
+    if (document.getElementById('scroll-target-btn')) return;
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.id   = 'scroll-target-btn';
+    btn.setAttribute('data-testid', 'scroll-target-btn');
+    btn.textContent = 'Click Me (Below Fold)';
+    btn.addEventListener('click', function () {
+      document.getElementById('scroll-target-result').classList.remove('hidden');
+    });
+    wrapper.appendChild(btn);
+  }, { threshold: 0.1 });
+  observer.observe(sentinel);
+
+  // Scroll event: when lazy-sentinel is visible, inject items into lazy-container
+  function tryInjectLazy() {
+    if (document.getElementById('lazy-item-1')) return;
+    var lazySentinel = document.getElementById('lazy-sentinel');
+    if (!lazySentinel) return;
+    var rect = lazySentinel.getBoundingClientRect();
+    if (rect.top > window.innerHeight) return;
+    window.removeEventListener('scroll', tryInjectLazy);
+    var container = document.getElementById('lazy-container');
+    var count = 5;
+    for (var i = 1; i <= count; i++) {
+      var item = document.createElement('div');
+      item.className = 'lazy-item';
+      item.id = 'lazy-item-' + i;
+      item.setAttribute('data-testid', 'lazy-item-' + i);
+      item.textContent = 'Lazy Item #' + i;
+      container.appendChild(item);
+    }
+    var countEl = document.getElementById('lazy-count');
+    countEl.textContent = 'Items loaded: ' + count;
+    countEl.classList.remove('hidden');
+  }
+  window.addEventListener('scroll', tryInjectLazy);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,805 @@
+[
+  {
+    "input": "Suggest smartphones under 30000 with rating above 4",
+    "result": {
+      "intent": {
+        "type": "SEARCH_PRODUCT",
+        "filters": {
+          "priceMax": 30000,
+          "ratingMin": 4,
+          "query": "smartphone"
+        },
+        "sites": [
+          "amazon",
+          "flipkart"
+        ]
+      },
+      "products": [
+        {
+          "title": "Samsung Galaxy S23",
+          "price": 28000,
+          "rating": 4.5,
+          "site": "amazon"
+        },
+        {
+          "title": "Samsung Galaxy S23",
+          "price": 28000,
+          "rating": 4.5,
+          "site": "flipkart"
+        }
+      ],
+      "topProducts": [
+        {
+          "title": "Samsung Galaxy S23",
+          "price": 28000,
+          "rating": 4.5,
+          "site": "amazon"
+        },
+        {
+          "title": "Samsung Galaxy S23",
+          "price": 28000,
+          "rating": 4.5,
+          "site": "flipkart"
+        }
+      ]
+    },
+    "success": true,
+    "error": null,
+    "durationMs": 71
+  },
+  {
+    "input": "phones below 30k with 4+ rating",
+    "result": {
+      "intent": {
+        "type": "SEARCH_PRODUCT",
+        "filters": {
+          "priceMax": 30000,
+          "ratingMin": 4,
+          "query": "smartphone"
+        },
+        "sites": [
+          "amazon",
+          "flipkart"
+        ]
+      },
+      "products": [
+        {
+          "title": "Samsung Galaxy S23",
+          "price": 28000,
+          "rating": 4.5,
+          "site": "amazon"
+        },
+        {
+          "title": "Samsung Galaxy S23",
+          "price": 28000,
+          "rating": 4.5,
+          "site": "flipkart"
+        }
+      ],
+      "topProducts": [
+        {
+          "title": "Samsung Galaxy S23",
+          "price": 28000,
+          "rating": 4.5,
+          "site": "amazon"
+        },
+        {
+          "title": "Samsung Galaxy S23",
+          "price": 28000,
+          "rating": 4.5,
+          "site": "flipkart"
+        }
+      ]
+    },
+    "success": true,
+    "error": null,
+    "durationMs": 72
+  },
+  {
+    "input": "Login to portal using email and password",
+    "result": {
+      "intent": {
+        "type": "LOGIN",
+        "filters": {},
+        "sites": []
+      },
+      "products": [],
+      "topProducts": []
+    },
+    "success": true,
+    "error": null,
+    "durationMs": 2
+  },
+  {
+    "input": "Login with multi-step authentication flow",
+    "result": {
+      "intent": {
+        "type": "LOGIN",
+        "filters": {},
+        "sites": []
+      },
+      "products": [],
+      "topProducts": []
+    },
+    "success": true,
+    "error": null,
+    "durationMs": 2
+  },
+  {
+    "input": "Fill leave form for tomorrow and submit",
+    "result": {
+      "intent": {
+        "type": "FORM_FILL",
+        "filters": {},
+        "sites": []
+      },
+      "products": [],
+      "topProducts": []
+    },
+    "success": true,
+    "error": null,
+    "durationMs": 3
+  },
+  {
+    "input": "Fill multi-step form using next button and submit",
+    "result": {
+      "intent": {
+        "type": "SEARCH_PRODUCT",
+        "filters": {},
+        "sites": [
+          "amazon",
+          "flipkart"
+        ]
+      },
+      "products": [
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "amazon"
+        },
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "flipkart"
+        }
+      ],
+      "topProducts": [
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "amazon"
+        },
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "flipkart"
+        }
+      ]
+    },
+    "success": true,
+    "error": null,
+    "durationMs": 67
+  },
+  {
+    "input": "Select options from dropdown and submit form",
+    "result": {
+      "intent": {
+        "type": "FORM_FILL",
+        "filters": {},
+        "sites": []
+      },
+      "products": [],
+      "topProducts": []
+    },
+    "success": true,
+    "error": null,
+    "durationMs": 2
+  },
+  {
+    "input": "Select value from custom dropdown and continue",
+    "result": {
+      "intent": {
+        "type": "SEARCH_PRODUCT",
+        "filters": {},
+        "sites": [
+          "amazon",
+          "flipkart"
+        ]
+      },
+      "products": [
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "amazon"
+        },
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "flipkart"
+        }
+      ],
+      "topProducts": [
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "amazon"
+        },
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "flipkart"
+        }
+      ]
+    },
+    "success": true,
+    "error": null,
+    "durationMs": 66
+  },
+  {
+    "input": "Choose gender using radio button and submit",
+    "result": {
+      "intent": {
+        "type": "SEARCH_PRODUCT",
+        "filters": {},
+        "sites": [
+          "amazon",
+          "flipkart"
+        ]
+      },
+      "products": [
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "amazon"
+        },
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "flipkart"
+        }
+      ],
+      "topProducts": [
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "amazon"
+        },
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "flipkart"
+        }
+      ]
+    },
+    "success": true,
+    "error": null,
+    "durationMs": 69
+  },
+  {
+    "input": "Select multiple interests using checkboxes",
+    "result": {
+      "intent": {
+        "type": "SEARCH_PRODUCT",
+        "filters": {},
+        "sites": [
+          "amazon",
+          "flipkart"
+        ]
+      },
+      "products": [
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "amazon"
+        },
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "flipkart"
+        }
+      ],
+      "topProducts": [
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "amazon"
+        },
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "flipkart"
+        }
+      ]
+    },
+    "success": true,
+    "error": null,
+    "durationMs": 74
+  },
+  {
+    "input": "Search and wait for results to load before clicking",
+    "result": {
+      "intent": {
+        "type": "SEARCH_PRODUCT",
+        "filters": {},
+        "sites": [
+          "amazon",
+          "flipkart"
+        ]
+      },
+      "products": [
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "amazon"
+        },
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "flipkart"
+        }
+      ],
+      "topProducts": [
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "amazon"
+        },
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "flipkart"
+        }
+      ]
+    },
+    "success": true,
+    "error": null,
+    "durationMs": 68
+  },
+  {
+    "input": "Handle delayed loading elements and continue",
+    "result": {
+      "intent": {
+        "type": "SEARCH_PRODUCT",
+        "filters": {},
+        "sites": [
+          "amazon",
+          "flipkart"
+        ]
+      },
+      "products": [
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "amazon"
+        },
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "flipkart"
+        }
+      ],
+      "topProducts": [
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "amazon"
+        },
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "flipkart"
+        }
+      ]
+    },
+    "success": true,
+    "error": null,
+    "durationMs": 74
+  },
+  {
+    "input": "Find employee John in table and open details",
+    "result": {
+      "intent": {
+        "type": "TABLE_LOOKUP",
+        "filters": {},
+        "sites": []
+      },
+      "products": [],
+      "topProducts": []
+    },
+    "success": true,
+    "error": null,
+    "durationMs": 2
+  },
+  {
+    "input": "Find employee across paginated table",
+    "result": {
+      "intent": {
+        "type": "TABLE_LOOKUP",
+        "filters": {},
+        "sites": []
+      },
+      "products": [],
+      "topProducts": []
+    },
+    "success": true,
+    "error": null,
+    "durationMs": 2
+  },
+  {
+    "input": "Click hyperlink and navigate to details page",
+    "result": {
+      "intent": {
+        "type": "NAVIGATE",
+        "filters": {},
+        "sites": []
+      },
+      "products": [],
+      "topProducts": []
+    },
+    "success": true,
+    "error": null,
+    "durationMs": 2
+  },
+  {
+    "input": "Click custom link implemented using div and navigate",
+    "result": {
+      "intent": {
+        "type": "SEARCH_PRODUCT",
+        "filters": {},
+        "sites": [
+          "amazon",
+          "flipkart"
+        ]
+      },
+      "products": [
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "amazon"
+        },
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "flipkart"
+        }
+      ],
+      "topProducts": [
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "amazon"
+        },
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "flipkart"
+        }
+      ]
+    },
+    "success": true,
+    "error": null,
+    "durationMs": 69
+  },
+  {
+    "input": "Open dashboard and download report",
+    "result": {
+      "intent": {
+        "type": "NAVIGATE",
+        "filters": {},
+        "sites": []
+      },
+      "products": [],
+      "topProducts": []
+    },
+    "success": true,
+    "error": null,
+    "durationMs": 6
+  },
+  {
+    "input": "Navigate through multiple pages and perform action",
+    "result": {
+      "intent": {
+        "type": "SEARCH_PRODUCT",
+        "filters": {},
+        "sites": [
+          "amazon",
+          "flipkart"
+        ]
+      },
+      "products": [
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "amazon"
+        },
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "flipkart"
+        }
+      ],
+      "topProducts": [
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "amazon"
+        },
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "flipkart"
+        }
+      ]
+    },
+    "success": true,
+    "error": null,
+    "durationMs": 81
+  },
+  {
+    "input": "Click button inside iframe",
+    "result": {
+      "intent": {
+        "type": "SEARCH_PRODUCT",
+        "filters": {},
+        "sites": [
+          "amazon",
+          "flipkart"
+        ]
+      },
+      "products": [
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "amazon"
+        },
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "flipkart"
+        }
+      ],
+      "topProducts": [
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "amazon"
+        },
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "flipkart"
+        }
+      ]
+    },
+    "success": true,
+    "error": null,
+    "durationMs": 78
+  },
+  {
+    "input": "Interact with shadow DOM element",
+    "result": {
+      "intent": {
+        "type": "SEARCH_PRODUCT",
+        "filters": {},
+        "sites": [
+          "amazon",
+          "flipkart"
+        ]
+      },
+      "products": [
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "amazon"
+        },
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "flipkart"
+        }
+      ],
+      "topProducts": [
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "amazon"
+        },
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "flipkart"
+        }
+      ]
+    },
+    "success": true,
+    "error": null,
+    "durationMs": 74
+  },
+  {
+    "input": "Open link in new tab and extract data",
+    "result": {
+      "intent": {
+        "type": "NAVIGATE",
+        "filters": {},
+        "sites": []
+      },
+      "products": [],
+      "topProducts": []
+    },
+    "success": true,
+    "error": null,
+    "durationMs": 2
+  },
+  {
+    "input": "Perform actions while tab is in background",
+    "result": {
+      "intent": {
+        "type": "SEARCH_PRODUCT",
+        "filters": {},
+        "sites": [
+          "amazon",
+          "flipkart"
+        ]
+      },
+      "products": [
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "amazon"
+        },
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "flipkart"
+        }
+      ],
+      "topProducts": [
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "amazon"
+        },
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "flipkart"
+        }
+      ]
+    },
+    "success": true,
+    "error": null,
+    "durationMs": 67
+  },
+  {
+    "input": "Handle missing elements gracefully",
+    "result": {
+      "intent": {
+        "type": "SEARCH_PRODUCT",
+        "filters": {},
+        "sites": [
+          "amazon",
+          "flipkart"
+        ]
+      },
+      "products": [
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "amazon"
+        },
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "flipkart"
+        }
+      ],
+      "topProducts": [
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "amazon"
+        },
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "flipkart"
+        }
+      ]
+    },
+    "success": true,
+    "error": null,
+    "durationMs": 74
+  },
+  {
+    "input": "Retry action when element is temporarily unavailable",
+    "result": {
+      "intent": {
+        "type": "SEARCH_PRODUCT",
+        "filters": {},
+        "sites": [
+          "amazon",
+          "flipkart"
+        ]
+      },
+      "products": [
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "amazon"
+        },
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "flipkart"
+        }
+      ],
+      "topProducts": [
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "amazon"
+        },
+        {
+          "title": "OnePlus 12",
+          "price": 32000,
+          "rating": 4.6,
+          "site": "flipkart"
+        }
+      ]
+    },
+    "success": true,
+    "error": null,
+    "durationMs": 69
+  }
+]

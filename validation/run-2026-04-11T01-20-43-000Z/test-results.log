@@ -1,0 +1,420 @@
+
+> automation-sdk@1.0.0 test:unit /home/runner/work/automation-sdk/automation-sdk
+> jest tests/unit --runInBand --forceExit "--verbose"
+
+  console.warn
+    [GoalRunner] task "amazon_task" failed — skipping: Error: Simulated network error
+        at Object.<anonymous> (/home/runner/work/automation-sdk/automation-sdk/tests/unit/ai.unit.test.ts:379:36)
+        at /home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-mock@29.7.0/node_modules/jest-mock/build/index.js:397:39
+        at Object.<anonymous> (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-mock@29.7.0/node_modules/jest-mock/build/index.js:404:13)
+        at Object.mockConstructor [as goto] (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-mock@29.7.0/node_modules/jest-mock/build/index.js:148:19)
+        at executeTask (/home/runner/work/automation-sdk/automation-sdk/src/ai/executor.ts:18:18)
+        at runGoal (/home/runner/work/automation-sdk/automation-sdk/src/ai/goal-runner.ts:32:41)
+        at Object.<anonymous> (/home/runner/work/automation-sdk/automation-sdk/tests/unit/ai.unit.test.ts:385:20)
+
+    [0m [90m 33 |[39m       allProducts[33m.[39mpush([33m...[39mproducts)[33m;[39m
+     [90m 34 |[39m     } [36mcatch[39m (err) {
+    [31m[1m>[22m[39m[90m 35 |[39m       console[33m.[39mwarn([32m`[GoalRunner] task "${task.id}" failed — skipping:`[39m[33m,[39m err)[33m;[39m
+     [90m    |[39m               [31m[1m^[22m[39m
+     [90m 36 |[39m       [90m// After a failed navigation Chrome may be in the middle of loading a[39m
+     [90m 37 |[39m       [90m// chrome-error:// page.  Reset to about:blank so the page is in a clean,[39m
+     [90m 38 |[39m       [90m// fully-loaded state before the next task's goto() call.[39m[0m
+
+      at runGoal (src/ai/goal-runner.ts:35:15)
+      at Object.<anonymous> (tests/unit/ai.unit.test.ts:385:20)
+
+  console.warn
+    [GoalRunner] task "amazon_task" failed — skipping: Error: Network error
+        at Object.<anonymous> (/home/runner/work/automation-sdk/automation-sdk/tests/unit/ai.unit.test.ts:399:44)
+        at Promise.then.completed (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:298:28)
+        at new Promise (<anonymous>)
+        at callAsyncCircusFn (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:231:10)
+        at _callCircusTest (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:316:40)
+        at _runTest (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:252:3)
+        at _runTestsForDescribeBlock (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:126:9)
+        at _runTestsForDescribeBlock (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+        at run (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:71:3)
+        at runAndTransformResultsToJestFormat (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+        at jestAdapter (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+        at runTestInternal (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:367:16)
+        at runTest (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:444:34)
+
+    [0m [90m 33 |[39m       allProducts[33m.[39mpush([33m...[39mproducts)[33m;[39m
+     [90m 34 |[39m     } [36mcatch[39m (err) {
+    [31m[1m>[22m[39m[90m 35 |[39m       console[33m.[39mwarn([32m`[GoalRunner] task "${task.id}" failed — skipping:`[39m[33m,[39m err)[33m;[39m
+     [90m    |[39m               [31m[1m^[22m[39m
+     [90m 36 |[39m       [90m// After a failed navigation Chrome may be in the middle of loading a[39m
+     [90m 37 |[39m       [90m// chrome-error:// page.  Reset to about:blank so the page is in a clean,[39m
+     [90m 38 |[39m       [90m// fully-loaded state before the next task's goto() call.[39m[0m
+
+      at runGoal (src/ai/goal-runner.ts:35:15)
+      at Object.<anonymous> (tests/unit/ai.unit.test.ts:403:20)
+
+  console.warn
+    [GoalRunner] task "flipkart_task" failed — skipping: Error: Network error
+        at Object.<anonymous> (/home/runner/work/automation-sdk/automation-sdk/tests/unit/ai.unit.test.ts:399:44)
+        at Promise.then.completed (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:298:28)
+        at new Promise (<anonymous>)
+        at callAsyncCircusFn (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:231:10)
+        at _callCircusTest (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:316:40)
+        at _runTest (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:252:3)
+        at _runTestsForDescribeBlock (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:126:9)
+        at _runTestsForDescribeBlock (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+        at run (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:71:3)
+        at runAndTransformResultsToJestFormat (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+        at jestAdapter (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+        at runTestInternal (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:367:16)
+        at runTest (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:444:34)
+
+    [0m [90m 33 |[39m       allProducts[33m.[39mpush([33m...[39mproducts)[33m;[39m
+     [90m 34 |[39m     } [36mcatch[39m (err) {
+    [31m[1m>[22m[39m[90m 35 |[39m       console[33m.[39mwarn([32m`[GoalRunner] task "${task.id}" failed — skipping:`[39m[33m,[39m err)[33m;[39m
+     [90m    |[39m               [31m[1m^[22m[39m
+     [90m 36 |[39m       [90m// After a failed navigation Chrome may be in the middle of loading a[39m
+     [90m 37 |[39m       [90m// chrome-error:// page.  Reset to about:blank so the page is in a clean,[39m
+     [90m 38 |[39m       [90m// fully-loaded state before the next task's goto() call.[39m[0m
+
+      at runGoal (src/ai/goal-runner.ts:35:15)
+      at Object.<anonymous> (tests/unit/ai.unit.test.ts:403:20)
+
+  console.warn
+    [GoalRunner] task "amazon_task" failed — skipping: Error: Timeout
+        at Object.<anonymous> (/home/runner/work/automation-sdk/automation-sdk/tests/unit/ai.unit.test.ts:415:44)
+        at Promise.then.completed (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:298:28)
+        at new Promise (<anonymous>)
+        at callAsyncCircusFn (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:231:10)
+        at _callCircusTest (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:316:40)
+        at _runTest (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:252:3)
+        at _runTestsForDescribeBlock (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:126:9)
+        at _runTestsForDescribeBlock (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+        at run (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:71:3)
+        at runAndTransformResultsToJestFormat (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+        at jestAdapter (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+        at runTestInternal (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:367:16)
+        at runTest (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:444:34)
+
+    [0m [90m 33 |[39m       allProducts[33m.[39mpush([33m...[39mproducts)[33m;[39m
+     [90m 34 |[39m     } [36mcatch[39m (err) {
+    [31m[1m>[22m[39m[90m 35 |[39m       console[33m.[39mwarn([32m`[GoalRunner] task "${task.id}" failed — skipping:`[39m[33m,[39m err)[33m;[39m
+     [90m    |[39m               [31m[1m^[22m[39m
+     [90m 36 |[39m       [90m// After a failed navigation Chrome may be in the middle of loading a[39m
+     [90m 37 |[39m       [90m// chrome-error:// page.  Reset to about:blank so the page is in a clean,[39m
+     [90m 38 |[39m       [90m// fully-loaded state before the next task's goto() call.[39m[0m
+
+      at runGoal (src/ai/goal-runner.ts:35:15)
+      at Object.<anonymous> (tests/unit/ai.unit.test.ts:419:5)
+
+  console.warn
+    [GoalRunner] task "flipkart_task" failed — skipping: Error: Timeout
+        at Object.<anonymous> (/home/runner/work/automation-sdk/automation-sdk/tests/unit/ai.unit.test.ts:415:44)
+        at Promise.then.completed (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:298:28)
+        at new Promise (<anonymous>)
+        at callAsyncCircusFn (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:231:10)
+        at _callCircusTest (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:316:40)
+        at _runTest (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:252:3)
+        at _runTestsForDescribeBlock (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:126:9)
+        at _runTestsForDescribeBlock (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+        at run (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:71:3)
+        at runAndTransformResultsToJestFormat (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+        at jestAdapter (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+        at runTestInternal (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:367:16)
+        at runTest (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:444:34)
+
+    [0m [90m 33 |[39m       allProducts[33m.[39mpush([33m...[39mproducts)[33m;[39m
+     [90m 34 |[39m     } [36mcatch[39m (err) {
+    [31m[1m>[22m[39m[90m 35 |[39m       console[33m.[39mwarn([32m`[GoalRunner] task "${task.id}" failed — skipping:`[39m[33m,[39m err)[33m;[39m
+     [90m    |[39m               [31m[1m^[22m[39m
+     [90m 36 |[39m       [90m// After a failed navigation Chrome may be in the middle of loading a[39m
+     [90m 37 |[39m       [90m// chrome-error:// page.  Reset to about:blank so the page is in a clean,[39m
+     [90m 38 |[39m       [90m// fully-loaded state before the next task's goto() call.[39m[0m
+
+      at runGoal (src/ai/goal-runner.ts:35:15)
+      at Object.<anonymous> (tests/unit/ai.unit.test.ts:419:5)
+
+
+=== E2E SUITES ===
+
+> automation-sdk@1.0.0 test:e2e /home/runner/work/automation-sdk/automation-sdk
+> jest tests/e2e --runInBand --forceExit "--verbose"
+
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+  console.log
+    [2026-04-11T01:21:20.721Z] ✓ CLICK "#btn" 33ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+  console.log
+    [2026-04-11T01:21:20.837Z] ✓ CLICK "#btn" 21ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.log
+    [2026-04-11T01:21:21.407Z] ✓ CLICK "#long-delayed-btn" 1213ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.log
+    [2026-04-11T01:21:22.644Z] ✓ CLICK "#delayed-enable-btn" 636ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.log
+    [2026-04-11T01:21:23.304Z] ✓ CLICK "text=Login" 23ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.log
+    [2026-04-11T01:21:23.354Z] ✓ CLICK "text*=Log" 21ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.log
+    [2026-04-11T01:21:23.401Z] ✓ CLICK "#btn" 23ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.log
+    [2026-04-11T01:21:23.425Z] ✓ NAVIGATE "http://127.0.0.1:38159" 27ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.log
+    [2026-04-11T01:21:23.454Z] ✓ TYPE "#email" 51ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.log
+    [2026-04-11T01:21:23.508Z] ✓ CLICK "#btn" 13ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+  console.log
+    [2026-04-11T01:21:23.571Z] ✓ CLICK "#btn" 21ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+  console.log
+    [2026-04-11T01:21:23.717Z] ✓ CLICK "#btn" 23ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.log
+    [2026-04-11T01:21:23.766Z] ✗ CLICK "#does-not-exist" 3104ms ERROR: Waiting for selector `#does-not-exist` failed: Waiting failed: 1500ms exceeded
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.log
+    [2026-04-11T01:21:26.895Z] ✗ CLICK "text=ButtonThatDoesNotExist" 3100ms ERROR: Waiting for selector `[[[{"name":"xpath","value":"//*[normalize-space()='ButtonThatDoesNotExist']"}]]]` failed: Waiting failed: 1500ms exceeded
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+  console.log
+    [2026-04-11T01:21:30.064Z] ✓ CLICK "#btn" 30ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.log
+    [2026-04-11T01:21:30.095Z] ✗ CLICK "#nonexistent" 3102ms ERROR: Waiting for selector `#nonexistent` failed: Waiting failed: 1500ms exceeded
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+  console.log
+    [2026-04-11T01:21:33.226Z] ✓ CLICK "#btn" 26ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.log
+    [2026-04-11T01:21:33.278Z] ✓ TYPE "#email" 39ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.log
+    [2026-04-11T01:21:33.318Z] ✓ NAVIGATE "http://127.0.0.1:38159" 26ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.log
+    
+    Performance Baseline:
+      click:    26ms  (limit 5 000ms)
+      type:     39ms  (limit 5 000ms)
+      navigate: 26ms  (limit 10 000ms)
+
+      at Object.<anonymous> (tests/e2e/sdk.e2e.test.ts:464:13)
+
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+  console.warn
+    [GoalRunner] task "amazon_task" failed — skipping: Error: net::ERR_FAILED at https://www.amazon.in/s?k=smartphone
+        at navigate (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/puppeteer-core@22.15.0/node_modules/puppeteer-core/src/cdp/Frame.ts:216:13)
+        at Deferred.race (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/puppeteer-core@22.15.0/node_modules/puppeteer-core/src/util/Deferred.ts:49:14)
+        at CdpFrame.goto (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/puppeteer-core@22.15.0/node_modules/puppeteer-core/src/cdp/Frame.ts:169:17)
+        at CdpPage.goto (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/puppeteer-core@22.15.0/node_modules/puppeteer-core/src/api/Page.ts:1648:12)
+        at executeTask (/home/runner/work/automation-sdk/automation-sdk/src/ai/executor.ts:18:7)
+        at runGoal (/home/runner/work/automation-sdk/automation-sdk/src/ai/goal-runner.ts:32:24)
+        at withCustomInterception (/home/runner/work/automation-sdk/automation-sdk/tests/e2e/phase3-hardening.e2e.test.ts:181:12)
+        at Object.<anonymous> (/home/runner/work/automation-sdk/automation-sdk/tests/e2e/phase3-hardening.e2e.test.ts:208:20)
+
+    [0m [90m 33 |[39m       allProducts[33m.[39mpush([33m...[39mproducts)[33m;[39m
+     [90m 34 |[39m     } [36mcatch[39m (err) {
+    [31m[1m>[22m[39m[90m 35 |[39m       console[33m.[39mwarn([32m`[GoalRunner] task "${task.id}" failed — skipping:`[39m[33m,[39m err)[33m;[39m
+     [90m    |[39m               [31m[1m^[22m[39m
+     [90m 36 |[39m       [90m// After a failed navigation Chrome may be in the middle of loading a[39m
+     [90m 37 |[39m       [90m// chrome-error:// page.  Reset to about:blank so the page is in a clean,[39m
+     [90m 38 |[39m       [90m// fully-loaded state before the next task's goto() call.[39m[0m
+
+      at runGoal (src/ai/goal-runner.ts:35:15)
+      at withCustomInterception (tests/e2e/phase3-hardening.e2e.test.ts:181:12)
+      at Object.<anonymous> (tests/e2e/phase3-hardening.e2e.test.ts:208:20)
+
+  console.warn
+    [GoalRunner] task "amazon_task" failed — skipping: Error: net::ERR_FAILED at https://www.amazon.in/s?k=smartphone
+        at navigate (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/puppeteer-core@22.15.0/node_modules/puppeteer-core/src/cdp/Frame.ts:216:13)
+        at Deferred.race (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/puppeteer-core@22.15.0/node_modules/puppeteer-core/src/util/Deferred.ts:49:14)
+        at CdpFrame.goto (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/puppeteer-core@22.15.0/node_modules/puppeteer-core/src/cdp/Frame.ts:169:17)
+        at CdpPage.goto (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/puppeteer-core@22.15.0/node_modules/puppeteer-core/src/api/Page.ts:1648:12)
+        at executeTask (/home/runner/work/automation-sdk/automation-sdk/src/ai/executor.ts:18:7)
+        at runGoal (/home/runner/work/automation-sdk/automation-sdk/src/ai/goal-runner.ts:32:24)
+        at withCustomInterception (/home/runner/work/automation-sdk/automation-sdk/tests/e2e/phase3-hardening.e2e.test.ts:181:12)
+        at Object.<anonymous> (/home/runner/work/automation-sdk/automation-sdk/tests/e2e/phase3-hardening.e2e.test.ts:247:20)
+
+    [0m [90m 33 |[39m       allProducts[33m.[39mpush([33m...[39mproducts)[33m;[39m
+     [90m 34 |[39m     } [36mcatch[39m (err) {
+    [31m[1m>[22m[39m[90m 35 |[39m       console[33m.[39mwarn([32m`[GoalRunner] task "${task.id}" failed — skipping:`[39m[33m,[39m err)[33m;[39m
+     [90m    |[39m               [31m[1m^[22m[39m
+     [90m 36 |[39m       [90m// After a failed navigation Chrome may be in the middle of loading a[39m
+     [90m 37 |[39m       [90m// chrome-error:// page.  Reset to about:blank so the page is in a clean,[39m
+     [90m 38 |[39m       [90m// fully-loaded state before the next task's goto() call.[39m[0m
+
+      at runGoal (src/ai/goal-runner.ts:35:15)
+      at withCustomInterception (tests/e2e/phase3-hardening.e2e.test.ts:181:12)
+      at Object.<anonymous> (tests/e2e/phase3-hardening.e2e.test.ts:247:20)
+
+  console.log
+    [perf] executeGoal duration: 65ms
+
+      at Object.<anonymous> (tests/e2e/phase3-hardening.e2e.test.ts:307:13)
+
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+

@@ -1,0 +1,28 @@
+{
+  "timestamp": "2026-04-11T01-53-31-908Z",
+  "totalTests": 280,
+  "passedTests": 280,
+  "failedTests": 0,
+  "successRate": 1,
+  "totalSuites": 11,
+  "passedSuites": 11,
+  "scenariosPassed": 24,
+  "scenariosTotal": 24,
+  "scenarioSuccessRate": 1,
+  "fallbackUsage": 0,
+  "avgRetries": 0.010714285714285714,
+  "testDurationMs": 92702,
+  "suiteDurations": {
+    "unit": 1892,
+    "e2e:sdk": 14997,
+    "e2e:phase2": 5691,
+    "e2e:goal": 2740,
+    "e2e:phase3-hardening": 2521,
+    "e2e:ui-coverage": 8295,
+    "e2e:reliability-engine": 12651,
+    "e2e:replay": 8099,
+    "e2e:enterprise-app": 23449,
+    "e2e:replay-consistency": 3160,
+    "e2e:performance": 3642
+  }
+}
