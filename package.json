@@ -22,6 +22,7 @@
     "puppeteer-core": "^22.0.0"
   },
   "devDependencies": {
+    "@puppeteer/browsers": "^2.13.0",
     "@types/chrome": "^0.1.40",
     "@types/jest": "^29.5.12",
     "@types/node": "^20.12.0",
@@ -34,7 +35,9 @@
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node",
-    "setupFiles": ["./jest.setup.js"],
+    "setupFiles": [
+      "./jest.setup.js"
+    ],
     "testMatch": [
       "**/tests/**/*.test.ts"
     ],
