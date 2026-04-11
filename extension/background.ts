@@ -21,10 +21,17 @@ import type {
 // ─── Configuration ────────────────────────────────────────────────────────────
 
 const BACKEND_LOG_URL = 'http://127.0.0.1:8000/logs';
+const LOG_MAX_RETRIES = 3;
+const LOG_RETRY_BASE_MS = 200; // exponential backoff: 200 → 400 → 800 ms
 
-// ─── Logging helper ───────────────────────────────────────────────────────────
+// ─── Logging helpers ──────────────────────────────────────────────────────────
 
-async function sendLog(
+/**
+ * Attempts to POST a structured log entry to the backend log server.
+ * Retries up to LOG_MAX_RETRIES times with exponential backoff.
+ * Errors are never surfaced to callers.
+ */
+async function sendLogWithRetry(
   level: LogLevel,
   message: string,
   data?: Record<string, unknown>,
@@ -36,16 +43,30 @@ async function sendLog(
     timestamp: Date.now(),
     data,
   };
-  try {
-    await fetch(BACKEND_LOG_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(entry),
-    });
-  } catch {
-    // Backend may not be running in all environments; logging failures are silent.
+  const body = JSON.stringify(entry);
+
+  for (let attempt = 0; attempt < LOG_MAX_RETRIES; attempt++) {
+    try {
+      const res = await fetch(BACKEND_LOG_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body,
+      });
+      if (res.ok) return; // success
+    } catch {
+      // network error — fall through to retry
+    }
+    if (attempt < LOG_MAX_RETRIES - 1) {
+      await new Promise<void>((r) =>
+        setTimeout(r, LOG_RETRY_BASE_MS * Math.pow(2, attempt)),
+      );
+    }
   }
+  // All retries exhausted — log silently dropped to avoid crashing the worker.
 }
+
+/** Convenience alias — top-level code still uses the short name. */
+const sendLog = sendLogWithRetry;
 
 // ─── Content-script bridge ────────────────────────────────────────────────────
 

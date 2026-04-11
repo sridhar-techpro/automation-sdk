@@ -11,7 +11,7 @@
         "success": true,
         "action": "type",
         "target": "[data-testid=\"step1-name\"]",
-        "timestamp": 1775884403156,
+        "timestamp": 1775887098348,
         "duration": 0
       }
     },
@@ -24,7 +24,7 @@
         "success": true,
         "action": "click",
         "target": "[data-testid=\"step-next\"]",
-        "timestamp": 1775884403172,
+        "timestamp": 1775887098363,
         "duration": 0
       }
     },
@@ -37,7 +37,7 @@
         "success": true,
         "action": "click",
         "target": "[data-testid=\"step-next\"]",
-        "timestamp": 1775884403197,
+        "timestamp": 1775887098382,
         "duration": 0
       }
     },
@@ -50,11 +50,11 @@
         "success": true,
         "action": "click",
         "target": "[data-testid=\"workflow-submit\"]",
-        "timestamp": 1775884403212,
-        "duration": 0
+        "timestamp": 1775887098397,
+        "duration": 1
       }
     }
   ],
-  "startedAt": 1775884403151,
-  "endedAt": 1775884403212
+  "startedAt": 1775887098343,
+  "endedAt": 1775887098398
 }

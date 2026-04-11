@@ -3,9 +3,10 @@
  *
  * Provides:
  *  - launchExtensionBrowser()   — launches Chrome with the extension loaded
- *  - getExtensionId()           — resolves extension ID from service worker target
- *  - simulateExtensionAction()  — replicates content-script.ts DOM logic
- *  - startLogCaptureServer()    — HTTP server that captures POST /logs entries
+ *  - getExtensionId()           — resolves extension ID (deterministic + fallback)
+ *  - simulateExtensionAction()  — replicates content-script.ts DOM logic + emits logs
+ *  - startLogCaptureServer()    — HTTP server capturing POST /logs entries
+ *  - setActiveLogPort()         — configures the port used for log emission in tests
  */
 
 import * as http from 'http';
@@ -16,6 +17,46 @@ import type { ExtensionActionPayload, ExtensionActionResult, LogEntry } from '..
 
 export const CHROME_EXECUTABLE = process.env.CHROME_PATH ?? '/usr/bin/google-chrome';
 export const EXTENSION_PATH    = path.resolve(__dirname, '../../../extension');
+
+// ─── Active log port ──────────────────────────────────────────────────────────
+
+/**
+ * Port number of the currently-running log capture server.
+ * Set by `setActiveLogPort()` in each test suite's beforeAll.
+ * `simulateExtensionAction()` uses this to emit action logs, mirroring what
+ * the real extension background service worker does.
+ */
+let _activeLogPort: number | null = null;
+
+export function setActiveLogPort(port: number | null): void {
+  _activeLogPort = port;
+}
+
+// ─── Internal: post a log entry to the capture server (Node.js-side) ─────────
+
+function postLogEntryToServer(port: number, entry: LogEntry): Promise<void> {
+  return new Promise<void>((resolve) => {
+    const body = JSON.stringify(entry);
+    const req = http.request(
+      {
+        hostname: '127.0.0.1',
+        port,
+        path: '/logs',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(body),
+        },
+      },
+      (res) => {
+        res.resume();
+        res.on('end', resolve);
+      },
+    );
+    req.on('error', () => resolve()); // never throw; log posting is best-effort
+    req.end(body);
+  });
+}
 
 // ─── Browser helpers ──────────────────────────────────────────────────────────
 
@@ -104,12 +145,28 @@ export async function getExtensionId(browser: Browser): Promise<string> {
  *
  * This is functionally equivalent to:
  *   popup → background.sendMessage → content-script.onMessage → DOM action
+ *
+ * Additionally posts two structured log entries to the active log capture
+ * server (matching what `extension/background.ts` sends in production):
+ *   1. "action start"  — before DOM action (level: info)
+ *   2. "action result" — after DOM action  (level: info | error)
  */
 export async function simulateExtensionAction(
   page: Page,
   payload: ExtensionActionPayload,
 ): Promise<ExtensionActionResult> {
-  return page.evaluate((p: ExtensionActionPayload): ExtensionActionResult => {
+  // Post "action start" log entry (mirrors background.ts sendLog 'Executing action')
+  if (_activeLogPort !== null) {
+    await postLogEntryToServer(_activeLogPort, {
+      level: 'info',
+      source: 'background',
+      message: 'action start',
+      timestamp: Date.now(),
+      data: { action: payload.action, target: payload.target },
+    });
+  }
+
+  const result = await page.evaluate((p: ExtensionActionPayload): ExtensionActionResult => {
     const start = Date.now();
     try {
       switch (p.action) {
@@ -159,6 +216,25 @@ export async function simulateExtensionAction(
       };
     }
   }, payload);
+
+  // Post "action result" log entry (mirrors background.ts sendLog 'Action result')
+  if (_activeLogPort !== null) {
+    await postLogEntryToServer(_activeLogPort, {
+      level: result.success ? 'info' : 'error',
+      source: 'background',
+      message: result.success ? 'action success' : 'action failure',
+      timestamp: result.timestamp,
+      data: {
+        action: result.action,
+        target: result.target,
+        success: result.success,
+        duration: result.duration,
+        error: result.error,
+      },
+    });
+  }
+
+  return result;
 }
 
 /**
@@ -188,21 +264,40 @@ export async function simulateSelectOption(
 export interface LogCaptureResult {
   server: http.Server;
   entries: LogEntry[];
+  port: number;
   stop: () => Promise<void>;
 }
 
 /**
- * Starts a minimal HTTP server on the given port that captures structured log
- * entries posted by the extension background service worker.
+ * Starts an HTTP server on the given port that captures structured log entries
+ * posted by the extension background service worker and by
+ * `simulateExtensionAction()`.
  *
  * The extension background.ts sends POST http://127.0.0.1:8000/logs.
- * If the port is unavailable (e.g. real backend already running), this rejects
- * and the caller should fall back to no-op log capture.
+ *
+ * If the port is unavailable (e.g. another process is bound to it), the
+ * returned Promise rejects.  Callers MUST NOT silently swallow this error —
+ * if the log server cannot start, the test suite should fail immediately to
+ * prevent silent observability gaps.
+ *
+ * CORS headers are included in every response to allow browser-side fetch
+ * calls (e.g. from the extension background worker running inside Chrome).
  */
 export function startLogCaptureServer(port = 8000): Promise<LogCaptureResult> {
   const entries: LogEntry[] = [];
   return new Promise((resolve, reject) => {
     const server = http.createServer((req, res) => {
+      // Add CORS headers so the browser-side extension background.js can POST
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+      if (req.method === 'OPTIONS') {
+        res.writeHead(204);
+        res.end();
+        return;
+      }
+
       const url = req.url ?? '';
       if (req.method === 'POST' && (url === '/logs' || url === '/logs/batch')) {
         let body = '';
@@ -226,9 +321,11 @@ export function startLogCaptureServer(port = 8000): Promise<LogCaptureResult> {
     });
     server.on('error', reject);
     server.listen(port, '127.0.0.1', () => {
+      const actualPort = (server.address() as { port: number }).port;
       resolve({
         server,
         entries,
+        port: actualPort,
         stop: () => new Promise<void>((res) => server.close(() => res())),
       });
     });
