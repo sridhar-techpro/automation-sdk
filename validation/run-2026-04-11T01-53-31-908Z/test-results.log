@@ -1,0 +1,967 @@
+=== UNIT ===
+  console.warn
+    [GoalRunner] task "amazon_task" failed — skipping: Error: Simulated network error
+        at Object.<anonymous> (/home/runner/work/automation-sdk/automation-sdk/tests/unit/ai.unit.test.ts:379:36)
+        at /home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-mock@29.7.0/node_modules/jest-mock/build/index.js:397:39
+        at Object.<anonymous> (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-mock@29.7.0/node_modules/jest-mock/build/index.js:404:13)
+        at Object.mockConstructor [as goto] (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-mock@29.7.0/node_modules/jest-mock/build/index.js:148:19)
+        at executeTask (/home/runner/work/automation-sdk/automation-sdk/src/ai/executor.ts:18:18)
+        at runGoal (/home/runner/work/automation-sdk/automation-sdk/src/ai/goal-runner.ts:32:41)
+        at Object.<anonymous> (/home/runner/work/automation-sdk/automation-sdk/tests/unit/ai.unit.test.ts:385:20)
+
+    [0m [90m 33 |[39m       allProducts[33m.[39mpush([33m...[39mproducts)[33m;[39m
+     [90m 34 |[39m     } [36mcatch[39m (err) {
+    [31m[1m>[22m[39m[90m 35 |[39m       console[33m.[39mwarn([32m`[GoalRunner] task "${task.id}" failed — skipping:`[39m[33m,[39m err)[33m;[39m
+     [90m    |[39m               [31m[1m^[22m[39m
+     [90m 36 |[39m       [90m// After a failed navigation Chrome may be in the middle of loading a[39m
+     [90m 37 |[39m       [90m// chrome-error:// page.  Reset to about:blank so the page is in a clean,[39m
+     [90m 38 |[39m       [90m// fully-loaded state before the next task's goto() call.[39m[0m
+
+      at runGoal (src/ai/goal-runner.ts:35:15)
+      at Object.<anonymous> (tests/unit/ai.unit.test.ts:385:20)
+
+  console.warn
+    [GoalRunner] task "amazon_task" failed — skipping: Error: Network error
+        at Object.<anonymous> (/home/runner/work/automation-sdk/automation-sdk/tests/unit/ai.unit.test.ts:399:44)
+        at Promise.then.completed (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:298:28)
+        at new Promise (<anonymous>)
+        at callAsyncCircusFn (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:231:10)
+        at _callCircusTest (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:316:40)
+        at _runTest (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:252:3)
+        at _runTestsForDescribeBlock (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:126:9)
+        at _runTestsForDescribeBlock (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+        at run (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:71:3)
+        at runAndTransformResultsToJestFormat (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+        at jestAdapter (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+        at runTestInternal (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:367:16)
+        at runTest (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:444:34)
+
+    [0m [90m 33 |[39m       allProducts[33m.[39mpush([33m...[39mproducts)[33m;[39m
+     [90m 34 |[39m     } [36mcatch[39m (err) {
+    [31m[1m>[22m[39m[90m 35 |[39m       console[33m.[39mwarn([32m`[GoalRunner] task "${task.id}" failed — skipping:`[39m[33m,[39m err)[33m;[39m
+     [90m    |[39m               [31m[1m^[22m[39m
+     [90m 36 |[39m       [90m// After a failed navigation Chrome may be in the middle of loading a[39m
+     [90m 37 |[39m       [90m// chrome-error:// page.  Reset to about:blank so the page is in a clean,[39m
+     [90m 38 |[39m       [90m// fully-loaded state before the next task's goto() call.[39m[0m
+
+      at runGoal (src/ai/goal-runner.ts:35:15)
+      at Object.<anonymous> (tests/unit/ai.unit.test.ts:403:20)
+
+  console.warn
+    [GoalRunner] task "flipkart_task" failed — skipping: Error: Network error
+        at Object.<anonymous> (/home/runner/work/automation-sdk/automation-sdk/tests/unit/ai.unit.test.ts:399:44)
+        at Promise.then.completed (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:298:28)
+        at new Promise (<anonymous>)
+        at callAsyncCircusFn (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:231:10)
+        at _callCircusTest (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:316:40)
+        at _runTest (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:252:3)
+        at _runTestsForDescribeBlock (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:126:9)
+        at _runTestsForDescribeBlock (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+        at run (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:71:3)
+        at runAndTransformResultsToJestFormat (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+        at jestAdapter (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+        at runTestInternal (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:367:16)
+        at runTest (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:444:34)
+
+    [0m [90m 33 |[39m       allProducts[33m.[39mpush([33m...[39mproducts)[33m;[39m
+     [90m 34 |[39m     } [36mcatch[39m (err) {
+    [31m[1m>[22m[39m[90m 35 |[39m       console[33m.[39mwarn([32m`[GoalRunner] task "${task.id}" failed — skipping:`[39m[33m,[39m err)[33m;[39m
+     [90m    |[39m               [31m[1m^[22m[39m
+     [90m 36 |[39m       [90m// After a failed navigation Chrome may be in the middle of loading a[39m
+     [90m 37 |[39m       [90m// chrome-error:// page.  Reset to about:blank so the page is in a clean,[39m
+     [90m 38 |[39m       [90m// fully-loaded state before the next task's goto() call.[39m[0m
+
+      at runGoal (src/ai/goal-runner.ts:35:15)
+      at Object.<anonymous> (tests/unit/ai.unit.test.ts:403:20)
+
+  console.warn
+    [GoalRunner] task "amazon_task" failed — skipping: Error: Timeout
+        at Object.<anonymous> (/home/runner/work/automation-sdk/automation-sdk/tests/unit/ai.unit.test.ts:415:44)
+        at Promise.then.completed (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:298:28)
+        at new Promise (<anonymous>)
+        at callAsyncCircusFn (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:231:10)
+        at _callCircusTest (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:316:40)
+        at _runTest (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:252:3)
+        at _runTestsForDescribeBlock (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:126:9)
+        at _runTestsForDescribeBlock (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+        at run (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:71:3)
+        at runAndTransformResultsToJestFormat (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+        at jestAdapter (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+        at runTestInternal (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:367:16)
+        at runTest (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:444:34)
+
+    [0m [90m 33 |[39m       allProducts[33m.[39mpush([33m...[39mproducts)[33m;[39m
+     [90m 34 |[39m     } [36mcatch[39m (err) {
+    [31m[1m>[22m[39m[90m 35 |[39m       console[33m.[39mwarn([32m`[GoalRunner] task "${task.id}" failed — skipping:`[39m[33m,[39m err)[33m;[39m
+     [90m    |[39m               [31m[1m^[22m[39m
+     [90m 36 |[39m       [90m// After a failed navigation Chrome may be in the middle of loading a[39m
+     [90m 37 |[39m       [90m// chrome-error:// page.  Reset to about:blank so the page is in a clean,[39m
+     [90m 38 |[39m       [90m// fully-loaded state before the next task's goto() call.[39m[0m
+
+      at runGoal (src/ai/goal-runner.ts:35:15)
+      at Object.<anonymous> (tests/unit/ai.unit.test.ts:419:5)
+
+  console.warn
+    [GoalRunner] task "flipkart_task" failed — skipping: Error: Timeout
+        at Object.<anonymous> (/home/runner/work/automation-sdk/automation-sdk/tests/unit/ai.unit.test.ts:415:44)
+        at Promise.then.completed (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:298:28)
+        at new Promise (<anonymous>)
+        at callAsyncCircusFn (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:231:10)
+        at _callCircusTest (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:316:40)
+        at _runTest (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:252:3)
+        at _runTestsForDescribeBlock (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:126:9)
+        at _runTestsForDescribeBlock (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+        at run (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:71:3)
+        at runAndTransformResultsToJestFormat (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+        at jestAdapter (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+        at runTestInternal (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:367:16)
+        at runTest (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:444:34)
+
+    [0m [90m 33 |[39m       allProducts[33m.[39mpush([33m...[39mproducts)[33m;[39m
+     [90m 34 |[39m     } [36mcatch[39m (err) {
+    [31m[1m>[22m[39m[90m 35 |[39m       console[33m.[39mwarn([32m`[GoalRunner] task "${task.id}" failed — skipping:`[39m[33m,[39m err)[33m;[39m
+     [90m    |[39m               [31m[1m^[22m[39m
+     [90m 36 |[39m       [90m// After a failed navigation Chrome may be in the middle of loading a[39m
+     [90m 37 |[39m       [90m// chrome-error:// page.  Reset to about:blank so the page is in a clean,[39m
+     [90m 38 |[39m       [90m// fully-loaded state before the next task's goto() call.[39m[0m
+
+      at runGoal (src/ai/goal-runner.ts:35:15)
+      at Object.<anonymous> (tests/unit/ai.unit.test.ts:419:5)
+
+PASS tests/unit/ai.unit.test.ts
+  Test Group 1: Intent Parsing
+    ✓ parses SEARCH_PRODUCT intent with price and rating filters (3 ms)
+    ✓ defaults to amazon + flipkart when no site is mentioned (1 ms)
+    ✓ parses LOGIN intent
+    ✓ parses NAVIGATE intent (1 ms)
+    ✓ respects explicit site mentions
+    ✓ normalizes "smartphones" keyword to query "smartphone" (1 ms)
+    ✓ normalizes "phones" keyword to query "smartphone"
+    ✓ parses FORM_FILL intent from "fill leave form"
+    ✓ parses FORM_FILL intent from "submit form"
+    ✓ parses TABLE_LOOKUP intent from "find employee"
+    ✓ parses TABLE_LOOKUP intent from "look up" (1 ms)
+    ✓ parses priceMax from "below 30000"
+    ✓ parses priceMax from "budget 30000"
+    ✓ parses priceMax from "less than 30000"
+    ✓ parses priceMax from "below 30k" (k notation → 30000)
+    ✓ parses priceMax from "under 20k" (k notation → 20000)
+    ✓ parses ratingMin from "4+ rating"
+    ✓ parses ratingMin from "rating greater than 4"
+    ✓ parses ratingMin from "4.5+ rating"
+  Test Group 2: Task Graph
+    ✓ creates one task per site for SEARCH_PRODUCT (1 ms)
+    ✓ creates amazon_task and flipkart_task
+    ✓ each task has site set correctly
+    ✓ each task includes a navigate step with a URL (1 ms)
+    ✓ each task includes an extract step
+    ✓ amazon task URL points to amazon domain (1 ms)
+    ✓ generates a single task for LOGIN intent
+    ✓ generates a single task for FORM_FILL intent
+    ✓ generates a single task for TABLE_LOOKUP intent
+  Test Group 3: Execution
+    ✓ executes tasks sequentially and returns product arrays (2 ms)
+    ✓ calls goto before extracting (navigate step runs first) (1 ms)
+    ✓ returns non-empty product list when mock HTML has products
+    ✓ returns empty array for a task with no steps (1 ms)
+  Test Group 4: Extraction
+    ✓ extracts all four products from mock HTML
+    ✓ extracts correct title, price and rating
+    ✓ attaches the site name to every extracted product (1 ms)
+    ✓ returns empty array for HTML with no product-item articles
+    ✓ is callable multiple times without state leakage
+  Test Group 5: Filtering
+    ✓ filters out products at or above priceMax (1 ms)
+    ✓ filters out products at or below ratingMin
+    ✓ applies both filters simultaneously and returns only passing products
+    ✓ returns all products when no filters are applied
+  Test Group 6: Aggregation
+    ✓ returns at most 2 products
+    ✓ returns the product with the highest rating first
+    ✓ top product is the one with highest rating (1 ms)
+    ✓ breaks rating ties by price ascending (cheaper wins)
+    ✓ handles fewer than 2 products gracefully
+    ✓ does not mutate the original array
+  Test Group 7: Failure Handling
+    ✓ continues when the first task throws — second task still succeeds (32 ms)
+    ✓ returns empty products when ALL tasks fail (4 ms)
+    ✓ does not throw even when all tasks fail (2 ms)
+  Test Group 8: End-to-End
+    ✓ runGoal returns a structured GoalResult
+    ✓ products and topProducts reference the same results
+    ✓ all returned products pass the price and rating filters
+    ✓ returns at most 2 products after aggregation (1 ms)
+    ✓ executes tasks for both amazon and flipkart (multi-site)
+    ✓ top product has the highest rating among qualifying products
+    ✓ handles "below 30000" price variation end-to-end (1 ms)
+    ✓ handles "4+ rating" variation end-to-end
+    ✓ handles "30k" price notation end-to-end
+
+PASS tests/unit/selectors.unit.test.ts
+  parseSelector
+    ✓ parses text= as text-exact (1 ms)
+    ✓ parses text*= as text-partial
+    ✓ parses #id as css
+    ✓ parses .class as css
+    ✓ parses complex CSS selector
+  withRetry
+    ✓ returns value on first success
+    ✓ retries on failure and eventually succeeds (21 ms)
+    ✓ throws after all retries exhausted (24 ms)
+    ✓ applies exponential backoff (2 ms)
+
+PASS tests/unit/planning.unit.test.ts
+  rankSelectors
+    ✓ returns candidates ordered by priority (1 ms)
+    ✓ sorts equal-priority items by value length (shorter first)
+    ✓ returns an empty array for empty input
+    ✓ handles a single candidate
+    ✓ does not mutate the input array
+  isBrittleSelector
+    ✓ flags nth-child selectors (1 ms)
+    ✓ flags nth-of-type selectors
+    ✓ flags index-based XPath
+    ✓ flags hash-like class names (8+ alphanumeric chars)
+    ✓ allows stable data-testid selectors (1 ms)
+    ✓ allows aria-label selectors
+    ✓ allows short class names
+    ✓ allows plain tag selectors
+  buildCompositeSelector
+    ✓ builds a valid XPath composite selector (1 ms)
+    ✓ escapes backslashes and double-quotes in the text
+  selectPrimaryAndFallbacks
+    ✓ picks data-testid as primary
+    ✓ demotes brittle selectors and still returns them as fallbacks
+    ✓ uses brittle selectors when nothing else is available (1 ms)
+    ✓ returns empty primary/fallbacks for empty input
+  generateReplayScript
+    ✓ generates a script with an id and goal
+    ✓ each step has selector, wait, and retry (1 ms)
+    ✓ click step has the data-testid as primary selector
+    ✓ generates unique ids for multiple calls
+    ✓ produces an empty steps array for empty records
+  WorkflowStore
+    ✓ saves and retrieves a workflow by id
+    ✓ findByGoal returns the workflow
+    ✓ list returns all workflows
+    ✓ updating the same goal increments version (1 ms)
+    ✓ updateSuccessRate tracks totals correctly
+    ✓ sets needsRevalidation when success rate drops below 50% after 3+ runs
+    ✓ does not set needsRevalidation for a good success rate (1 ms)
+    ✓ delete removes the workflow
+  SuccessRateTracker
+    ✓ recordRun updates the workflow success rate
+    ✓ isFlaky returns false for < 5 attempts (1 ms)
+    ✓ getStats returns selector stats
+    ✓ getAllStats returns all tracked selectors
+    ✓ promotes fallback to primary when primary consistently fails (1 ms)
+  ActionRecorder
+    ✓ records and retrieves steps
+    ✓ returns a copy of records (not the internal array)
+    ✓ clears records
+    ✓ records multiple steps in order
+
+PASS tests/unit/phase2.unit.test.ts
+  parseSelector — Phase 2
+    ✓ parses xpath= prefix as xpath (1 ms)
+    ✓ parses bare // as xpath
+    ✓ parses (// as xpath (grouped XPath expression) (1 ms)
+    ✓ parses shadow= prefix as shadow
+    ✓ still parses text= correctly
+    ✓ still parses text*= correctly
+    ✓ still parses #id as css
+  buildPlaceholderSelector
+    ✓ returns a CSS attribute selector
+    ✓ escapes double quotes inside the value
+    ✓ escapes backslashes inside the value
+  buildTestIdSelector
+    ✓ returns a data-testid CSS selector
+    ✓ escapes double quotes inside the id
+    ✓ escapes backslashes inside the id
+  buildTextSelector
+    ✓ returns text= for exact match (default)
+    ✓ returns text*= for partial match
+  buildLabelSelector
+    ✓ returns a ::-p-xpath selector referencing the label for attribute (1 ms)
+  buildRoleSelector
+    ✓ returns a ::-p-xpath selector for button role
+    ✓ includes name condition when name option is provided
+    ✓ handles XPath escaping for name with single quote
+  Locator — chainable API (no browser)
+    ✓ creates a Locator via constructor (1 ms)
+    ✓ nth() returns a new Locator
+    ✓ first() returns a new Locator
+    ✓ last() returns a new Locator (1 ms)
+    ✓ filter() returns a new Locator
+    ✓ locator() returns a child Locator
+    ✓ chains are immutable — original is not modified
+
+Test Suites: 4 passed, 4 total
+Tests:       135 passed, 135 total
+Snapshots:   0 total
+Time:        1.543 s, estimated 2 s
+Ran all test suites matching /tests\/unit/i.
+Force exiting Jest: Have you considered using `--detectOpenHandles` to detect async operations that kept running after all tests finished?
+
+
+=== E2E:SDK ===
+  console.log
+    [2026-04-11T01:53:36.540Z] ✓ CLICK "#btn" 37ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+  console.log
+    [2026-04-11T01:53:36.689Z] ✓ CLICK "#btn" 37ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.log
+    [2026-04-11T01:53:37.281Z] ✓ CLICK "#long-delayed-btn" 1211ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.log
+    [2026-04-11T01:53:38.516Z] ✓ CLICK "#delayed-enable-btn" 652ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.log
+    [2026-04-11T01:53:39.198Z] ✓ CLICK "text=Login" 25ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.log
+    [2026-04-11T01:53:39.254Z] ✓ CLICK "text*=Log" 26ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.log
+    [2026-04-11T01:53:39.310Z] ✓ CLICK "#btn" 24ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.log
+    [2026-04-11T01:53:39.335Z] ✓ NAVIGATE "http://127.0.0.1:39513" 30ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.log
+    [2026-04-11T01:53:39.367Z] ✓ TYPE "#email" 43ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.log
+    [2026-04-11T01:53:39.414Z] ✓ CLICK "#btn" 28ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+  console.log
+    [2026-04-11T01:53:39.492Z] ✓ CLICK "#btn" 25ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+  console.log
+    [2026-04-11T01:53:39.654Z] ✓ CLICK "#btn" 24ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.log
+    [2026-04-11T01:53:39.710Z] ✗ CLICK "#does-not-exist" 3103ms ERROR: Waiting for selector `#does-not-exist` failed: Waiting failed: 1500ms exceeded
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.log
+    [2026-04-11T01:53:42.883Z] ✗ CLICK "text=ButtonThatDoesNotExist" 3101ms ERROR: Waiting for selector `[[[{"name":"xpath","value":"//*[normalize-space()='ButtonThatDoesNotExist']"}]]]` failed: Waiting failed: 1500ms exceeded
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+  console.log
+    [2026-04-11T01:53:46.056Z] ✓ CLICK "#btn" 24ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.log
+    [2026-04-11T01:53:46.081Z] ✗ CLICK "#nonexistent" 3102ms ERROR: Waiting for selector `#nonexistent` failed: Waiting failed: 1500ms exceeded
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+  console.log
+    [2026-04-11T01:53:49.217Z] ✓ CLICK "#btn" 25ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.log
+    [2026-04-11T01:53:49.269Z] ✓ TYPE "#email" 40ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.log
+    [2026-04-11T01:53:49.309Z] ✓ NAVIGATE "http://127.0.0.1:39513" 31ms
+
+      at ActionLogger.log (src/tracer/logger.ts:11:13)
+
+  console.log
+    
+    Performance Baseline:
+      click:    25ms  (limit 5 000ms)
+      type:     40ms  (limit 5 000ms)
+      navigate: 31ms  (limit 10 000ms)
+
+      at Object.<anonymous> (tests/e2e/sdk.e2e.test.ts:464:13)
+
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+PASS tests/e2e/sdk.e2e.test.ts (14.424 s)
+  Test 1: Background Execution
+    ✓ executes CDP action while page visibility API reports hidden/blurred state (94 ms)
+    ✓ executes CDP action with two real Chrome tabs open (multi-tab background) (130 ms)
+  Test 2: Retry Stability
+    ✓ auto-waits for element that appears after 500ms (526 ms)
+    ✓ auto-wait: SDK waits for element that appears after 1200ms (1236 ms)
+    ✓ retry: element initially disabled → ActionabilityError → retry → enabled → success (676 ms)
+  Test 3: Selector Intelligence
+    ✓ clicks element via exact text selector (text=Login) (56 ms)
+    ✓ clicks element via partial text selector (text*=Log) (55 ms)
+    ✓ clicks element via CSS selector (#btn) (54 ms)
+  Test 4: Multi-step Flow
+    ✓ navigate → type → click → validate outcome (113 ms)
+  Test 5: CDP Connection Stability
+    ✓ reconnects and resumes execution after explicit disconnect (70 ms)
+    ✓ throws when execute is called before connect (14 ms)
+    ✓ page URL is preserved across disconnect/reconnect cycle (87 ms)
+    ✓ recovers page reference after target is destroyed (targetdestroyed event) (60 ms)
+  Test 6: Failure Path Validation
+    ✓ returns a failure ActionResult (does not throw) for a non-existent CSS selector (3128 ms)
+    ✓ returns a failure ActionResult for a non-existent text selector (3171 ms)
+    ✓ throws PolicyViolationError when navigating to a non-whitelisted domain (42 ms)
+    ✓ tracer logs both successful and failed actions with the correct schema (3156 ms)
+  Test 7: Performance Baseline
+    ✓ all action types complete within production time bounds (155 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       18 passed, 18 total
+Snapshots:   0 total
+Time:        14.644 s, estimated 15 s
+Ran all test suites matching /tests\/e2e\/sdk.e2e.test.ts/i.
+Force exiting Jest: Have you considered using `--detectOpenHandles` to detect async operations that kept running after all tests finished?
+
+
+=== E2E:PHASE2 ===
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+PASS tests/e2e/phase2.e2e.test.ts (5.114 s)
+  Phase 2 — Locator System
+    ✓ locator.click() works for a simple CSS selector (83 ms)
+    ✓ locator.nth(0) clicks the first list item (64 ms)
+    ✓ locator.first() clicks the first list item (82 ms)
+    ✓ locator.last() clicks the last list item (62 ms)
+    ✓ locator.nth(1) clicks the second list item (59 ms)
+    ✓ locator.filter({ hasText }) clicks the matching item (64 ms)
+    ✓ locator.filter chained with first() clicks first matching item (80 ms)
+    ✓ locator.locator(child) resolves within parent context (68 ms)
+    ✓ locator.type() types into an input (87 ms)
+  Phase 2 — Selector Execution
+    ✓ executes a CSS selector via locator (64 ms)
+    ✓ executes an XPath selector via locator (xpath= prefix) (71 ms)
+    ✓ executes a bare XPath (//) via locator (93 ms)
+    ✓ locator throws a descriptive error for a non-existent selector (1632 ms)
+  Phase 2 — Frame Handling
+    ✓ clicks a button inside an iframe (85 ms)
+  Phase 2 — Shadow DOM
+    ✓ clicks a button inside a shadow root using >>> selector (65 ms)
+    ✓ resolves shadow DOM element via shadow= selector (70 ms)
+  Phase 2 — Advanced Selectors
+    ✓ getByTestId finds and clicks the submit button (78 ms)
+    ✓ getByPlaceholder finds the email input and types into it (95 ms)
+    ✓ getByLabel finds the email input via its associated label (102 ms)
+    ✓ getByText finds the submit button by its text content (74 ms)
+    ✓ getByRole finds a button by role and aria-label (79 ms)
+  Phase 2 — Screenshot
+    ✓ sdk.screenshot() returns a non-empty Buffer (107 ms)
+    ✓ locator.screenshot() returns a non-empty Buffer for a matched element (122 ms)
+  Phase 2 — Multi-Tab Management
+    ✓ getTabs() returns the open tabs
+    ✓ switchToTab(0) returns the first page (1 ms)
+    ✓ switchToTab() throws for an out-of-bounds index (3 ms)
+    ✓ executeOnTab runs an action on the specified tab (1 ms)
+    ✓ multi-tab: disconnect → open second tab → reconnect → executeOnTab(1, ...) (111 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       28 passed, 28 total
+Snapshots:   0 total
+Time:        5.332 s, estimated 6 s
+Ran all test suites matching /tests\/e2e\/phase2.e2e.test.ts/i.
+Force exiting Jest: Have you considered using `--detectOpenHandles` to detect async operations that kept running after all tests finished?
+
+
+=== E2E:GOAL ===
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+PASS tests/e2e/goal.e2e.test.ts
+  E2E: sdk.executeGoal()
+    ✓ executeGoal works end-to-end and returns topProducts (76 ms)
+    ✓ returned products satisfy the price and rating constraints (60 ms)
+    ✓ returns at most 2 products (top-N aggregation) (70 ms)
+    ✓ products and topProducts contain the same results (71 ms)
+    ✓ intent is correctly parsed from natural language input (69 ms)
+    ✓ executes across multiple sites (multi-task) (72 ms)
+    ✓ handles "below" price variation correctly in a real run (76 ms)
+    ✓ returns a result (not throws) when goal produces no matching products (76 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       8 passed, 8 total
+Snapshots:   0 total
+Time:        2.388 s, estimated 3 s
+Ran all test suites matching /tests\/e2e\/goal.e2e.test.ts/i.
+Force exiting Jest: Have you considered using `--detectOpenHandles` to detect async operations that kept running after all tests finished?
+
+
+=== E2E:PHASE3-HARDENING ===
+  console.warn
+    [GoalRunner] task "amazon_task" failed — skipping: Error: net::ERR_FAILED at https://www.amazon.in/s?k=smartphone
+        at navigate (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/puppeteer-core@22.15.0/node_modules/puppeteer-core/src/cdp/Frame.ts:216:13)
+        at Deferred.race (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/puppeteer-core@22.15.0/node_modules/puppeteer-core/src/util/Deferred.ts:49:14)
+        at CdpFrame.goto (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/puppeteer-core@22.15.0/node_modules/puppeteer-core/src/cdp/Frame.ts:169:17)
+        at CdpPage.goto (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/puppeteer-core@22.15.0/node_modules/puppeteer-core/src/api/Page.ts:1648:12)
+        at executeTask (/home/runner/work/automation-sdk/automation-sdk/src/ai/executor.ts:18:7)
+        at runGoal (/home/runner/work/automation-sdk/automation-sdk/src/ai/goal-runner.ts:32:24)
+        at withCustomInterception (/home/runner/work/automation-sdk/automation-sdk/tests/e2e/phase3-hardening.e2e.test.ts:181:12)
+        at Object.<anonymous> (/home/runner/work/automation-sdk/automation-sdk/tests/e2e/phase3-hardening.e2e.test.ts:208:20)
+
+    [0m [90m 33 |[39m       allProducts[33m.[39mpush([33m...[39mproducts)[33m;[39m
+     [90m 34 |[39m     } [36mcatch[39m (err) {
+    [31m[1m>[22m[39m[90m 35 |[39m       console[33m.[39mwarn([32m`[GoalRunner] task "${task.id}" failed — skipping:`[39m[33m,[39m err)[33m;[39m
+     [90m    |[39m               [31m[1m^[22m[39m
+     [90m 36 |[39m       [90m// After a failed navigation Chrome may be in the middle of loading a[39m
+     [90m 37 |[39m       [90m// chrome-error:// page.  Reset to about:blank so the page is in a clean,[39m
+     [90m 38 |[39m       [90m// fully-loaded state before the next task's goto() call.[39m[0m
+
+      at runGoal (src/ai/goal-runner.ts:35:15)
+      at withCustomInterception (tests/e2e/phase3-hardening.e2e.test.ts:181:12)
+      at Object.<anonymous> (tests/e2e/phase3-hardening.e2e.test.ts:208:20)
+
+  console.warn
+    [GoalRunner] task "amazon_task" failed — skipping: Error: net::ERR_FAILED at https://www.amazon.in/s?k=smartphone
+        at navigate (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/puppeteer-core@22.15.0/node_modules/puppeteer-core/src/cdp/Frame.ts:216:13)
+        at Deferred.race (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/puppeteer-core@22.15.0/node_modules/puppeteer-core/src/util/Deferred.ts:49:14)
+        at CdpFrame.goto (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/puppeteer-core@22.15.0/node_modules/puppeteer-core/src/cdp/Frame.ts:169:17)
+        at CdpPage.goto (/home/runner/work/automation-sdk/automation-sdk/node_modules/.pnpm/puppeteer-core@22.15.0/node_modules/puppeteer-core/src/api/Page.ts:1648:12)
+        at executeTask (/home/runner/work/automation-sdk/automation-sdk/src/ai/executor.ts:18:7)
+        at runGoal (/home/runner/work/automation-sdk/automation-sdk/src/ai/goal-runner.ts:32:24)
+        at withCustomInterception (/home/runner/work/automation-sdk/automation-sdk/tests/e2e/phase3-hardening.e2e.test.ts:181:12)
+        at Object.<anonymous> (/home/runner/work/automation-sdk/automation-sdk/tests/e2e/phase3-hardening.e2e.test.ts:247:20)
+
+    [0m [90m 33 |[39m       allProducts[33m.[39mpush([33m...[39mproducts)[33m;[39m
+     [90m 34 |[39m     } [36mcatch[39m (err) {
+    [31m[1m>[22m[39m[90m 35 |[39m       console[33m.[39mwarn([32m`[GoalRunner] task "${task.id}" failed — skipping:`[39m[33m,[39m err)[33m;[39m
+     [90m    |[39m               [31m[1m^[22m[39m
+     [90m 36 |[39m       [90m// After a failed navigation Chrome may be in the middle of loading a[39m
+     [90m 37 |[39m       [90m// chrome-error:// page.  Reset to about:blank so the page is in a clean,[39m
+     [90m 38 |[39m       [90m// fully-loaded state before the next task's goto() call.[39m[0m
+
+      at runGoal (src/ai/goal-runner.ts:35:15)
+      at withCustomInterception (tests/e2e/phase3-hardening.e2e.test.ts:181:12)
+      at Object.<anonymous> (tests/e2e/phase3-hardening.e2e.test.ts:247:20)
+
+  console.log
+    [perf] executeGoal duration: 66ms
+
+      at Object.<anonymous> (tests/e2e/phase3-hardening.e2e.test.ts:307:13)
+
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+PASS tests/e2e/phase3-hardening.e2e.test.ts
+  Phase 3 Hardening — Partial Failure
+    ✓ continues and returns Flipkart results when the Amazon request is aborted (148 ms)
+  Phase 3 Hardening — Ordering Validation
+    ✓ returns top products sorted by rating DESC, then price ASC on tie (100 ms)
+  Phase 3 Hardening — Non-Ecommerce Workflow
+    ✓ LOGIN intent: does not throw and returns a structured result (1 ms)
+  Phase 3 Hardening — Performance Signal
+    ✓ executeGoal with mock interception completes within a reasonable time (68 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       4 passed, 4 total
+Snapshots:   0 total
+Time:        2.168 s
+Ran all test suites matching /tests\/e2e\/phase3-hardening.e2e.test.ts/i.
+Force exiting Jest: Have you considered using `--detectOpenHandles` to detect async operations that kept running after all tests finished?
+
+
+=== E2E:UI-COVERAGE ===
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+PASS tests/e2e/ui-coverage.e2e.test.ts (7.718 s)
+  UI Coverage — Multi-step Form
+    ✓ navigates to step 2 when name is typed and Next is clicked (144 ms)
+    ✓ completes all three steps and shows the success message (218 ms)
+  UI Coverage — Input Elements
+    ✓ types into a text input (90 ms)
+    ✓ types into a password input (73 ms)
+    ✓ types into a textarea (87 ms)
+  UI Coverage — Selection Elements
+    ✓ selects a radio button by clicking the input element (63 ms)
+    ✓ checks two checkboxes independently, leaving a third unchecked (88 ms)
+  UI Coverage — Dropdown Elements
+    ✓ selects an option from a native <select> via page.select() (49 ms)
+    ✓ opens a custom div dropdown and selects an option by clicking (96 ms)
+  UI Coverage — Interactive Elements
+    ✓ clicks a standard <button> and verifies the outcome (66 ms)
+    ✓ clicks a <div role="button"> element (80 ms)
+    ✓ navigates via an <a> anchor link (in-page hash) (71 ms)
+  UI Coverage — Table and Pagination
+    ✓ finds an employee row by text and clicks it (69 ms)
+    ✓ simulates pagination by clicking Next Page (65 ms)
+  UI Coverage — Dynamic Content
+    ✓ auto-waits for a delayed element to become visible, then clicks it (691 ms)
+    ✓ retries and succeeds on a button that starts disabled (703 ms)
+  UI Coverage — Resilience
+    ✓ locating a non-existent element throws rather than hanging indefinitely (3112 ms)
+    ✓ switchToTab() throws for an out-of-bounds index (4 ms)
+  UI Coverage — iFrame Interaction
+    ✓ clicks a button inside an iFrame and verifies the result (87 ms)
+  UI Coverage — Shadow DOM Interaction
+    ✓ clicks a button inside a shadow root and verifies the result (73 ms)
+  UI Coverage — Multi-tab Management
+    ✓ getTabs() returns at least one tab
+    ✓ opens a second tab via disconnect → newPage() → reconnect, then queries it (121 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       22 passed, 22 total
+Snapshots:   0 total
+Time:        7.939 s, estimated 8 s
+Ran all test suites matching /tests\/e2e\/ui-coverage.e2e.test.ts/i.
+Force exiting Jest: Have you considered using `--detectOpenHandles` to detect async operations that kept running after all tests finished?
+
+
+=== E2E:RELIABILITY-ENGINE ===
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+PASS tests/e2e/reliability-engine.e2e.test.ts (12.093 s)
+  Reliability Engine — 1. Scroll Discovery
+    ✓ finds #below-fold-btn (created by IntersectionObserver after scrolling) and clicks it (2474 ms)
+    ✓ locator.scrollFind() finds #below-fold-btn and returns a clickable handle (2445 ms)
+  Reliability Engine — 2. Dynamic Load
+    ✓ waits for #dynamic-btn (appears after 600 ms) then clicks it (642 ms)
+    ✓ waitForLoadState("domcontentloaded") resolves for a loaded page (24 ms)
+    ✓ waitForLoadState("networkidle") resolves once no more requests are in flight (529 ms)
+  Reliability Engine — 3. Event-Driven UI
+    ✓ click trigger → dropdown appears → select option via waitForElementAfterAction (62 ms)
+    ✓ dropdown is hidden before trigger click and visible after (57 ms)
+  Reliability Engine — 4. Lazy Loading
+    ✓ scrolls until lazy content (created by scroll event) loads then clicks it (4060 ms)
+  Reliability Engine — 5. Multi-Step Chained Interaction
+    ✓ click → new field appears → type → submit → result shows (99 ms)
+    ✓ field has the typed value after multi-step flow (96 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       10 passed, 10 total
+Snapshots:   0 total
+Time:        12.309 s, estimated 13 s
+Ran all test suites matching /tests\/e2e\/reliability-engine.e2e.test.ts/i.
+Force exiting Jest: Have you considered using `--detectOpenHandles` to detect async operations that kept running after all tests finished?
+
+
+=== E2E:REPLAY ===
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+PASS tests/e2e/replay.e2e.test.ts (7.489 s)
+  ReplayScript — native select
+    ✓ replays selecting an option from a native <select> (62 ms)
+  ReplayScript — custom dropdown
+    ✓ replays custom dropdown open and option select (72 ms)
+  ReplayScript — radio buttons
+    ✓ replays radio button selection (57 ms)
+  ReplayScript — checkboxes
+    ✓ replays checkbox interactions (79 ms)
+  ReplayScript — text inputs
+    ✓ replays typing into text fields (175 ms)
+  ReplayScript — textarea
+    ✓ replays typing into a textarea (84 ms)
+  File upload field
+    ✓ file input element exists in the DOM (39 ms)
+  ReplayScript — modal interaction
+    ✓ replays open modal, type, and close (130 ms)
+  ReplayScript — dynamic content
+    ✓ replays trigger and waits for dynamic content (68 ms)
+  ReplayScript — scroll to element
+    ✓ replays scroll to off-screen element (56 ms)
+  ReplayScript — submit button + result
+    ✓ replays click on submit button (57 ms)
+  Success rate tracking
+    ✓ updates success rate after successful replay (52 ms)
+  Selector fallback
+    ✓ uses fallback selector when primary fails (4884 ms)
+  Workflow round-trip
+    ✓ save → retrieve → replay (59 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       14 passed, 14 total
+Snapshots:   0 total
+Time:        7.714 s, estimated 8 s
+Ran all test suites matching /tests\/e2e\/replay.e2e.test.ts/i.
+Force exiting Jest: Have you considered using `--detectOpenHandles` to detect async operations that kept running after all tests finished?
+
+
+=== E2E:ENTERPRISE-APP ===
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+PASS tests/e2e/enterprise-app.e2e.test.ts (22.887 s)
+  Module 1 — Complex Form
+    ✓ types into name and email inputs and values are captured (156 ms)
+    ✓ selects a department from the native dropdown (47 ms)
+    ✓ opens custom priority dropdown and selects High priority (96 ms)
+    ✓ selects a radio button and checks multiple checkboxes (103 ms)
+    ✓ shows validation errors on empty submit; shows success after valid data (196 ms)
+  Module 2 — Multi-Step Workflow
+    ✓ starts on step 1 and navigates forward to step 2 then back (115 ms)
+    ✓ shows conditional company-size field when Enterprise account type is selected (56 ms)
+    ✓ populates review step with entered data (148 ms)
+    ✓ completes the workflow and shows success message (163 ms)
+  Module 3 — Data Table
+    ✓ renders the first page with 4 rows by default (69 ms)
+    ✓ search filters rows by employee name (101 ms)
+    ✓ filter dropdown narrows table to Engineering rows only (60 ms)
+    ✓ pagination next advances to page 2 and prev returns to page 1 (90 ms)
+    ✓ clicking a row opens the detail panel with correct employee info (90 ms)
+  Module 4 — Dynamic UI
+    ✓ opens the modal on button click (92 ms)
+    ✓ closes the modal with the Cancel button (101 ms)
+    ✓ types into modal input and confirms → shows result (145 ms)
+    ✓ loading trigger shows spinner then displays completion badge (988 ms)
+    ✓ custom action menu opens on trigger click and menu item fires result (113 ms)
+  Module 5 — Scroll + Lazy Load
+    ✓ findWithScroll discovers the below-fold button and returns an ElementHandle (8908 ms)
+    ✓ clicking the below-fold button (via scrollFind Locator) shows result (8895 ms)
+    ✓ lazy-loaded items appear after scrolling to the lazy sentinel (78 ms)
+  Module 6 — Modern UI Patterns
+    ✓ div-based button (role=button) is clickable via getByRole and shows result (86 ms)
+    ✓ span role=link is clickable via getByRole and shows result (98 ms)
+    ✓ toggle switch changes aria-checked and status text on each click (115 ms)
+    ✓ tab navigation shows the correct panel and hides others (135 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       26 passed, 26 total
+Snapshots:   0 total
+Time:        23.105 s
+Ran all test suites matching /tests\/e2e\/enterprise-app.e2e.test.ts/i.
+Force exiting Jest: Have you considered using `--detectOpenHandles` to detect async operations that kept running after all tests finished?
+
+
+=== E2E:REPLAY-CONSISTENCY ===
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+PASS tests/e2e/replay-consistency.test.ts
+  Replay Consistency — 3 consecutive runs
+    ✓ all runs succeed (2 ms)
+    ✓ all runs execute the same number of steps (1 ms)
+    ✓ no selector drift — primary selector used consistently across runs (1 ms)
+    ✓ no retry escalation — attempt counts do not increase between runs (1 ms)
+    ✓ total attempts across runs remain stable (no retry drift)
+  Replay Consistency — result verification
+    ✓ result-a is visible after replay (146 ms)
+    ✓ result-b is visible after replay (132 ms)
+    ✓ typed text is reflected in name-output (133 ms)
+    ✓ submit-result is visible after replay (133 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       9 passed, 9 total
+Snapshots:   0 total
+Time:        2.803 s, estimated 3 s
+Ran all test suites matching /tests\/e2e\/replay-consistency.test.ts/i.
+Force exiting Jest: Have you considered using `--detectOpenHandles` to detect async operations that kept running after all tests finished?
+
+
+=== E2E:PERFORMANCE ===
+  console.log
+    
+    Performance Benchmark Results:
+
+      at Object.<anonymous> (tests/e2e/performance.test.ts:241:13)
+
+  console.log
+    {
+      "llmPath": {
+        "runs": 3,
+        "minMs": 63,
+        "maxMs": 70,
+        "medianMs": 66,
+        "timesMs": [
+          63,
+          66,
+          70
+        ]
+      },
+      "replayPath": {
+        "runs": 3,
+        "minMs": 33,
+        "maxMs": 50,
+        "medianMs": 33,
+        "timesMs": [
+          33,
+          33,
+          50
+        ]
+      },
+      "speedupFactor": 2
+    }
+
+      at Object.<anonymous> (tests/e2e/performance.test.ts:242:13)
+
+  console.log
+      LLM path median: 66ms
+
+      at Object.<anonymous> (tests/e2e/performance.test.ts:248:13)
+
+  console.log
+      Replay path median: 33ms
+
+      at Object.<anonymous> (tests/e2e/performance.test.ts:254:13)
+
+  console.log
+      Speedup factor: 2.0× (goal=66ms, replay=33ms)
+
+      at Object.<anonymous> (tests/e2e/performance.test.ts:261:13)
+
+  console.log
+      Replay consistency ratio: 1.52
+
+      at Object.<anonymous> (tests/e2e/performance.test.ts:270:13)
+
+  console.debug
+    [PuppeteerAdapter] Browser disconnected — clearing references
+
+      at src/engine/puppeteer-adapter.ts:27:15
+          at Array.map (<anonymous>)
+          at Array.map (<anonymous>)
+
+PASS tests/e2e/performance.test.ts
+  Performance Benchmark — LLM path vs Replay path
+    ✓ executeGoal (LLM path) completes within 30 seconds (3 ms)
+    ✓ replayScript (replay path) completes within 5 seconds (1 ms)
+    ✓ replay is faster than LLM path (≥1.3× speedup with mock backend) (1 ms)
+    ✓ replay path is consistent (max/min ratio < 3) (1 ms)
+    ✓ LLM path returns valid products on every run (72 ms)
+    ✓ replay path succeeds on every measured run (138 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       6 passed, 6 total
+Snapshots:   0 total
+Time:        3.285 s
+Ran all test suites matching /tests\/e2e\/performance.test.ts/i.
+Force exiting Jest: Have you considered using `--detectOpenHandles` to detect async operations that kept running after all tests finished?
