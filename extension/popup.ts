@@ -61,6 +61,43 @@ btnClear.addEventListener('click', () => {
 
 // ─── Run button ───────────────────────────────────────────────────────────────
 
+// ─── resolveTargetTab ─────────────────────────────────────────────────────────
+
+/**
+ * Resolves the Chrome tab ID to target for the current action.
+ *
+ * Default behaviour (production): queries the active tab in the current window,
+ * which is the tab the user has open when they click Run in the extension popup.
+ *
+ * Test-harness override: if the popup URL contains a `?targetUrl=<encoded-url>`
+ * query parameter, scans ALL open tabs and returns the first tab whose URL
+ * matches the provided value (exact match, then prefix fallback).  This allows
+ * integration tests to target a specific controlled tab using the real
+ * chrome.tabs API — no mocking required.
+ *
+ * The `targetUrl` param has ZERO effect in normal popup usage because the popup
+ * URL is always opened by the browser action without any query string.
+ */
+function resolveTargetTab(callback: (id: number | undefined) => void): void {
+  const params   = new URLSearchParams(window.location.search);
+  const targetUrl = params.get('targetUrl') ?? '';
+
+  if (targetUrl) {
+    // Test override: find tab by URL (uses real chrome.tabs API, no mock needed)
+    chrome.tabs.query({}, (allTabs) => {
+      const tab = allTabs.find(
+        (t) => t.url === targetUrl || (t.url ?? '').startsWith(targetUrl),
+      );
+      callback(tab?.id);
+    });
+  } else {
+    // Normal operation: use the active tab in the current window
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      callback(tabs[0]?.id);
+    });
+  }
+}
+
 btnRun.addEventListener('click', () => {
   const action = actionSelect.value as ExtensionAction;
   const target = targetInput.value.trim();
@@ -70,8 +107,7 @@ btnRun.addEventListener('click', () => {
     return;
   }
 
-  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    const tabId = tabs[0]?.id;
+  resolveTargetTab((tabId) => {
     if (tabId === undefined) {
       showStatus('No active tab found.', 'error');
       return;
