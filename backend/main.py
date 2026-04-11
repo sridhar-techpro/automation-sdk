@@ -1,16 +1,29 @@
 from fastapi import FastAPI
 
-from .matcher import match_workflow
-from .models import (
-    PlanRequest,
-    PlanResponse,
-    MatchRequest,
-    MatchResponse,
-    LogEntry,
-    LogBatch,
-    LogResponse,
-)
-from .planner import plan_with_llm
+try:
+    from .matcher import match_workflow
+    from .models import (
+        PlanRequest,
+        PlanResponse,
+        MatchRequest,
+        MatchResponse,
+        LogEntry,
+        LogBatch,
+        LogResponse,
+    )
+    from .planner import plan_with_llm
+except ImportError:
+    from matcher import match_workflow  # type: ignore[no-redef]
+    from models import (  # type: ignore[no-redef]
+        PlanRequest,
+        PlanResponse,
+        MatchRequest,
+        MatchResponse,
+        LogEntry,
+        LogBatch,
+        LogResponse,
+    )
+    from planner import plan_with_llm  # type: ignore[no-redef]
 
 app = FastAPI(title="Automation Planner", version="1.0.0")
 
@@ -64,3 +77,17 @@ def _persist_entry(entry: LogEntry) -> None:
         "data": entry.data,
     }
     print(json.dumps(record), file=sys.stdout, flush=True)
+
+
+if __name__ == "__main__":
+    import sys
+    import os
+    import uvicorn
+
+    # Ensure the repo root is on sys.path so the reload subprocess can import
+    # the `backend` package regardless of how this file is invoked.
+    repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    if repo_root not in sys.path:
+        sys.path.insert(0, repo_root)
+
+    uvicorn.run("backend.main:app", host="0.0.0.0", port=8000, reload=True)

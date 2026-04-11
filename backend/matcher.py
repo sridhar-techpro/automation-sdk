@@ -1,7 +1,7 @@
 import json
 import os
 
-from .models import MatchRequest, MatchResponse
+from models import MatchRequest, MatchResponse
 
 
 def match_workflow(req: MatchRequest) -> MatchResponse:
