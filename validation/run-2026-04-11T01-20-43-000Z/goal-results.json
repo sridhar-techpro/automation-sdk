@@ -1,0 +1,151 @@
+{
+  "timestamp": "2026-04-11T01:20:43.000Z",
+  "scenarios": [
+    {
+      "scenario": "Suggest smartphones under 30000 with rating above 4",
+      "status": "pass",
+      "topProducts": 2,
+      "durationMs": 63
+    },
+    {
+      "scenario": "phones below 30k with 4+ rating",
+      "status": "pass",
+      "topProducts": 2,
+      "durationMs": 66
+    },
+    {
+      "scenario": "Login to portal using email and password",
+      "status": "pass",
+      "topProducts": 0,
+      "durationMs": 4
+    },
+    {
+      "scenario": "Login with multi-step authentication flow",
+      "status": "pass",
+      "topProducts": 0,
+      "durationMs": 2
+    },
+    {
+      "scenario": "Fill leave form for tomorrow and submit",
+      "status": "pass",
+      "topProducts": 0,
+      "durationMs": 2
+    },
+    {
+      "scenario": "Fill multi-step form using next button and submit",
+      "status": "pass",
+      "topProducts": 2,
+      "durationMs": 65
+    },
+    {
+      "scenario": "Select options from dropdown and submit form",
+      "status": "pass",
+      "topProducts": 0,
+      "durationMs": 2
+    },
+    {
+      "scenario": "Select value from custom dropdown and continue",
+      "status": "pass",
+      "topProducts": 2,
+      "durationMs": 81
+    },
+    {
+      "scenario": "Choose gender using radio button and submit",
+      "status": "pass",
+      "topProducts": 2,
+      "durationMs": 67
+    },
+    {
+      "scenario": "Select multiple interests using checkboxes",
+      "status": "pass",
+      "topProducts": 2,
+      "durationMs": 75
+    },
+    {
+      "scenario": "Search and wait for results to load before clicking",
+      "status": "pass",
+      "topProducts": 2,
+      "durationMs": 69
+    },
+    {
+      "scenario": "Handle delayed loading elements and continue",
+      "status": "pass",
+      "topProducts": 2,
+      "durationMs": 72
+    },
+    {
+      "scenario": "Find employee John in table and open details",
+      "status": "pass",
+      "topProducts": 0,
+      "durationMs": 1
+    },
+    {
+      "scenario": "Find employee across paginated table",
+      "status": "pass",
+      "topProducts": 0,
+      "durationMs": 2
+    },
+    {
+      "scenario": "Click hyperlink and navigate to details page",
+      "status": "pass",
+      "topProducts": 0,
+      "durationMs": 2
+    },
+    {
+      "scenario": "Click custom link implemented using div and navigate",
+      "status": "pass",
+      "topProducts": 2,
+      "durationMs": 69
+    },
+    {
+      "scenario": "Open dashboard and download report",
+      "status": "pass",
+      "topProducts": 0,
+      "durationMs": 5
+    },
+    {
+      "scenario": "Navigate through multiple pages and perform action",
+      "status": "pass",
+      "topProducts": 2,
+      "durationMs": 67
+    },
+    {
+      "scenario": "Click button inside iframe",
+      "status": "pass",
+      "topProducts": 2,
+      "durationMs": 78
+    },
+    {
+      "scenario": "Interact with shadow DOM element",
+      "status": "pass",
+      "topProducts": 2,
+      "durationMs": 75
+    },
+    {
+      "scenario": "Open link in new tab and extract data",
+      "status": "pass",
+      "topProducts": 0,
+      "durationMs": 2
+    },
+    {
+      "scenario": "Perform actions while tab is in background",
+      "status": "pass",
+      "topProducts": 2,
+      "durationMs": 81
+    },
+    {
+      "scenario": "Handle missing elements gracefully",
+      "status": "pass",
+      "topProducts": 2,
+      "durationMs": 70
+    },
+    {
+      "scenario": "Retry action when element is temporarily unavailable",
+      "status": "pass",
+      "topProducts": 2,
+      "durationMs": 69
+    }
+  ],
+  "passed": 24,
+  "failed": 0
+}
