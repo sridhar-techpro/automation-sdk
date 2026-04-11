@@ -10,6 +10,8 @@ jobs:
   # ── Unit + SDK E2E tests ────────────────────────────────────────────────────
   unit-and-e2e:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
 
@@ -39,10 +41,11 @@ jobs:
   # ── Extension E2E tests (real Chrome + real popup + backend + OpenAI) ───────
   extension-e2e:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     env:
       DISPLAY: ":99"
-      CHROME_PATH: "/usr/bin/google-chrome"
-      # OPENAI_API_KEY is injected from the repository secret below.
+      # OPENAI_API_KEY is injected from the repository secret.
       # The backend subprocess inherits it automatically.
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
@@ -62,15 +65,24 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install Chrome
+      - name: Install system dependencies (Xvfb + Chrome libs)
         run: |
-          wget -q -O - https://dl.google.com/linux/linux_signing_key.pub \
-            | sudo apt-key add -
-          sudo sh -c \
-            'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" \
-            > /etc/apt/sources.list.d/google-chrome.list'
           sudo apt-get update -q
-          sudo apt-get install -y google-chrome-stable xvfb
+          sudo apt-get install -y \
+            xvfb \
+            libgconf-2-4 \
+            libatk1.0-0 \
+            libatk-bridge2.0-0 \
+            libgdk-pixbuf2.0-0 \
+            libgtk-3-0 \
+            libgbm-dev \
+            libnss3 \
+            libasound2 \
+            libx11-xcb1 \
+            libxcomposite1 \
+            libxdamage1 \
+            libxrandr2 \
+            libxtst6
 
       - name: Install Node dependencies
         run: pnpm install --frozen-lockfile
@@ -82,10 +94,44 @@ jobs:
         run: pnpm run build:extension
 
       - name: Install Python backend dependencies
-        run: pip install fastapi uvicorn openai pydantic
+        run: pip install fastapi uvicorn openai pydantic python-dotenv
+
+      # Cache the Puppeteer-downloaded Chrome stable so subsequent runs are fast
+      - name: Cache Puppeteer Chrome stable
+        id: cache-chrome
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/automation-sdk/chromium
+          key: puppeteer-chrome-stable-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            puppeteer-chrome-stable-${{ runner.os }}-
+
+      - name: Download Puppeteer Chrome stable
+        # Download only when not restored from cache.
+        # This Chrome build has no enterprise policies that block --load-extension.
+        run: |
+          node -e "
+          const { install, Browser, detectBrowserPlatform, resolveBuildId } = require('@puppeteer/browsers');
+          const os = require('os');
+          const path = require('path');
+          const cacheDir = path.join(os.homedir(), '.cache', 'automation-sdk', 'chromium');
+          (async () => {
+            const platform = detectBrowserPlatform();
+            const buildId = await resolveBuildId(Browser.CHROME, platform, 'stable');
+            console.log('Downloading Chrome stable build', buildId);
+            const result = await install({
+              browser: Browser.CHROME, buildId, cacheDir,
+              downloadProgressCallback: (d, t) => t > 0 && process.stdout.write('\r  ' + Math.round(d/t*100) + '%   ')
+            });
+            process.stdout.write('\n');
+            console.log('Chrome ready at:', result.executablePath);
+          })().catch(e => { console.error(e.message); process.exit(1); });
+          "
 
       - name: Start Xvfb
-        run: Xvfb :99 -screen 0 1280x800x24 &
+        run: |
+          Xvfb :99 -screen 0 1280x800x24 &
+          sleep 1
 
       - name: Run extension E2E tests
         run: pnpm run test:e2e-extension
