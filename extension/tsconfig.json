@@ -1,16 +1,16 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "module": "commonjs",
+    "module": "ES2020",
     "lib": ["ES2020", "DOM"],
-    "outDir": "./dist",
-    "rootDir": ".",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
-    "types": ["chrome", "node"]
+    "noEmit": false,
+    "outDir": "dist",
+    "rootDir": ".",
+    "types": ["chrome"]
   },
   "include": ["./**/*.ts"],
   "exclude": ["node_modules", "dist"]

@@ -11,7 +11,7 @@
         "success": true,
         "action": "type",
         "target": "[data-testid=\"form-name\"]",
-        "timestamp": 1775887098077,
+        "timestamp": 1775892797930,
         "duration": 1
       }
     },
@@ -25,11 +25,11 @@
         "success": true,
         "action": "type",
         "target": "[data-testid=\"form-email\"]",
-        "timestamp": 1775887098085,
-        "duration": 1
+        "timestamp": 1775892797936,
+        "duration": 6
       }
     }
   ],
-  "startedAt": 1775887098068,
-  "endedAt": 1775887098087
+  "startedAt": 1775892797925,
+  "endedAt": 1775892797944
 }

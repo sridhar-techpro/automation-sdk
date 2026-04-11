@@ -11,8 +11,8 @@
         "success": true,
         "action": "type",
         "target": "[data-testid=\"step1-name\"]",
-        "timestamp": 1775887098348,
-        "duration": 0
+        "timestamp": 1775892798200,
+        "duration": 1
       }
     },
     {
@@ -24,8 +24,8 @@
         "success": true,
         "action": "click",
         "target": "[data-testid=\"step-next\"]",
-        "timestamp": 1775887098363,
-        "duration": 0
+        "timestamp": 1775892798211,
+        "duration": 1
       }
     },
     {
@@ -37,7 +37,7 @@
         "success": true,
         "action": "click",
         "target": "[data-testid=\"step-next\"]",
-        "timestamp": 1775887098382,
+        "timestamp": 1775892798231,
         "duration": 0
       }
     },
@@ -50,11 +50,11 @@
         "success": true,
         "action": "click",
         "target": "[data-testid=\"workflow-submit\"]",
-        "timestamp": 1775887098397,
-        "duration": 1
+        "timestamp": 1775892798245,
+        "duration": 0
       }
     }
   ],
-  "startedAt": 1775887098343,
-  "endedAt": 1775887098398
+  "startedAt": 1775892798195,
+  "endedAt": 1775892798246
 }

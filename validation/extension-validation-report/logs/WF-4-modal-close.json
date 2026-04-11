@@ -10,7 +10,7 @@
         "success": true,
         "action": "click",
         "target": "[data-testid=\"modal-open\"]",
-        "timestamp": 1775887098884,
+        "timestamp": 1775892798850,
         "duration": 0
       }
     },
@@ -23,11 +23,11 @@
         "success": true,
         "action": "click",
         "target": "[data-testid=\"modal-close\"]",
-        "timestamp": 1775887098902,
-        "duration": 1
+        "timestamp": 1775892798871,
+        "duration": 0
       }
     }
   ],
-  "startedAt": 1775887098880,
-  "endedAt": 1775887098903
+  "startedAt": 1775892798846,
+  "endedAt": 1775892798872
 }

@@ -10,7 +10,7 @@
         "success": false,
         "action": "click",
         "target": "#non-existent-submit",
-        "timestamp": 1775887100254,
+        "timestamp": 1775892800212,
         "duration": 0,
         "error": "Element not found: #non-existent-submit"
       }
@@ -25,8 +25,8 @@
         "success": true,
         "action": "type",
         "target": "[data-testid=\"form-name\"]",
-        "timestamp": 1775887100260,
-        "duration": 2
+        "timestamp": 1775892800218,
+        "duration": 1
       }
     },
     {
@@ -39,7 +39,7 @@
         "success": true,
         "action": "type",
         "target": "[data-testid=\"form-email\"]",
-        "timestamp": 1775887100266,
+        "timestamp": 1775892800231,
         "duration": 0
       }
     },
@@ -52,11 +52,11 @@
         "success": true,
         "action": "click",
         "target": "[data-testid=\"form-submit\"]",
-        "timestamp": 1775887100269,
+        "timestamp": 1775892800237,
         "duration": 0
       }
     }
   ],
-  "startedAt": 1775887100214,
-  "endedAt": 1775887100271
+  "startedAt": 1775892800173,
+  "endedAt": 1775892800240
 }

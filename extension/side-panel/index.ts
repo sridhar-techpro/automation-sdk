@@ -1,0 +1,59 @@
+/**
+ * Side-panel Goal Runner
+ *
+ * Accepts a natural-language goal, sends it to the backend /chat endpoint,
+ * and displays the AI-generated response in the panel.
+ *
+ * The backend reads OPENAI_API_KEY from its environment — the key is never
+ * stored in extension code.
+ */
+
+const BACKEND_CHAT_URL = 'http://127.0.0.1:8000/chat';
+
+const goalInput = document.getElementById('goal-input') as HTMLTextAreaElement;
+const btnSend   = document.getElementById('btn-send')   as HTMLButtonElement;
+const statusEl  = document.getElementById('status')     as HTMLDivElement;
+const resultEl  = document.getElementById('result')     as HTMLDivElement;
+
+function setStatus(msg: string): void {
+  statusEl.textContent = msg;
+}
+
+function showResult(text: string): void {
+  resultEl.textContent = text;
+  resultEl.classList.add('visible');
+}
+
+btnSend.addEventListener('click', async () => {
+  const goal = goalInput.value.trim();
+  if (!goal) {
+    setStatus('Please enter a goal.');
+    return;
+  }
+
+  btnSend.disabled = true;
+  setStatus('Running…');
+  resultEl.classList.remove('visible');
+
+  try {
+    const resp = await fetch(BACKEND_CHAT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ goal }),
+    });
+
+    if (!resp.ok) {
+      throw new Error(`Backend returned HTTP ${resp.status}`);
+    }
+
+    const data = await resp.json() as { response: string };
+    showResult(data.response);
+    setStatus('Done.');
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    showResult(`Error: ${msg}`);
+    setStatus('Failed.');
+  } finally {
+    btnSend.disabled = false;
+  }
+});

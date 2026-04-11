@@ -1,4 +1,9 @@
+import sys
+import json
+from typing import List
+
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 try:
     from .matcher import match_workflow
@@ -27,10 +32,51 @@ except ImportError:
 
 app = FastAPI(title="Automation Planner", version="1.0.0")
 
+# ─── CORS ─────────────────────────────────────────────────────────────────────
+# Allow the Chrome extension (chrome-extension://<id>) to call backend APIs.
+# allow_origin_regex covers every extension ID without having to hard-code it.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:8000", "http://127.0.0.1:8000"],
+    allow_origin_regex=r"chrome-extension://.*",
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# ─── In-memory log store (for test introspection) ─────────────────────────────
+
+_log_store: List[dict] = []
+
 
 @app.post("/plan", response_model=PlanResponse)
 def plan(req: PlanRequest) -> PlanResponse:
     return plan_with_llm(req)
+
+
+@app.post("/plan-with-context", response_model=PlanWithContextResponse)
+def plan_ctx(req: PlanWithContextRequest) -> PlanWithContextResponse:
+    return plan_with_context(req)
+
+
+@app.post("/chat", response_model=ChatResponse)
+def chat(req: ChatRequest) -> ChatResponse:
+    """
+    Natural-language goal → human-readable AI response.
+    Used by the extension side panel.  OPENAI_API_KEY is read from the
+    server environment only — never passed in the request body.
+    """
+    return chat_with_llm(req)
+    """
+    Context-aware extension action planner.
+
+    Accepts a natural-language goal and the current page HTML.  The LLM
+    (gpt-4o-mini) returns concrete CSS selectors the extension executes
+    directly.  Falls back to a heuristic mock when OPENAI_API_KEY is not set.
+
+    The API key is NEVER accepted as a request field — server-side env var only.
+    """
+    return plan_with_context(req)
 
 
 @app.post("/match-workflow", response_model=MatchResponse)
@@ -60,15 +106,20 @@ def ingest_log_batch(batch: LogBatch) -> LogResponse:
     return LogResponse(accepted=len(batch.entries))
 
 
-def _persist_entry(entry: LogEntry) -> None:
-    """
-    Persist a log entry.  In production this would write to a database or
-    forwarding sink; here we print to stdout so the server logs capture it.
-    The format is stable and machine-readable for downstream processing.
-    """
-    import sys
-    import json
+@app.get("/logs")
+def get_logs() -> list:
+    """Return all captured log entries (used by tests to assert observability)."""
+    return list(_log_store)
 
+
+@app.delete("/logs")
+def clear_logs() -> dict:
+    """Clear the in-memory log store (called by test beforeAll for a clean slate)."""
+    _log_store.clear()
+    return {"cleared": True}
+
+
+def _persist_entry(entry: LogEntry) -> None:
     record = {
         "level": entry.level,
         "source": entry.source,
@@ -76,6 +127,7 @@ def _persist_entry(entry: LogEntry) -> None:
         "timestamp": entry.timestamp,
         "data": entry.data,
     }
+    _log_store.append(record)
     print(json.dumps(record), file=sys.stdout, flush=True)
 
 

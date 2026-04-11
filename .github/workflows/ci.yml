@@ -1,0 +1,96 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  # ── Unit + SDK E2E tests ────────────────────────────────────────────────────
+  unit-and-e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Install Node dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build SDK
+        run: pnpm run build
+
+      - name: Unit tests
+        run: pnpm run test:unit
+
+      - name: E2E tests (SDK)
+        run: |
+          Xvfb :99 -screen 0 1280x800x24 &
+          sleep 1
+          DISPLAY=:99 CHROME_PATH=/usr/bin/google-chrome pnpm run test:e2e
+
+  # ── Extension E2E tests (real Chrome + real popup + backend + OpenAI) ───────
+  extension-e2e:
+    runs-on: ubuntu-latest
+    env:
+      DISPLAY: ":99"
+      CHROME_PATH: "/usr/bin/google-chrome"
+      # OPENAI_API_KEY is injected from the repository secret below.
+      # The backend subprocess inherits it automatically.
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Chrome
+        run: |
+          wget -q -O - https://dl.google.com/linux/linux_signing_key.pub \
+            | sudo apt-key add -
+          sudo sh -c \
+            'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" \
+            > /etc/apt/sources.list.d/google-chrome.list'
+          sudo apt-get update -q
+          sudo apt-get install -y google-chrome-stable xvfb
+
+      - name: Install Node dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build SDK
+        run: pnpm run build
+
+      - name: Build extension (TypeScript → JavaScript)
+        run: pnpm run build:extension
+
+      - name: Install Python backend dependencies
+        run: pip install fastapi uvicorn openai pydantic
+
+      - name: Start Xvfb
+        run: Xvfb :99 -screen 0 1280x800x24 &
+
+      - name: Run extension E2E tests
+        run: pnpm run test:e2e-extension
+        # OPENAI_API_KEY from env above is automatically inherited by:
+        #   1. The Jest test runner process
+        #   2. The uvicorn subprocess spawned in beforeAll
+        #   3. The backend's planner.py → OpenAI client
+        # No key → heuristic mock plan is used instead (tests still pass)

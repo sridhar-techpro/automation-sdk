@@ -11,11 +11,11 @@
         "success": true,
         "action": "type",
         "target": "[data-testid=\"table-search\"]",
-        "timestamp": 1775887098545,
-        "duration": 1
+        "timestamp": 1775892798397,
+        "duration": 0
       }
     }
   ],
-  "startedAt": 1775887098541,
-  "endedAt": 1775887098548
+  "startedAt": 1775892798392,
+  "endedAt": 1775892798399
 }
