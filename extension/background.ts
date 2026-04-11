@@ -23,6 +23,11 @@ import type {
 // ─── Configuration ────────────────────────────────────────────────────────────
 
 const BACKEND_BASE_URL   = 'http://127.0.0.1:8000';
+
+// ─── Extension icon click → open index.html in a new tab ─────────────────────
+chrome.action.onClicked.addListener(() => {
+  chrome.tabs.create({ url: chrome.runtime.getURL('side-panel/index.html') });
+});
 const BACKEND_LOG_URL    = `${BACKEND_BASE_URL}/logs`;
 const BACKEND_PLAN_URL   = `${BACKEND_BASE_URL}/plan-with-context`;
 const LOG_MAX_RETRIES = 3;

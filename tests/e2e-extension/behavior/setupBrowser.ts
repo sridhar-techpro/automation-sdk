@@ -36,10 +36,28 @@ async function resolveChromePath(): Promise<string> {
   return installed.executablePath;
 }
 
+const PROFILE_PREFIX = ".chrome-profile-";
+
+function cleanOldProfiles(): void {
+  const cwd = process.cwd();
+  try {
+    const entries = fs.readdirSync(cwd);
+    for (const entry of entries) {
+      if (entry.startsWith(PROFILE_PREFIX)) {
+        fs.rmSync(path.join(cwd, entry), { recursive: true, force: true });
+      }
+    }
+  } catch {
+    // non-fatal — best effort cleanup
+  }
+}
+
 export async function setupBrowser(): Promise<Browser> {
+  cleanOldProfiles();
+
   const userDataDir = path.join(
     process.cwd(),
-    `.chrome-profile-${Date.now()}`
+    `${PROFILE_PREFIX}${Date.now()}`
   );
 
   if (!fs.existsSync(EXTENSION_PATH)) {
@@ -48,7 +66,7 @@ export async function setupBrowser(): Promise<Browser> {
 
   const executablePath = await resolveChromePath();
 
-  return puppeteer.launch({
+  const browser = puppeteer.launch({
     executablePath,
     headless: false,
     userDataDir,
@@ -59,4 +77,11 @@ export async function setupBrowser(): Promise<Browser> {
       "--disable-setuid-sandbox"
     ]
   });
+
+  // Clean up this run's profile when the browser closes
+  (await browser).on("disconnected", () => {
+    fs.rmSync(userDataDir, { recursive: true, force: true });
+  });
+
+  return browser;
 }
