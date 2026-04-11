@@ -101,7 +101,8 @@ def llm(req: LlmRequest) -> LlmResponse:
             temperature=0.3,
             max_tokens=800,
         )
-        return LlmResponse(response=resp.choices[0].message.content or "")
+        response = LlmResponse(response=resp.choices[0].message.content or "")
+        return response
     return _mock_llm(req)
 
 
