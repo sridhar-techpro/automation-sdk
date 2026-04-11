@@ -1,7 +1,10 @@
 /**
  * Backend API client for extension integration tests.
  *
- * All LLM logic lives in the Python FastAPI backend (backend/main.py).
+ * The backend exposes only two API surfaces:
+ *   POST /llm          — thin LLM proxy (used by the extension agent layer)
+ *   /logs, /logs/batch — structured log ingestion and retrieval
+ *
  * Tests never call OpenAI directly — they call the backend, which reads
  * OPENAI_API_KEY from its own server-side environment.
  *
@@ -26,28 +29,16 @@ export interface BackendLogEntry {
   data:      Record<string, unknown>;
 }
 
-export interface ExtensionActionStep {
-  action:    'click' | 'type' | 'navigate' | 'screenshot';
-  target:    string;
-  value?:    string | null;
-  reasoning: string;
-}
-
-export interface PlanWithContextResponse {
-  steps:     ExtensionActionStep[];
-  reasoning: string;
-}
-
 // ─── Process management ───────────────────────────────────────────────────────
 
 /**
- * Starts the FastAPI backend with uvicorn and waits for it to be healthy.
+ * Starts the FastAPI backend with uvicorn and waits for it to be ready.
  * If the backend is already running on the given port, returns null (no-op).
  * The process inherits the caller's environment (including OPENAI_API_KEY).
  */
 export async function startBackend(port = BACKEND_PORT, timeoutMs = 25_000): Promise<ChildProcess | null> {
   // If already running, skip — avoids "address already in use" errors
-  const alreadyUp = await waitForBackendHealth(port, 1_500).then(() => true).catch(() => false);
+  const alreadyUp = await waitForBackend(port, 1_500).then(() => true).catch(() => false);
   if (alreadyUp) {
     console.log(`[backend-client] Backend already running on port ${port}`);
     return null;
@@ -62,7 +53,7 @@ export async function startBackend(port = BACKEND_PORT, timeoutMs = 25_000): Pro
       cwd: root,
       env: {
         ...process.env,
-        // planner.py / matcher.py use bare `from models import ...` which requires
+        // planner.py uses bare `from models import ...` which requires
         // the backend/ directory on sys.path.
         PYTHONPATH: path.join(root, 'backend') + (process.env.PYTHONPATH ? ':' + process.env.PYTHONPATH : ''),
       },
@@ -76,18 +67,18 @@ export async function startBackend(port = BACKEND_PORT, timeoutMs = 25_000): Pro
     if (line) process.stderr.write(`[backend] ${line}\n`);
   });
 
-  await waitForBackendHealth(port, timeoutMs);
+  await waitForBackend(port, timeoutMs);
   return proc;
 }
 
-/** Wait until GET /health returns 200 or timeout. */
-async function waitForBackendHealth(port: number, timeoutMs: number): Promise<void> {
+/** Wait until GET /logs returns 200 (backend is ready) or timeout. */
+async function waitForBackend(port: number, timeoutMs: number): Promise<void> {
   const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {
     await new Promise<void>((r) => setTimeout(r, 500));
     try {
-      const ok = await httpGet<{ status: string }>(port, '/health');
-      if (ok?.status === 'ok') return;
+      await httpGet<unknown>(port, '/logs');
+      return; // 200 OK — backend is up
     } catch {
       /* not ready yet */
     }
@@ -105,23 +96,6 @@ export function getBackendLogs(port = BACKEND_PORT): Promise<BackendLogEntry[]> 
 /** Clear the backend's in-memory log store (call in beforeAll for a clean slate). */
 export async function clearBackendLogs(port = BACKEND_PORT): Promise<void> {
   await httpDelete(port, '/logs');
-}
-
-// ─── Planning ─────────────────────────────────────────────────────────────────
-
-/**
- * Ask the backend to translate a natural-language goal + page HTML into
- * concrete extension action steps (CSS selectors + action types).
- *
- * With OPENAI_API_KEY set → uses gpt-4o-mini for real planning.
- * Without it → returns a heuristic mock plan.
- */
-export function planWithContext(
-  goal:     string,
-  pageHtml: string,
-  port = BACKEND_PORT,
-): Promise<PlanWithContextResponse> {
-  return httpPost<PlanWithContextResponse>(port, '/plan-with-context', { goal, pageHtml });
 }
 
 // ─── Low-level HTTP helpers ───────────────────────────────────────────────────
@@ -142,29 +116,6 @@ function httpGet<T>(port: number, path: string): Promise<T> {
     req.setTimeout(5_000, () => { req.destroy(); reject(new Error(`Timeout GET ${path}`)); });
     req.on('error', reject);
     req.end();
-  });
-}
-
-function httpPost<T>(port: number, path: string, body: unknown): Promise<T> {
-  const raw = JSON.stringify(body);
-  return new Promise((resolve, reject) => {
-    const req = http.request(
-      {
-        hostname: '127.0.0.1', port, path, method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(raw) },
-      },
-      (res) => {
-        let data = '';
-        res.on('data', (c: Buffer) => { data += c.toString(); });
-        res.on('end', () => {
-          try { resolve(JSON.parse(data) as T); }
-          catch { reject(new Error(`Non-JSON from POST ${path}: ${data.slice(0, 200)}`)); }
-        });
-      },
-    );
-    req.setTimeout(30_000, () => { req.destroy(); reject(new Error(`Timeout POST ${path}`)); });
-    req.on('error', reject);
-    req.end(raw);
   });
 }
 

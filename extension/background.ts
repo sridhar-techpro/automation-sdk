@@ -28,8 +28,8 @@ const BACKEND_BASE_URL   = 'http://127.0.0.1:8000';
 chrome.action.onClicked.addListener(() => {
   chrome.tabs.create({ url: chrome.runtime.getURL('side-panel/index.html') });
 });
-const BACKEND_LOG_URL    = `${BACKEND_BASE_URL}/logs`;
-const BACKEND_PLAN_URL   = `${BACKEND_BASE_URL}/plan-with-context`;
+const BACKEND_LOG_URL = `${BACKEND_BASE_URL}/logs`;
+const BACKEND_LLM_URL = `${BACKEND_BASE_URL}/llm`;
 const LOG_MAX_RETRIES = 3;
 const LOG_RETRY_BASE_MS = 200; // exponential backoff: 200 → 400 → 800 ms
 
@@ -135,17 +135,27 @@ chrome.runtime.onMessage.addListener(
           });
         }
 
-        // 2. Ask backend to plan the goal → returns concrete CSS selector steps
+        // 2. Ask backend /llm to plan the goal → returns concrete CSS selector steps
         let steps: Array<{ action: string; target: string; value?: string | null }> = [];
         try {
-          const planResp = await fetch(BACKEND_PLAN_URL, {
+          const prompt =
+            `You are an extension action planner. Given a natural-language goal and page HTML, ` +
+            `return ONLY a JSON object: {"steps": [{"action": "click"|"type"|"navigate"|"screenshot", ` +
+            `"target": "<css-selector-or-url>", "value": "<text, only for type actions>"}]}.\n\n` +
+            `Goal: ${goal}\n\nPage HTML (first 3000 chars):\n${pageHtml.slice(0, 3_000)}`;
+
+          const planResp = await fetch(BACKEND_LLM_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ goal, pageHtml }),
+            body: JSON.stringify({ prompt }),
           });
-          const plan = await planResp.json() as {
-            steps: Array<{ action: string; target: string; value?: string | null }>;
-          };
+          const llmData = await planResp.json() as { response: string };
+          let plan: { steps: Array<{ action: string; target: string; value?: string | null }> };
+          try {
+            plan = JSON.parse(llmData.response) as typeof plan;
+          } catch {
+            plan = { steps: [] };
+          }
           steps = plan.steps ?? [];
           await sendLog('info', 'Plan received', { goal, stepsCount: steps.length });
         } catch (err) {

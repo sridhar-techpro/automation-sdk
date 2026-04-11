@@ -10,43 +10,25 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 try:
-    from .matcher import match_workflow
     from .models import (
-        PlanRequest,
-        PlanResponse,
-        MatchRequest,
-        MatchResponse,
         LogEntry,
         LogBatch,
         LogResponse,
-        PlanWithContextRequest,
-        PlanWithContextResponse,
-        ChatRequest,
-        ChatResponse,
         LlmRequest,
         LlmResponse,
     )
-    from .planner import plan_with_llm, plan_with_context, chat_with_llm, llm_proxy
+    from .planner import llm_proxy
 except ImportError:
-    from matcher import match_workflow  # type: ignore[no-redef]
     from models import (  # type: ignore[no-redef]
-        PlanRequest,
-        PlanResponse,
-        MatchRequest,
-        MatchResponse,
         LogEntry,
         LogBatch,
         LogResponse,
-        PlanWithContextRequest,
-        PlanWithContextResponse,
-        ChatRequest,
-        ChatResponse,
         LlmRequest,
         LlmResponse,
     )
-    from planner import plan_with_llm, plan_with_context, chat_with_llm, llm_proxy  # type: ignore[no-redef]
+    from planner import llm_proxy  # type: ignore[no-redef]
 
-app = FastAPI(title="Automation Planner", version="1.0.0")
+app = FastAPI(title="Automation Backend", version="1.0.0")
 
 # ─── CORS ─────────────────────────────────────────────────────────────────────
 # Allow the Chrome extension (chrome-extension://<id>) to call backend APIs.
@@ -65,25 +47,7 @@ app.add_middleware(
 _log_store: List[dict] = []
 
 
-@app.post("/plan", response_model=PlanResponse)
-def plan(req: PlanRequest) -> PlanResponse:
-    return plan_with_llm(req)
-
-
-@app.post("/plan-with-context", response_model=PlanWithContextResponse)
-def plan_ctx(req: PlanWithContextRequest) -> PlanWithContextResponse:
-    return plan_with_context(req)
-
-
-@app.post("/chat", response_model=ChatResponse)
-def chat(req: ChatRequest) -> ChatResponse:
-    """
-    Natural-language goal → human-readable AI response.
-    Used by the extension side panel.  OPENAI_API_KEY is read from the
-    server environment only — never passed in the request body.
-    """
-    return chat_with_llm(req)
-
+# ─── LLM proxy ────────────────────────────────────────────────────────────────
 
 @app.post("/llm", response_model=LlmResponse)
 def llm(req: LlmRequest) -> LlmResponse:
@@ -93,16 +57,6 @@ def llm(req: LlmRequest) -> LlmResponse:
     OPENAI_API_KEY is read from the server environment only.
     """
     return llm_proxy(req)
-
-
-@app.post("/match-workflow", response_model=MatchResponse)
-def match(req: MatchRequest) -> MatchResponse:
-    return match_workflow(req)
-
-
-@app.get("/health")
-def health() -> dict:
-    return {"status": "ok"}
 
 
 # ─── Centralized logging API ──────────────────────────────────────────────────
