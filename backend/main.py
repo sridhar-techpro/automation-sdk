@@ -9,8 +9,10 @@ from .models import (
     LogEntry,
     LogBatch,
     LogResponse,
+    PlanWithContextRequest,
+    PlanWithContextResponse,
 )
-from .planner import plan_with_llm
+from .planner import plan_with_llm, plan_with_context
 
 app = FastAPI(title="Automation Planner", version="1.0.0")
 
@@ -18,6 +20,21 @@ app = FastAPI(title="Automation Planner", version="1.0.0")
 @app.post("/plan", response_model=PlanResponse)
 def plan(req: PlanRequest) -> PlanResponse:
     return plan_with_llm(req)
+
+
+@app.post("/plan-with-context", response_model=PlanWithContextResponse)
+def plan_ctx(req: PlanWithContextRequest) -> PlanWithContextResponse:
+    """
+    Context-aware extension action planner.
+
+    Accepts a natural-language goal and the current page HTML.  The backend
+    LLM (gpt-4o-mini, loaded via OPENAI_API_KEY env var) returns concrete
+    CSS selectors / URLs the Chrome Extension can execute directly.
+
+    Falls back to a deterministic heuristic plan when OPENAI_API_KEY is not set.
+    The API key is NEVER accepted as a request field — server-side env var only.
+    """
+    return plan_with_context(req)
 
 
 @app.post("/match-workflow", response_model=MatchResponse)
