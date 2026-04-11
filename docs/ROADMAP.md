@@ -87,14 +87,22 @@ This document tracks the feature delivery roadmap across all phases.
 
 ---
 
-## Phase 3.4 — Memory System ❌
+## Phase 3.4 — Semantic Matching + Feedback Loop 🟡
 
-> **Goal:** Cross-session recall of successful workflows, selectors, and user corrections.
+> **Goal:** Cross-session recall of successful workflows, semantic matching, and active learning from failures.
 
-- Session-scoped memory (current run context)
-- Persistent memory written to `feedback/knowledge-base.json`
-- Retrieval at goal-execution time to pre-select best known selectors/workflows
-- Confidence scoring + decay model
+| Feature | Status | Source |
+|---------|--------|--------|
+| Semantic workflow matching (keyword + backend LLM) | ✅ | `src/workflow/semantic-matcher.ts` |
+| `WorkflowStore.findByKeyword()` — Jaccard token similarity | ✅ | `src/workflow/workflow-store.ts` |
+| `FailureStore` — persists failure records to JSON | ✅ | `src/feedback/failure-store.ts` |
+| `KnowledgeStore` — loads/saves knowledge entries, handles legacy format | ✅ | `src/feedback/knowledge-store.ts` |
+| `FeedbackLoop` — captures failures, CLI fix prompt, learns from fixes | ✅ | `src/feedback/feedback-loop.ts` |
+| Self-healing replay via `KnowledgeStore` in `ReplayEngine` | ✅ | `src/replay/replay-engine.ts` |
+| `sdk.findBestWorkflow()` — exact → keyword → semantic | ✅ | `src/core/sdk.ts` |
+| `sdk.getFeedbackLoop()` / `sdk.getKnowledgeStore()` | ✅ | `src/core/sdk.ts` |
+| Backend `/match-workflow` endpoint (keyword + optional LLM) | ✅ | `backend/matcher.py`, `backend/main.py` |
+| E2E tests for all new features | ✅ | `tests/e2e/phase34-semantic.e2e.test.ts` |
 
 ---
 

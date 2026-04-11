@@ -70,14 +70,14 @@ feedback/
 implementation — the active feedback loop that writes new entries on failure is
 planned for Phase 3.x completion.
 
-### Planned Active Loop
+### Active Loop (Phase 3.4 — Implemented)
 
-1. `executeGoal` or a low-level action fails after exhausting retries.
-2. The failure type (selector not found, timeout, extraction returned 0 products) is classified.
-3. A learning agent suggests a fix (alternative selector, different wait strategy).
-4. The fix is stored in `knowledge-base.json` with `confidence: 0.5` (provisional).
-5. On the next execution of a matching goal, the stored fix is applied first.
-6. If it succeeds, confidence increases; if it fails again, confidence decreases and the entry is eventually pruned.
+1. `executeGoal` or a replay step fails after exhausting retries.
+2. `FeedbackLoop.captureFailure()` persists the failure to `feedback/failures.json`.
+3. In interactive (TTY) mode, `FeedbackLoop.promptFix()` offers a CLI menu to choose a fix type (text / role / css / skip).
+4. `FeedbackLoop.learnFromFix()` writes a `KnowledgeEntry` to `feedback/knowledge-base.json` with `confidence: 0.7` and `source: "user"`.
+5. On the next replay, `ReplayEngine` calls `knowledgeStore.match(goal, stepTarget)` after all selectors fail. If a matching entry exists (with `fix.type !== 'skip'`), the fix selector is tried; if it succeeds, it is promoted into `step.selector.fallbacks` for future runs.
+6. `sdk.findBestWorkflow()` uses `SemanticMatcher` to find relevant workflows via keyword Jaccard similarity (≥ 0.75) or backend LLM semantic matching.
 
 ---
 

@@ -24,6 +24,10 @@ import { generateReplayScript } from '../replay/script-generator';
 import { ReplayEngine } from '../replay/replay-engine';
 import { WorkflowStore } from '../workflow/workflow-store';
 import { SuccessRateTracker } from '../metrics/success-tracker';
+import { SemanticMatcher } from '../workflow/semantic-matcher';
+import { FeedbackLoop } from '../feedback/feedback-loop';
+import { FailureStore } from '../feedback/failure-store';
+import { KnowledgeStore } from '../feedback/knowledge-store';
 import type { ReplayScript, WorkflowRecord, RunMetrics } from '../replay/types';
 
 export class AutomationSDK {
@@ -36,6 +40,9 @@ export class AutomationSDK {
   private workflowStore: WorkflowStore;
   private replayEngine: ReplayEngine;
   private successTracker: SuccessRateTracker;
+  private semanticMatcher: SemanticMatcher;
+  private feedbackLoop: FeedbackLoop;
+  private knowledgeStore: KnowledgeStore;
 
   constructor(config: SDKConfig) {
     this.config = config;
@@ -51,8 +58,12 @@ export class AutomationSDK {
     this.policyEnforcer = new PolicyEnforcer(this.whitelist);
     this.recorder = new ActionRecorder();
     this.workflowStore = new WorkflowStore();
-    this.replayEngine = new ReplayEngine(() => this.connectionManager.getPage());
+    this.knowledgeStore = new KnowledgeStore();
+    this.replayEngine = new ReplayEngine(() => this.connectionManager.getPage(), this.knowledgeStore);
     this.successTracker = new SuccessRateTracker(this.workflowStore);
+    this.semanticMatcher = new SemanticMatcher();
+    const failureStore = new FailureStore();
+    this.feedbackLoop = new FeedbackLoop(failureStore, this.knowledgeStore);
   }
 
   async connect(): Promise<void> {
@@ -190,9 +201,22 @@ export class AutomationSDK {
    *
    * Requires an active connection — call connect() first.
    */
-  async executeGoal(input: string): Promise<GoalResult> {
+  async executeGoal(input: string, backendUrl = 'http://127.0.0.1:8000'): Promise<GoalResult> {
     if (!this.connectionManager.isConnected()) {
       throw new Error('SDK is not connected. Call connect() first.');
+    }
+    const match = await this.findBestWorkflow(input, backendUrl).catch(() => null);
+    if (match && match.confidence >= 0.75) {
+      try {
+        await this.replayScript(match.workflow.script);
+        return {
+          intent: { type: 'NAVIGATE', filters: {}, sites: [] },
+          products: [],
+          topProducts: [],
+        };
+      } catch {
+        // replay failed, fall through to LLM pipeline
+      }
     }
     return runGoal(input, () => this.connectionManager.getPage());
   }
@@ -364,5 +388,32 @@ export class AutomationSDK {
   /** Returns the WorkflowStore for direct access. */
   getWorkflowStore(): WorkflowStore {
     return this.workflowStore;
+  }
+
+  // ─── Phase 3.4: Semantic Matching + Feedback Loop ─────────────────────────
+
+  /**
+   * Finds the best matching workflow for the given goal.
+   * Tries exact, keyword, and semantic matching in order.
+   */
+  async findBestWorkflow(
+    goal: string,
+    backendUrl = 'http://127.0.0.1:8000',
+  ): Promise<{ workflow: WorkflowRecord; confidence: number; method: string } | null> {
+    const exact = this.workflowStore.findByGoal(goal);
+    if (exact) return { workflow: exact, confidence: 1.0, method: 'exact' };
+    const workflows = this.workflowStore.list();
+    if (workflows.length === 0) return null;
+    return this.semanticMatcher.findBestWorkflow(goal, workflows, backendUrl);
+  }
+
+  /** Returns the FeedbackLoop for capturing failures and learning fixes. */
+  getFeedbackLoop(): FeedbackLoop {
+    return this.feedbackLoop;
+  }
+
+  /** Returns the KnowledgeStore for direct access. */
+  getKnowledgeStore(): KnowledgeStore {
+    return this.knowledgeStore;
   }
 }
