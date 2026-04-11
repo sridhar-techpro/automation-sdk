@@ -303,6 +303,7 @@ async function runJestTests(): Promise<TestRunResult> {
     { label: 'e2e:enterprise-app',       pattern: 'tests/e2e/enterprise-app.e2e.test.ts',            timeout: 180_000 },
     { label: 'e2e:replay-consistency',   pattern: 'tests/e2e/replay-consistency.test.ts',            timeout: 120_000 },
     { label: 'e2e:performance',          pattern: 'tests/e2e/performance.test.ts',                   timeout: 120_000 },
+    { label: 'e2e:phase34-semantic',     pattern: 'tests/e2e/phase34-semantic.e2e.test.ts',           timeout: 180_000 },
   ];
 
   let combinedOutput = '';

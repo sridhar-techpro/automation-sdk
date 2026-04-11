@@ -2,6 +2,7 @@ import type { Page } from 'puppeteer-core';
 import { ReplayScript, ReplayStep, RunMetrics, StepMetrics } from './types';
 import { stabilizeBefore, stabilizeDuring, stabilizeAfter } from './stabilization';
 import { resolveSelector } from '../selectors/selector-engine';
+import type { KnowledgeStore } from '../feedback/knowledge-store';
 
 function generateRunId(): string {
   return `run-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
@@ -12,7 +13,10 @@ function generateRunId(): string {
  * Tries the primary selector first then falls back through the fallback list.
  */
 export class ReplayEngine {
-  constructor(private getPage: () => Promise<Page>) {}
+  constructor(
+    private getPage: () => Promise<Page>,
+    private knowledgeStore?: KnowledgeStore,
+  ) {}
 
   async replay(script: ReplayScript): Promise<RunMetrics> {
     const runId = generateRunId();
@@ -21,7 +25,7 @@ export class ReplayEngine {
     let overallSuccess = true;
 
     for (let i = 0; i < script.steps.length; i++) {
-      const metric = await this.executeStep(script.steps[i], i);
+      const metric = await this.executeStep(script.steps[i], i, script.goal);
       stepMetrics.push(metric);
       if (!metric.succeeded) {
         overallSuccess = false;
@@ -39,7 +43,7 @@ export class ReplayEngine {
     };
   }
 
-  private async executeStep(step: ReplayStep, index: number): Promise<StepMetrics> {
+  private async executeStep(step: ReplayStep, index: number, goal = ''): Promise<StepMetrics> {
     const stepStart = Date.now();
     const page = await this.getPage();
 
@@ -78,6 +82,30 @@ export class ReplayEngine {
 
     if (succeeded && step.wait.after) {
       await stabilizeAfter(page, step.wait.after, { timeout: step.wait.timeout }).catch(() => {});
+    }
+
+    if (!succeeded && this.knowledgeStore) {
+      const entry = this.knowledgeStore.match(goal, step.target ?? '');
+      if (entry && entry.fix.type !== 'skip') {
+        const fixSel = entry.fix.value;
+        try {
+          await stabilizeDuring(
+            async () => {
+              attempts++;
+              activeSelector = fixSel;
+              await this.performAction(page, step, fixSel);
+            },
+            { retries: step.retry },
+          );
+          succeeded = true;
+          usedFallback = true;
+          if (!step.selector.fallbacks.includes(fixSel)) {
+            step.selector.fallbacks.push(fixSel);
+          }
+        } catch {
+          // fix also failed
+        }
+      }
     }
 
     return {
