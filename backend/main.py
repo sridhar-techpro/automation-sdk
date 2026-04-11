@@ -1,3 +1,7 @@
+import sys
+import json
+from typing import List
+
 from fastapi import FastAPI
 
 from .matcher import match_workflow
@@ -16,6 +20,10 @@ from .planner import plan_with_llm, plan_with_context
 
 app = FastAPI(title="Automation Planner", version="1.0.0")
 
+# ─── In-memory log store (for test introspection) ─────────────────────────────
+
+_log_store: List[dict] = []
+
 
 @app.post("/plan", response_model=PlanResponse)
 def plan(req: PlanRequest) -> PlanResponse:
@@ -27,11 +35,10 @@ def plan_ctx(req: PlanWithContextRequest) -> PlanWithContextResponse:
     """
     Context-aware extension action planner.
 
-    Accepts a natural-language goal and the current page HTML.  The backend
-    LLM (gpt-4o-mini, loaded via OPENAI_API_KEY env var) returns concrete
-    CSS selectors / URLs the Chrome Extension can execute directly.
+    Accepts a natural-language goal and the current page HTML.  The LLM
+    (gpt-4o-mini) returns concrete CSS selectors the extension executes
+    directly.  Falls back to a heuristic mock when OPENAI_API_KEY is not set.
 
-    Falls back to a deterministic heuristic plan when OPENAI_API_KEY is not set.
     The API key is NEVER accepted as a request field — server-side env var only.
     """
     return plan_with_context(req)
@@ -64,15 +71,20 @@ def ingest_log_batch(batch: LogBatch) -> LogResponse:
     return LogResponse(accepted=len(batch.entries))
 
 
-def _persist_entry(entry: LogEntry) -> None:
-    """
-    Persist a log entry.  In production this would write to a database or
-    forwarding sink; here we print to stdout so the server logs capture it.
-    The format is stable and machine-readable for downstream processing.
-    """
-    import sys
-    import json
+@app.get("/logs")
+def get_logs() -> list:
+    """Return all captured log entries (used by tests to assert observability)."""
+    return list(_log_store)
 
+
+@app.delete("/logs")
+def clear_logs() -> dict:
+    """Clear the in-memory log store (called by test beforeAll for a clean slate)."""
+    _log_store.clear()
+    return {"cleared": True}
+
+
+def _persist_entry(entry: LogEntry) -> None:
     record = {
         "level": entry.level,
         "source": entry.source,
@@ -80,4 +92,5 @@ def _persist_entry(entry: LogEntry) -> None:
         "timestamp": entry.timestamp,
         "data": entry.data,
     }
+    _log_store.append(record)
     print(json.dumps(record), file=sys.stdout, flush=True)

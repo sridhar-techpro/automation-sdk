@@ -134,10 +134,44 @@ def _llm_plan_with_context(
 def _mock_plan_with_context(req: PlanWithContextRequest) -> PlanWithContextResponse:
     """
     Heuristic mock used when OPENAI_API_KEY is not set.
-    Inspects the goal text and falls back to safe, common selectors.
+    Covers common e-commerce and form-interaction patterns.
     """
     goal_lower = req.goal.lower()
 
+    # E-commerce: add to cart
+    if "cart" in goal_lower or "add to cart" in goal_lower:
+        return PlanWithContextResponse(
+            reasoning="Goal mentions adding to cart; clicking #add-to-cart.",
+            steps=[
+                ExtensionActionStep(
+                    action="click",
+                    target="#add-to-cart",
+                    reasoning="Primary add-to-cart button",
+                )
+            ],
+        )
+
+    # E-commerce: search
+    if "search" in goal_lower and ("product" in goal_lower or "smartphone" in goal_lower
+                                    or "phone" in goal_lower or "item" in goal_lower):
+        return PlanWithContextResponse(
+            reasoning="Goal mentions searching for a product; typing into search input.",
+            steps=[
+                ExtensionActionStep(
+                    action="type",
+                    target="#search-input",
+                    value=req.goal,
+                    reasoning="Primary search box",
+                ),
+                ExtensionActionStep(
+                    action="click",
+                    target="#search-btn",
+                    reasoning="Submit search",
+                ),
+            ],
+        )
+
+    # Click button
     if "click" in goal_lower and "button" in goal_lower:
         return PlanWithContextResponse(
             reasoning="Goal mentions clicking a button; targeting #btn by id.",
@@ -150,6 +184,7 @@ def _mock_plan_with_context(req: PlanWithContextRequest) -> PlanWithContextRespo
             ],
         )
 
+    # Type / input
     if "type" in goal_lower or "input" in goal_lower or "enter" in goal_lower:
         return PlanWithContextResponse(
             reasoning="Goal mentions typing into an input field.",
