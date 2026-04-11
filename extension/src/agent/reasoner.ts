@@ -1,0 +1,53 @@
+/**
+ * Reasoner — ranks products and optionally calls /llm for final reasoning.
+ */
+
+import type { Product } from './extractor';
+
+export interface ReasoningResult {
+  topProducts: Product[];
+  reasoning: string;
+}
+
+const BACKEND = 'http://127.0.0.1:8000';
+
+export async function reasonAboutProducts(
+  products: Product[],
+  filters: Record<string, string>,
+  promptTemplate: string,
+): Promise<ReasoningResult> {
+  // Local pre-filter: apply minRating, minReviews, inStock
+  let filtered = products.filter((p) => {
+    if (filters['minRating'] && p.rating < parseFloat(filters['minRating'])) return false;
+    if (filters['minReviews'] && p.reviews < parseInt(filters['minReviews'], 10)) return false;
+    if (!p.inStock) return false;
+    return true;
+  });
+
+  // Sort by rating desc, then reviews desc
+  filtered.sort((a, b) => b.rating - a.rating || b.reviews - a.reviews);
+  const top3 = filtered.slice(0, 3);
+
+  // If we have data, call /llm for prose reasoning
+  if (top3.length > 0) {
+    try {
+      const prompt = `${promptTemplate}\n\nProducts:\n${JSON.stringify(top3, null, 2)}`;
+      const resp = await fetch(`${BACKEND}/llm`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt }),
+      });
+      if (resp.ok) {
+        const data = await resp.json() as { response: string };
+        return { topProducts: top3, reasoning: data.response };
+      }
+    } catch { /* use local reasoning */ }
+  }
+
+  // Fallback: generate local reasoning
+  const reasoning = top3.length > 0
+    ? `Top ${top3.length} products selected based on rating ≥ ${filters['minRating'] ?? 4} and ≥ ${filters['minReviews'] ?? 500} reviews.`
+    : 'No products matched the specified filters.';
+
+  return { topProducts: top3, reasoning };
+}

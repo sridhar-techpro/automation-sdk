@@ -91,3 +91,15 @@ class ChatRequest(BaseModel):
 class ChatResponse(BaseModel):
     """Response from /chat — a human-readable AI answer."""
     response: str
+
+
+# ─── LLM proxy models (used by extension agent layer) ─────────────────────────
+
+class LlmRequest(BaseModel):
+    """Request body for /llm — a raw prompt string."""
+    prompt: str
+
+
+class LlmResponse(BaseModel):
+    """Response from /llm — the raw model response string."""
+    response: str

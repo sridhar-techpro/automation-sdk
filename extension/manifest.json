@@ -21,7 +21,7 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["side-panel/index.html", "side-panel/index.js"],
+      "resources": ["side-panel/index.html", "side-panel/index.js", "prompts/*.md"],
       "matches": ["<all_urls>"]
     }
   ]

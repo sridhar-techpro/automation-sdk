@@ -60,7 +60,12 @@ export async function startBackend(port = BACKEND_PORT, timeoutMs = 25_000): Pro
     ['-m', 'uvicorn', 'backend.main:app', '--port', String(port), '--host', '127.0.0.1'],
     {
       cwd: root,
-      env: { ...process.env }, // inherits OPENAI_API_KEY from test runner's env
+      env: {
+        ...process.env,
+        // planner.py / matcher.py use bare `from models import ...` which requires
+        // the backend/ directory on sys.path.
+        PYTHONPATH: path.join(root, 'backend') + (process.env.PYTHONPATH ? ':' + process.env.PYTHONPATH : ''),
+      },
       stdio: ['ignore', 'pipe', 'pipe'],
     },
   );

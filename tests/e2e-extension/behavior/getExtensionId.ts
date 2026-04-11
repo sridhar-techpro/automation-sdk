@@ -19,26 +19,48 @@ function computeExtensionId(extensionPath: string): string {
 }
 
 export async function getExtensionId(browser: Browser): Promise<string> {
-  // ── Strategy 1: read from service-worker target URL (most reliable) ──────
-  try {
-    // Give the service worker time to register
-    await new Promise((r) => setTimeout(r, 1500));
+  // ── Strategy 1: find service-worker or background target for OUR extension ─
+  // Give Chrome a few seconds to register the extension service worker.
+  for (let attempt = 0; attempt < 5; attempt++) {
+    await new Promise((r) => setTimeout(r, 1000));
     const targets = browser.targets();
-    const swTarget = targets.find(
+    const extTarget = targets.find(
       (t) =>
-        t.type() === "service_worker" &&
-        t.url().startsWith("chrome-extension://")
+        (t.type() === "service_worker" || t.type() === "background_page") &&
+        t.url().startsWith("chrome-extension://") &&
+        // Our extension's service worker is background.js (not a built-in)
+        (t.url().endsWith("background.js") ||
+          t.url().endsWith("background.html"))
     );
-    if (swTarget) {
-      const extId = new URL(swTarget.url()).hostname;
-      if (extId) return extId;
+    if (extTarget) {
+      const extId = new URL(extTarget.url()).hostname;
+      if (extId) {
+        console.log(`[getExtensionId] Found via target URL: ${extId}`);
+        return extId;
+      }
     }
-  } catch { /* fall through */ }
+  }
 
-  // ── Strategy 2: chrome://extensions/ shadow DOM ───────────────────────────
+  // ── Strategy 2: ANY non-empty chrome-extension service worker target ───────
+  await new Promise((r) => setTimeout(r, 1000));
+  const allTargets = browser.targets();
+  const swTarget = allTargets.find(
+    (t) =>
+      t.type() === "service_worker" &&
+      t.url().startsWith("chrome-extension://")
+  );
+  if (swTarget) {
+    const extId = new URL(swTarget.url()).hostname;
+    if (extId) {
+      console.log(`[getExtensionId] Found via SW target (fallback): ${extId}`);
+      return extId;
+    }
+  }
+
+  // ── Strategy 3: chrome://extensions/ shadow DOM ───────────────────────────
   try {
     const page = await browser.newPage();
-    await page.goto("chrome://extensions/", { waitUntil: "networkidle0" });
+    await page.goto("chrome://extensions/", { waitUntil: "domcontentloaded", timeout: 10_000 });
     await new Promise((r) => setTimeout(r, 2000));
 
     const id = await page.evaluate(() => {
@@ -53,9 +75,14 @@ export async function getExtensionId(browser: Browser): Promise<string> {
     });
 
     await page.close();
+    console.log(`[getExtensionId] Found via shadow DOM: ${id}`);
     return id;
-  } catch { /* fall through */ }
+  } catch (e) {
+    console.warn("[getExtensionId] Shadow DOM strategy failed:", e);
+  }
 
-  // ── Strategy 3: deterministic ID computed from extension path ─────────────
-  return computeExtensionId(EXTENSION_DIST);
+  // ── Strategy 4: deterministic ID computed from extension path ─────────────
+  const computed = computeExtensionId(EXTENSION_DIST);
+  console.log(`[getExtensionId] Using computed ID: ${computed}`);
+  return computed;
 }

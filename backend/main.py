@@ -22,9 +22,11 @@ try:
         PlanWithContextRequest,
         PlanWithContextResponse,
         ChatRequest,
-        ChatResponse
+        ChatResponse,
+        LlmRequest,
+        LlmResponse,
     )
-    from .planner import plan_with_llm, plan_with_context, chat_with_llm
+    from .planner import plan_with_llm, plan_with_context, chat_with_llm, llm_proxy
 except ImportError:
     from matcher import match_workflow  # type: ignore[no-redef]
     from models import (  # type: ignore[no-redef]
@@ -38,9 +40,11 @@ except ImportError:
         PlanWithContextRequest,
         PlanWithContextResponse,
         ChatRequest,
-        ChatResponse
+        ChatResponse,
+        LlmRequest,
+        LlmResponse,
     )
-    from planner import plan_with_llm, plan_with_context, chat_with_llm  # type: ignore[no-redef]
+    from planner import plan_with_llm, plan_with_context, chat_with_llm, llm_proxy  # type: ignore[no-redef]
 
 app = FastAPI(title="Automation Planner", version="1.0.0")
 
@@ -79,6 +83,16 @@ def chat(req: ChatRequest) -> ChatResponse:
     server environment only — never passed in the request body.
     """
     return chat_with_llm(req)
+
+
+@app.post("/llm", response_model=LlmResponse)
+def llm(req: LlmRequest) -> LlmResponse:
+    """
+    Thin LLM proxy — accepts a prompt, returns the model response.
+    Used exclusively by the extension agent layer (planner, extractor, reasoner).
+    OPENAI_API_KEY is read from the server environment only.
+    """
+    return llm_proxy(req)
 
 
 @app.post("/match-workflow", response_model=MatchResponse)

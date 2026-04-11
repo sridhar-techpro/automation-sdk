@@ -21,12 +21,16 @@ const DIST = path.join(EXT, 'dist');
 // ── 1. Ensure dist exists ─────────────────────────────────────────────────────
 fs.mkdirSync(DIST,                          { recursive: true });
 fs.mkdirSync(path.join(DIST, 'side-panel'), { recursive: true });
+fs.mkdirSync(path.join(DIST, 'prompts'),    { recursive: true });
 
 // ── 2. Copy static files into dist ───────────────────────────────────────────
 const STATIC = [
-  ['manifest.json',           'manifest.json'],
-  ['popup.html',              'popup.html'],
-  ['side-panel/index.html',   'side-panel/index.html'],
+  ['manifest.json',                     'manifest.json'],
+  ['popup.html',                        'popup.html'],
+  ['side-panel/index.html',             'side-panel/index.html'],
+  ['prompts/prompt-planner.md',         'prompts/prompt-planner.md'],
+  ['prompts/prompt-reasoner.md',        'prompts/prompt-reasoner.md'],
+  ['prompts/prompt-extractor.md',       'prompts/prompt-extractor.md'],
 ];
 
 for (const [src, dest] of STATIC) {
